@@ -1,3 +1,7 @@
+#directories
 bin
 bin-intermidiates
 .vs
+
+#files
+*.user
