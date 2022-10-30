@@ -5,6 +5,7 @@
 #include <stdio.h>
 
 #include "Bubble/Application.h"
+#include "Bubble/Log.h"
 
 // Provide Application symbols for entry point
 #include "Bubble/EntryPoint.h"

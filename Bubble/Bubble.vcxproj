@@ -11,13 +11,16 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Log.h" />
     <ClInclude Include="src\Bubble.h" />
     <ClInclude Include="src\Bubble\Application.h" />
     <ClInclude Include="src\Bubble\Core.h" />
     <ClInclude Include="src\Bubble\EntryPoint.h" />
+    <ClInclude Include="src\Bubble\Log.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Bubble\Application.cpp" />
+    <ClCompile Include="src\Bubble\Log.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -66,6 +69,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);BUBBLE_PLATFORM_WINDOWS;BUBBLE_BUILD_DLL</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir)Bubble\third-party\spdlog\include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -80,6 +84,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);BUBBLE_PLATFORM_WINDOWS;BUBBLE_BUILD_DLL</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir)Bubble\third-party\spdlog\include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

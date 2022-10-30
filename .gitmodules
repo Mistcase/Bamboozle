@@ -1,0 +1,3 @@
+[submodule "Bubble/third-party/spdlog"]
+	path = Bubble/third-party/spdlog
+	url = https://github.com/gabime/spdlog.git
