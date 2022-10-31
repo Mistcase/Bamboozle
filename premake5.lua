@@ -18,6 +18,9 @@ project "Bubble"
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin/" .. outputdir .. "/%{prj.name}")
 
+    pchheader "bubblepch.h"
+	pchsource "Bubble/src/bubblepch.cpp"
+
     files
     {
         "%{prj.name}/src/**.h",
@@ -26,6 +29,7 @@ project "Bubble"
 
     includedirs
     {
+        "%{prj.name}/src",
         "%{prj.name}/third-party/spdlog/include"
     }
 

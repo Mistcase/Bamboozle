@@ -1,3 +1,4 @@
+#include "bubblepch.h"
 #include "Application.h"
 
 namespace bubble
