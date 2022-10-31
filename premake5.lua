@@ -13,9 +13,11 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 IncludeDir = {}
 IncludeDir["GLFW"] = "Bubble/third-party/GLFW/include"
 IncludeDir["Glad"] = "Bubble/third-party/Glad/include"
+IncludeDir["ImGui"] = "Bubble/third-party/ImGui"
 
 include "Bubble/third-party/GLFW"
 include "Bubble/third-party/Glad"
+include "Bubble/third-party/ImGui"
 
 project "Bubble"
     location "Bubble"
@@ -39,13 +41,15 @@ project "Bubble"
         "%{prj.name}/src",
         "%{prj.name}/third-party/spdlog/include",
         "%{IncludeDir.GLFW}",
-        "%{IncludeDir.Glad}"
+        "%{IncludeDir.Glad}",
+        "%{IncludeDir.ImGui}"
     }
 
     links
     {
         "GLFW",
         "Glad",
+        "ImGui",
         "opengl32.lib"
     }
 

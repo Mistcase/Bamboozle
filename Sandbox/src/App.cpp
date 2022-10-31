@@ -26,6 +26,7 @@ public:
 	Sandbox()
 	{
 		pushLayer(new ExampleLayer());
+		pushOverlay(new bubble::ImGuiLayer());
 	}
 
 	~Sandbox()

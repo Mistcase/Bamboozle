@@ -1,9 +1,10 @@
 #directories
-bin
-bin-intermidiates
+*bin*
+*bin-int*
 .vs
 
 #files
 *.user
 *.sln
 *.vcxproj*
+imgui.ini

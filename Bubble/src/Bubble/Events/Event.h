@@ -22,6 +22,7 @@ namespace bubble
 
 		KeyPressed,
 		KeyReleased,
+		KeyTyped,
 
 		MouseButtonPressed,
 		MouseButtonReleased,

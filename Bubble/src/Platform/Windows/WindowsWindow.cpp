@@ -110,6 +110,14 @@ namespace bubble
 			}
 		});
 
+		glfwSetCharCallback(m_window, [](GLFWwindow* window, unsigned int c) 
+		{
+			WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
+			
+			KeyTypedEvent event(c);
+			data.eventCallback(event);
+		});
+
 		glfwSetMouseButtonCallback(m_window, [](GLFWwindow* window, int button, int action, int mods)
 		{
 			WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));

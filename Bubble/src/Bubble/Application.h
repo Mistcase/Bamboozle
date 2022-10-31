@@ -23,10 +23,15 @@ namespace bubble
 		void pushLayer(Layer* layer);
 		void pushOverlay(Layer* layer);
 
+	    inline static Application& GetInstance() { return *m_instance; }
+		inline Window& GetWindow() { return *m_window; }
+
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);
 
 	private:
+		static Application* m_instance;
+
 		std::unique_ptr<Window> m_window;
 		bool m_running = true;
 

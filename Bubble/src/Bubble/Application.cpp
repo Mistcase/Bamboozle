@@ -7,9 +7,14 @@
 
 namespace bubble
 {
+	Application* Application::m_instance = nullptr;
+
 	Application::Application()
 		: m_window(Window::Create())
 	{
+		BUBBLE_CORE_ASSERT(!m_instance, "Application already exists");
+		m_instance = this;
+
 		m_window->setEventCallback([this](Event& event) { onEvent(event); });
 
 		unsigned int id;
@@ -56,10 +61,12 @@ namespace bubble
 	void Application::pushLayer(Layer* layer)
 	{
 		m_layerStack.pushLayer(layer);
+		layer->onAttach();
 	}
 
 	void Application::pushOverlay(Layer* layer)
 	{
 		m_layerStack.pushOverlay(layer);
+		layer->onAttach();
 	}
 }
