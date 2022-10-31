@@ -55,14 +55,13 @@ namespace bubble
 		virtual const char* getName() const = 0;
 		virtual int getCategoryFlags() const = 0;
 		virtual std::string toString() const { return getName(); }
-
+		
 		inline bool isInCategory(EventCategory category)
 		{
 			return getCategoryFlags() & category;
 		}
 
-	protected:
-		bool m_handled = false;
+		bool handled = false;
 	};
 
 	class EventDispatcher
@@ -81,7 +80,7 @@ namespace bubble
 		{
 			if (m_event.getEventType() == T::GetStaticType())
 			{
-				m_event.m_handled = func(*(T*)&m_event);
+				m_event.handled = func(*(T*)&m_event);
 				return true;
 			}
 			return false;

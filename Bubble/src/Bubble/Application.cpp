@@ -26,6 +26,9 @@ namespace bubble
 	{
 		while (m_running) 
 		{
+			for (auto layer : m_layerStack)
+				layer->onUpdate();
+
 			m_window->onUpdate();
 		}
 	}
@@ -36,5 +39,22 @@ namespace bubble
 		dispatcher.dispatch<WindowCloseEvent>([this](WindowCloseEvent& e) { return OnWindowClose(e); });
 
 		BUBBLE_CORE_TRACE(e);
+
+		for (auto it = std::prev(m_layerStack.end()); it != m_layerStack.begin(); --it)
+		{
+			(*it)->onEvent(e);
+			if (e.handled)
+				break;
+		}
+	}
+
+	void Application::pushLayer(Layer* layer)
+	{
+		m_layerStack.pushLayer(layer);
+	}
+
+	void Application::pushOverlay(Layer* layer)
+	{
+		m_layerStack.pushOverlay(layer);
 	}
 }
