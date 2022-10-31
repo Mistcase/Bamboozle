@@ -3,12 +3,17 @@
 
 #include "Log.h"
 
+#include <glad/glad.h>
+
 namespace bubble
 {
 	Application::Application()
 		: m_window(Window::Create())
 	{
 		m_window->setEventCallback([this](Event& event) { onEvent(event); });
+
+		unsigned int id;
+		glGenVertexArrays(1, &id);
 	}
 
 	Application::~Application()

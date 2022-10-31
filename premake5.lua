@@ -12,8 +12,10 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 IncludeDir = {}
 IncludeDir["GLFW"] = "Bubble/third-party/GLFW/include"
+IncludeDir["Glad"] = "Bubble/third-party/Glad/include"
 
 include "Bubble/third-party/GLFW"
+include "Bubble/third-party/Glad"
 
 project "Bubble"
     location "Bubble"
@@ -36,12 +38,14 @@ project "Bubble"
     {
         "%{prj.name}/src",
         "%{prj.name}/third-party/spdlog/include",
-        "%{IncludeDir.GLFW}"
+        "%{IncludeDir.GLFW}",
+        "%{IncludeDir.Glad}"
     }
 
     links
     {
         "GLFW",
+        "Glad",
         "opengl32.lib"
     }
 
@@ -53,7 +57,8 @@ project "Bubble"
         defines
         {
             "BUBBLE_PLATFORM_WINDOWS",
-            "BUBBLE_BUILD_DLL"
+            "BUBBLE_BUILD_DLL",
+            "GLFW_INCLUDE_NONE"
         }
 
         postbuildcommands
