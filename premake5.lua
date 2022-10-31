@@ -10,6 +10,11 @@ workspace "Bubble"
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
+IncludeDir = {}
+IncludeDir["GLFW"] = "Bubble/third-party/GLFW/include"
+
+include "Bubble/third-party/GLFW"
+
 project "Bubble"
     location "Bubble"
     kind "SharedLib"
@@ -30,7 +35,14 @@ project "Bubble"
     includedirs
     {
         "%{prj.name}/src",
-        "%{prj.name}/third-party/spdlog/include"
+        "%{prj.name}/third-party/spdlog/include",
+        "%{IncludeDir.GLFW}"
+    }
+
+    links
+    {
+        "GLFW",
+        "opengl32.lib"
     }
 
     filter "system:windows"

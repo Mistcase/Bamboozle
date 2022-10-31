@@ -1,3 +1,6 @@
 [submodule "Bubble/third-party/spdlog"]
 	path = Bubble/third-party/spdlog
 	url = https://github.com/gabime/spdlog.git
+[submodule "Bubble/third-party/GLFW"]
+	path = Bubble/third-party/GLFW
+	url = https://github.com/Mistcase/glfw

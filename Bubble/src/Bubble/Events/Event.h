@@ -1,5 +1,6 @@
 #pragma once
 
+#include "bubblepch.h"
 #include "Bubble/Core.h"
 
 namespace bubble 
@@ -31,7 +32,6 @@ namespace bubble
 	enum EventCategory
 	{
 		// Exists just for filtering events
-
 		None = 0,
 		EventCategoryApplication    = 1,
 		EventCategoryInput          = 1 << 1,
@@ -49,6 +49,7 @@ namespace bubble
 	class BUBBLE_API Event
 	{
 		friend class EventDispatcher;
+
 	public:
 		virtual EventType getEventType() const = 0;
 		virtual const char* getName() const = 0;
@@ -59,6 +60,7 @@ namespace bubble
 		{
 			return getCategoryFlags() & category;
 		}
+
 	protected:
 		bool m_handled = false;
 	};
@@ -77,13 +79,14 @@ namespace bubble
 		template<typename T>
 		bool dispatch(FnDispatchEvent<T> func)
 		{
-			if (m_event.GetEventType() == T::GetStaticType())
+			if (m_event.getEventType() == T::GetStaticType())
 			{
 				m_event.m_handled = func(*(T*)&m_event);
 				return true;
 			}
 			return false;
 		}
+
 	private:
 		Event& m_event;
 	};
@@ -92,5 +95,6 @@ namespace bubble
 	{
 		return os << e.toString();
 	}
-}
+
+} // namespace bubble
 
