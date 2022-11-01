@@ -10,7 +10,6 @@ public:
 
 	void onUpdate() override
 	{
-		BUBBLE_CLIENT_INFO("ExampleLayer::Update");
 	}
 
 	void onEvent(bubble::Event& event) override

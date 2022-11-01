@@ -22,6 +22,8 @@ namespace bubble
 		void setVSync(bool enabled) override;
 		bool isVSync() const override;
 
+	    void* getNativeWindow() const override;
+
 	private:
 		virtual void init(const WindowProps& props);
 		virtual void shutdown();

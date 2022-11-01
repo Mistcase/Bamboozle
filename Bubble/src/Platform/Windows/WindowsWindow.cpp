@@ -178,4 +178,9 @@ namespace bubble
 		return m_data.vSync;
 	}
 
+	void* WindowsWindow::getNativeWindow() const
+	{
+		return m_window;
+	}
+
 } // namespace bubble

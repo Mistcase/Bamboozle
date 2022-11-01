@@ -5,6 +5,8 @@
 
 #include <glad/glad.h>
 
+#include "Input.h"
+
 namespace bubble
 {
 	Application* Application::m_instance = nullptr;
@@ -23,10 +25,9 @@ namespace bubble
 
 	Application::~Application()
 	{
-		
 	}
 
-	bool Application::OnWindowClose(WindowCloseEvent& e)
+	bool Application::onWindowClose(WindowCloseEvent& e)
 	{
 		m_running = false;
 		return true;
@@ -46,7 +47,7 @@ namespace bubble
 	void Application::onEvent(Event& e)
 	{
 		EventDispatcher dispatcher(e);
-		dispatcher.dispatch<WindowCloseEvent>([this](WindowCloseEvent& e) { return OnWindowClose(e); });
+		dispatcher.dispatch<WindowCloseEvent>([this](WindowCloseEvent& e) { return onWindowClose(e); });
 
 		BUBBLE_CORE_TRACE(e);
 

@@ -11,8 +11,8 @@
 #endif
 
 #ifdef BUBBLE_ENABLE_ASSERTS
-#define BUBBLE_ASSERT(x, ...) { if(!(x)) { HZ_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
-#define BUBBLE_CORE_ASSERT(x, ...) { if(!(x)) { HZ_CORE_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
+#define BUBBLE_ASSERT(x, ...) { if(!(x)) { BUBBLE_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
+#define BUBBLE_CORE_ASSERT(x, ...) { if(!(x)) { BUBBLE_CORE_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
 #else
 #define BUBBLE_ASSERT(x, ...)
 #define BUBBLE_CORE_ASSERT(x, ...)

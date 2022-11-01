@@ -24,10 +24,10 @@ namespace bubble
 		void pushOverlay(Layer* layer);
 
 	    inline static Application& GetInstance() { return *m_instance; }
-		inline Window& GetWindow() { return *m_window; }
+		inline Window& getWindow() { return *m_window; }
 
 	private:
-		bool OnWindowClose(WindowCloseEvent& e);
+		bool onWindowClose(WindowCloseEvent& e);
 
 	private:
 		static Application* m_instance;
