@@ -3,7 +3,7 @@
 #include "bubblepch.h"
 #include "Bubble/Core.h"
 
-namespace bubble 
+namespace bubble
 {
 	// TODO: add event buffering
 
@@ -13,11 +13,11 @@ namespace bubble
 		WindowClose,
 		WindowResize,
 		WindowFocus,
-		WindowLostFocus, 
+		WindowLostFocus,
 		WindowMoved,
 
 		AppTick,
-		AppUpdate, 
+		AppUpdate,
 		AppRender,
 
 		KeyPressed,
@@ -41,7 +41,7 @@ namespace bubble
 		EventCategoryMouseButton    = 1 << 4
 	};
 
-#define EVENT_CLASS_TYPE(type)  static EventType GetStaticType() { return EventType::##type; }\
+#define EVENT_CLASS_TYPE(type)  static EventType GetStaticType() { return EventType::type; }\
 								EventType getEventType() const override { return GetStaticType(); }\
 								const char* getName() const override { return #type; }
 
@@ -56,7 +56,7 @@ namespace bubble
 		virtual const char* getName() const = 0;
 		virtual int getCategoryFlags() const = 0;
 		virtual std::string toString() const { return getName(); }
-		
+
 		inline bool isInCategory(EventCategory category)
 		{
 			return getCategoryFlags() & category;
@@ -97,4 +97,3 @@ namespace bubble
 	}
 
 } // namespace bubble
-

@@ -18,6 +18,8 @@ namespace bubble
 		glfwMakeContextCurrent(m_window);
 		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 		BUBBLE_CORE_ASSERT(status, "Failed to initialize Glad");
+
+        BUBBLE_CORE_INFO("OpenGL renderer: {0}", glGetString(GL_RENDERER));
 	}
 
 	void OpenGLContext::swapBuffers()

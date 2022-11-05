@@ -1,3 +1,5 @@
+require "export-compile-commands"
+
 workspace "Bubble"
     architecture "x64"
 
@@ -43,7 +45,8 @@ project "Bubble"
 
     defines
     {
-        "_CRT_SECURE_NO_WARNINGS"
+        "_CRT_SECURE_NO_WARNINGS",
+        "_ALLOW_COMPILER_AND_STL_VERSION_MISMATCH"
     }
 
     includedirs

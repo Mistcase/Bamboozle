@@ -1,5 +1,7 @@
 #pragma once
 
+#define _ALLOW_COMPILER_AND_STL_VERSION_MISMATCH
+
 #include <iostream>
 #include <memory>
 #include <utility>
