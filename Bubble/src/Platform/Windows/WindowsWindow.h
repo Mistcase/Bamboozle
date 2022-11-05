@@ -1,8 +1,9 @@
 #pragma once
 
 #include "Bubble/Window.h"
+#include "Bubble/Renderer/GraphicsContext.h"
 
-#include <GLFW/glfw3.h>
+struct GLFWwindow;
 
 namespace bubble
 {
@@ -30,6 +31,7 @@ namespace bubble
 
 	private:
 		GLFWwindow* m_window;
+		GraphicsContext* m_context;
 
 		struct WindowData
 		{
