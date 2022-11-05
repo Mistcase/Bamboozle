@@ -22,8 +22,10 @@ include "Bubble/third-party/ImGui"
 
 project "Bubble"
     location "Bubble"
-    kind "SharedLib"
+    kind "StaticLib"
     language "C++"
+    cppdialect "C++17"
+    staticruntime "on"
 
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin/" .. outputdir .. "/%{prj.name}")
@@ -37,6 +39,11 @@ project "Bubble"
         "%{prj.name}/src/**.cpp",
         "%{prj.name}/third-party/glm/glm/**.hpp",
          "%{prj.name}/third-party/glm/glm/**.inl"
+    }
+
+    defines
+    {
+        "_CRT_SECURE_NO_WARNINGS"
     }
 
     includedirs
@@ -69,28 +76,24 @@ project "Bubble"
             "GLFW_INCLUDE_NONE"
         }
 
-        postbuildcommands
-        {
-            ("{COPY} %{cfg.buildtarget.relpath} ../bin/" .. outputdir .. "/Sandbox")
-        }
-
     filter "configurations:Debug"
         defines "BUBBLE_DEBUG"
-        symbols "On"
+        symbols "on"
 
     filter "configurations:Release"
         defines "BUBBLE_RELEASE"
-        optimize "On"
+        optimize "on"
 
     filter "configurations:Dist"
         defines "BUBBLE_DIST"
-        optimize "On"
+        optimize "on"
 
 project "Sandbox"
     location "Sandbox"
     kind "ConsoleApp"
-
     language "C++"
+    cppdialect "C++17"
+    staticruntime "on"
 
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin/" .. outputdir .. "/%{prj.name}")
@@ -105,6 +108,7 @@ project "Sandbox"
     {
         "Bubble/third-party/spdlog/include",
         "Bubble/src",
+        "Bubble/third-party",
         "%{IncludeDir.glm}"
     }
 
@@ -114,8 +118,6 @@ project "Sandbox"
     }
 
     filter "system:windows"
-        cppdialect "C++17"
-        staticruntime "On"
         systemversion "latest"
 
         defines
@@ -125,12 +127,12 @@ project "Sandbox"
 
     filter "configurations:Debug"
         defines "BUBBLE_DEBUG"
-        symbols "On"
+        symbols "on"
 
     filter "configurations:Release"
         defines "BUBBLE_RELEASE"
-        optimize "On"
+        optimize "on"
 
     filter "configurations:Dist"
         defines "BUBBLE_DIST"
-        optimize "On"
+        optimize "on"

@@ -25,7 +25,7 @@ namespace bubble
 		Container::iterator end() { return m_layers.end(); }
 	private:
 		Container m_layers;
-		Container::iterator m_layerInsert;
+		size_t m_layerInsertIndex = 0;
 	};
 
 } // namespace bubble

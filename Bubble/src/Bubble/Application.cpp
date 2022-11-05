@@ -13,11 +13,14 @@ namespace bubble
 
 	Application::Application()
 		: m_window(Window::Create())
+		, m_imGuiLayer(new ImGuiLayer())
 	{
 		BUBBLE_CORE_ASSERT(!m_instance, "Application already exists");
 		m_instance = this;
 
 		m_window->setEventCallback([this](Event& event) { onEvent(event); });
+
+		pushOverlay(m_imGuiLayer);
 	}
 
 	Application::~Application()
@@ -38,6 +41,11 @@ namespace bubble
 
 			for (auto layer : m_layerStack)
 				layer->onUpdate();
+
+			m_imGuiLayer->begin();
+			for (auto layer : m_layerStack)
+				layer->onImGuiRender();
+			m_imGuiLayer->end();
 
 			m_window->onUpdate();
 		}

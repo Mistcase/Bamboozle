@@ -1,10 +1,12 @@
 #directories
-*bin*
-*bin-int*
-.vs
+bin
+bin-int
+*.vs
 
 #files
 *.user
 *.sln
 *.vcxproj*
-*/imgui.ini
+imgui.ini
+*.log
+*.tlog

@@ -6,6 +6,8 @@
 #include "LayerStack.h"
 #include "Window.h"
 
+#include "ImGui/ImGuiLayer.h"
+
 class WindowCloseEvent;
 
 namespace bubble
@@ -33,6 +35,7 @@ namespace bubble
 		static Application* m_instance;
 
 		std::unique_ptr<Window> m_window;
+		ImGuiLayer* m_imGuiLayer;
 		bool m_running = true;
 
 		LayerStack m_layerStack;
