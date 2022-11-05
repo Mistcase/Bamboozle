@@ -22,7 +22,7 @@ namespace bubble
 	void ImGuiLayer::onAttach()
 	{
 		ImGui::CreateContext();
-		ImGui::StyleColorsDark();
+  		ImGui::StyleColorsDark();
 
 		ImGuiIO& io = ImGui::GetIO();
 		io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
@@ -76,7 +76,6 @@ namespace bubble
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-		ImGui::EndFrame();
 	}
 
 	void ImGuiLayer::onEvent(Event& event)

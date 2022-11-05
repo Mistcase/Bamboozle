@@ -18,9 +18,6 @@ namespace bubble
 		m_instance = this;
 
 		m_window->setEventCallback([this](Event& event) { onEvent(event); });
-
-		unsigned int id;
-		glGenVertexArrays(1, &id);
 	}
 
 	Application::~Application()
@@ -37,6 +34,8 @@ namespace bubble
 	{
 		while (m_running) 
 		{
+			glClear(GL_COLOR_BUFFER_BIT);
+
 			for (auto layer : m_layerStack)
 				layer->onUpdate();
 

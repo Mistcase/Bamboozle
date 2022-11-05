@@ -7,4 +7,4 @@
 *.user
 *.sln
 *.vcxproj*
-imgui.ini
+*/imgui.ini

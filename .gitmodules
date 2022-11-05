@@ -7,3 +7,6 @@
 [submodule "Bubble/third-party/ImGui"]
 	path = Bubble/third-party/ImGui
 	url = https://github.com/Mistcase/imgui.git
+[submodule "Bubble/third-party/glm"]
+	path = Bubble/third-party/glm
+	url = https://github.com/g-truc/glm.git
