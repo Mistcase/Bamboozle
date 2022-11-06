@@ -10,7 +10,7 @@ namespace bubble
 
 	void Log::Init()
 	{
-		spdlog::set_pattern("%^[%T] %n %v%$");
+		spdlog::set_pattern("%^[%T] %n: %v%$");
 
 		m_coreLogger = spdlog::stdout_color_mt("BUBBLE");
 		m_coreLogger->set_level(spdlog::level::trace);

@@ -24,8 +24,7 @@ class ExampleLayer : public bubble::Layer
 public:
 	ExampleLayer()
 		: Layer("Example") 
-	{
-		
+	{	
 	}
 
 	void onUpdate() override
@@ -34,9 +33,6 @@ public:
 
 	void onImGuiRender() override
 	{
-		ImGui::Begin("Test");
-		ImGui::Text("Hello");
-		ImGui::End();
 	}
 
 	void onEvent(bubble::Event& event) override
@@ -56,7 +52,6 @@ public:
 
 	~Sandbox()
 	{
-
 	}
 
 };

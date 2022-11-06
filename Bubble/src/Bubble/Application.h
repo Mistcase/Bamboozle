@@ -7,6 +7,7 @@
 #include "Window.h"
 
 #include "ImGui/ImGuiLayer.h"
+#include "Bubble/Renderer/Shader.h"
 
 class WindowCloseEvent;
 
@@ -37,6 +38,9 @@ namespace bubble
 		std::unique_ptr<Window> m_window;
 		ImGuiLayer* m_imGuiLayer;
 		bool m_running = true;
+
+		unsigned int m_vertexArray, m_vertexBuffer, m_indexBuffer;
+        std::unique_ptr<Shader> m_shader;
 
 		LayerStack m_layerStack;
 	};
