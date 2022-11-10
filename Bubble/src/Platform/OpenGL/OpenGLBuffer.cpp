@@ -27,6 +27,16 @@ namespace bubble
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
+    const BufferLayout& OpenGLVertexBuffer::getLayout() const
+    {
+        return m_layout;
+    }
+
+    void OpenGLVertexBuffer::setLayout(const BufferLayout& layout)
+    {
+        m_layout = layout;
+    }
+
     //----------------------------------------------
 
     OpenGLIndexBuffer::OpenGLIndexBuffer(uint32_t* indices, size_t count)

@@ -13,6 +13,12 @@ namespace bubble
         void bind() override;
         void unbind() override;
 
+        const BufferLayout& getLayout() const override;
+        void setLayout(const BufferLayout& layout) override;
+
+    private:
+        BufferLayout m_layout;
+
     private:
         uint32_t m_rendererId;
     };
