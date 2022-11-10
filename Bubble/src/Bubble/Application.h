@@ -13,6 +13,9 @@ class WindowCloseEvent;
 
 namespace bubble
 {
+    class IndexBuffer;
+    class VertexBuffer;
+
 	class BUBBLE_API Application
 	{
 	public:
@@ -39,8 +42,10 @@ namespace bubble
 		ImGuiLayer* m_imGuiLayer;
 		bool m_running = true;
 
-		unsigned int m_vertexArray, m_vertexBuffer, m_indexBuffer;
+		unsigned int m_vertexArray;
         std::unique_ptr<Shader> m_shader;
+        std::unique_ptr<VertexBuffer> m_vertexBuffer;
+        std::unique_ptr<IndexBuffer> m_indexBuffer;
 
 		LayerStack m_layerStack;
 	};

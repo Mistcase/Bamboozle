@@ -1,6 +1,7 @@
 #directories
 bin
 bin-int
+.cache
 *.vs
 *compile*commands*
 
@@ -11,3 +12,4 @@ bin-int
 imgui.ini
 *.log
 *.tlog
+*.ini
