@@ -75,7 +75,7 @@ namespace bubble
         return nullptr;
     }
 
-    IndexBuffer* IndexBuffer::Create(uint32_t* indices, size_t size)
+    IndexBuffer* IndexBuffer::Create(uint32_t* indices, size_t count)
     {
         switch (Renderer::GetAPI())
         {
@@ -84,7 +84,7 @@ namespace bubble
             break;
 
         case RendererAPI::OpenGL:
-            return new OpenGLIndexBuffer(indices, size);
+            return new OpenGLIndexBuffer(indices, count);
             break;
         }
 

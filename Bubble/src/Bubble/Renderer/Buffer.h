@@ -103,7 +103,7 @@ namespace bubble
     class IndexBuffer
     {
     public:
-        static IndexBuffer* Create(uint32_t* indices, size_t size);
+        static IndexBuffer* Create(uint32_t* indices, size_t count);
 
     public:
         virtual ~IndexBuffer() = default;
