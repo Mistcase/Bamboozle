@@ -14,7 +14,7 @@
 	#error Build platform is not supported!
 #endif
 
-#ifdef BUBBLE_ENABLE_ASSERTS
+#ifdef BUBBLE_DEBUG
 #define BUBBLE_ASSERT(x, ...) { if(!(x)) { BUBBLE_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
 #define BUBBLE_CORE_ASSERT(x, ...) { if(!(x)) { BUBBLE_CORE_ERROR("Assertion Failed: {0}", __VA_ARGS__); __debugbreak(); } }
 #else

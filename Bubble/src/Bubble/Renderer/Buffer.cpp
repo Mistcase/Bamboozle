@@ -62,11 +62,11 @@ namespace bubble
     {
         switch (Renderer::GetAPI())
         {
-        case RendererAPI::None:
+        case RenderAPI::API::None:
             BUBBLE_CORE_ASSERT(false, "Current API is None");
             break;
 
-        case RendererAPI::OpenGL:
+        case RenderAPI::API::OpenGL:
             return new OpenGLVertexBuffer(vertices, size);
             break;
         }
@@ -79,11 +79,11 @@ namespace bubble
     {
         switch (Renderer::GetAPI())
         {
-        case RendererAPI::None:
+        case RenderAPI::API::None:
             BUBBLE_CORE_ASSERT(false, "Current API is None");
             break;
 
-        case RendererAPI::OpenGL:
+        case RenderAPI::API::OpenGL:
             return new OpenGLIndexBuffer(indices, count);
             break;
         }

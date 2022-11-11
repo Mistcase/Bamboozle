@@ -5,7 +5,7 @@
 #include "Renderer/Buffer.h"
 #include "Renderer/VertexArray.h"
 
-#include <glad/glad.h>
+#include "Bubble/Renderer/Renderer.h"
 
 #include "Input.h"
 
@@ -17,6 +17,7 @@ namespace bubble
 		: m_window(Window::Create())
 		, m_imGuiLayer(new ImGuiLayer())
 	{
+		BUBBLE_CORE_ASSERT(false, "Test");
 		BUBBLE_CORE_ASSERT(!m_instance, "Application already exists");
 		m_instance = this;
 
@@ -25,27 +26,15 @@ namespace bubble
 		pushOverlay(m_imGuiLayer);
 
         m_vertexArray.reset(VertexArray::Create());
-
 		float vertices[] = {
-			-0.5f, -0.5f, 0.0f,
-             0.5f, -0.5f, 0.0f,
-             0.5f, 0.5f, 0.0f,
-             -0.5f, 0.5f, 0.0f,
+			 -0.5f, -0.5f, 0.0f,
+              0.5f, -0.5f, 0.0f,
+              0.5f,  0.5f, 0.0f,
+             -0.5f,  0.5f, 0.0f,
 		};
-
-        // m_vertexBuffer.reset(VertexBuffer::Create(vertices, sizeof(vertices)));
-        // BufferLayout layout = {
-        //     { ShaderDataType::Float3, "a_Position" },
-        //     { ShaderDataType::Float4, "a_Color" }
-        // };
-
-        // m_vertexBuffer->setLayout(layout);
-        //m_vertexArray->addVertexBuffer(m_vertexBuffer); // Call it when layout is already set
 
 		unsigned int indices[] = { 0, 1, 2, 2, 3, 0 };
         m_indexBuffer.reset(IndexBuffer::Create(indices, std::size(indices)));
-        // m_vertexArray->setIndexBuffer(m_indexBuffer);
-
         m_squareVA.reset(VertexArray::Create());
         auto squareVB = std::shared_ptr<VertexBuffer>(VertexBuffer::Create(vertices, sizeof(vertices)));
         squareVB->setLayout({
@@ -64,7 +53,7 @@ namespace bubble
 
         void main()
         {
-            v_Color = vec4(vec3(0.5), 1.0);
+            v_Color = vec4(0.8, 0.0, 0.0, 1.0);
             gl_Position = vec4(a_Position, 1.0);
         }
         )";
@@ -99,12 +88,16 @@ namespace bubble
 	{
 		while (m_running)
 		{
-			glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-			glClear(GL_COLOR_BUFFER_BIT);
+            Renderer::BeginScene();
+            {
+                RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
+                RenderCommand::Clear();
 
-            m_shader->bind();
-			m_squareVA->bind();
-			glDrawElements(GL_TRIANGLES, m_squareVA->getIndexBuffer()->getCount(), GL_UNSIGNED_INT, nullptr);
+                m_shader->bind();
+                Renderer::Submit(m_squareVA);
+            }
+            Renderer::EndScene();
+            // Renderer::Flush();
 
 			for (auto layer : m_layerStack)
 				layer->onUpdate();
