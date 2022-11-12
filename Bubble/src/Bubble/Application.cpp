@@ -21,7 +21,7 @@ namespace bubble
 		: m_window(Window::Create())
 		, m_imGuiLayer(new ImGuiLayer())
 	{
-		BUBBLE_CORE_ASSERT(!m_instance, "Application already exists");
+		BUBBLE_CORE_ASSERT(!m_instance,  "Application already exists");
 		m_instance = this;
 
 		m_window->setEventCallback([this](Event& event) { onEvent(event); });

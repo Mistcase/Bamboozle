@@ -5,26 +5,30 @@
 #include "Bubble/Renderer/Shader.h"
 #include "Bubble/Renderer/VertexArray.h"
 
+//Temp
+#include "Platform/OpenGL/OpenGLShader.h"
+
 namespace bubble
 {
-    void Renderer::BeginScene(const Camera* camera, const Shader* shader)
+    const Camera* Renderer::m_camera = nullptr;
+
+    void Renderer::BeginScene(const Camera* camera)
     {
-        // BUBBLE_CORE_ASSERT(shader != nullptr);
-        shader->bind();
-
-        // Get View * Projection matrix
-        // Send it to shader
-
-        shader->setUniformMat4("u_VP", camera->getViewProjection());
+        m_camera = camera;
     }
 
     void Renderer::EndScene()
     {
-
     }
 
-    void Renderer::Submit(const std::shared_ptr<VertexArray>& vertexArray)
+    void Renderer::Submit(const Shader* shader, const std::shared_ptr<VertexArray>& vertexArray, const glm::mat4& transform)
     {
+        BUBBLE_CORE_ASSERT(shader != nullptr, "Shader is nullptr");
+
+        shader->bind();
+        static_cast<const bubble::OpenGLShader*>(shader)->setUniformMat4("u_VP", m_camera->getViewProjection());
+        static_cast<const bubble::OpenGLShader*>(shader)->setUniformMat4("u_Transform", transform);
+
         // Submit to render command queue
         vertexArray->bind();
         RenderCommand::DrawIndexed(vertexArray);

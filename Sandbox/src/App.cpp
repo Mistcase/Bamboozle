@@ -1,6 +1,9 @@
 #include <Bubble.h>
 
+#include <Platform/OpenGL/OpenGLShader.h>
+
 #include "ImGui/imgui.h"
+#include "glm/ext/matrix_transform.hpp"
 
 class ExampleLayer : public bubble::Layer
 {
@@ -9,18 +12,18 @@ public:
 		: Layer("Example")
 	{
         auto& window = bubble::Application::GetInstance().getWindow();
-        m_camera = std::make_unique<bubble::Camera>(200.0f, 200.0f);
-        m_camera->setPosition({ 540.0f, 260.0f, 0.0f });
-        // m_camera->setRotation(M_PI_4);
+        m_camera = std::make_unique<bubble::Camera>(window.getWidth(), window.getHeight());
+        m_camera->setPosition(glm::vec3(0.0f));
 
         m_vertexArray.reset(bubble::VertexArray::Create());
 		float vertices[] = {
-            590.0f, 410.0f, 0.0f,
-            690.0f, 410.0f, 0.0f,
-            640.0f, 310.0f, 0.0f,
+            0.0f,            0.0f,            0.0f,
+            m_rectangleSize, 0.0f,            0.0f,
+            m_rectangleSize, m_rectangleSize, 0.0f,
+            0.0f,            m_rectangleSize, 0.0f,
 		};
 
-		unsigned int indices[] = { 0, 1, 2 };
+		unsigned int indices[] = { 0, 1, 2, 2, 3, 0 };
         m_indexBuffer.reset(bubble::IndexBuffer::Create(indices, std::size(indices)));
         m_vertexArray.reset(bubble::VertexArray::Create());
         auto vertexBuffer = std::shared_ptr<bubble::VertexBuffer>(bubble::VertexBuffer::Create(vertices, sizeof(vertices)));
@@ -37,12 +40,14 @@ public:
         layout(location = 0) in vec3 a_Position;
 
         uniform mat4 u_VP;
+        uniform mat4 u_Transform;
+        uniform vec4 u_Color;
         out vec4 v_Color;
 
         void main()
         {
-            v_Color = vec4(0.8, 0.0, 0.0, 1.0);
-            gl_Position = u_VP * vec4(a_Position, 1.0);
+            v_Color = u_Color;
+            gl_Position = u_VP * u_Transform * vec4(a_Position, 1.0);
         }
         )";
 
@@ -59,19 +64,33 @@ public:
         }
         )";
 
-        m_shader = std::make_unique<bubble::Shader>(vertexSource, fragmentSource);
+        m_shader.reset(bubble::Shader::Create(vertexSource, fragmentSource));
 	}
 
 	void onUpdate(float dt) override
 	{
-        BUBBLE_CLIENT_TRACE("{0}s", dt);
-
-        bubble::Renderer::BeginScene(m_camera.get(), m_shader.get());
+        bubble::Renderer::BeginScene(m_camera.get());
         {
             bubble::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
             bubble::RenderCommand::Clear();
 
-            bubble::Renderer::Submit(m_vertexArray);
+            auto idx = 0;
+            for (int x = 0; x < 10; x++)
+            {
+                for (int y = 0; y < 10; y++)
+                {
+                    const auto o = 1.1f * m_rectangleSize;
+                    const auto transform = glm::translate(glm::mat4(1.0f), m_objectPosition + glm::vec3(o * x, o * y, 0.0f));
+
+                    static_cast<const bubble::OpenGLShader*>(m_shader.get())->setUniform4f("u_Color", (idx++ % 2 == 0)
+                                           ? glm::vec4(0.78f, 0.75f, 0.68f, 1.0f)
+                                           : glm::vec4(0.45f, 0.44f, 0.41f, 1.0f));
+
+                    bubble::Renderer::Submit(m_shader.get(), m_vertexArray, transform);
+                }
+
+                idx++;
+            }
         }
         bubble::Renderer::EndScene();
         // Renderer::Flush();
@@ -121,6 +140,22 @@ public:
             m_camera->setPosition(position + glm::vec3(0.0f, 10.0f, 0.0f));
             return true;
 
+        case BUBBLE_KEY_A:
+            m_objectPosition.x -= 10.0f;
+            return true;
+
+        case BUBBLE_KEY_D:
+            m_objectPosition.x += 10.0f;
+            return true;
+
+        case BUBBLE_KEY_W:
+            m_objectPosition.y -= 10.0f;
+            return true;
+
+        case BUBBLE_KEY_S:
+            m_objectPosition.y += 10.0f;
+            return true;
+
         default:
             return false;
         }
@@ -145,6 +180,8 @@ private:
     std::shared_ptr<bubble::VertexArray> m_vertexArray;
     std::unique_ptr<bubble::Camera> m_camera;
 
+    glm::vec3 m_objectPosition = glm::vec3{ 400.0f, 100.0f, 0.0f };
+    const float m_rectangleSize = 50.0f;
 };
 
 class Sandbox : public bubble::Application

@@ -8,14 +8,12 @@ namespace bubble
     class Shader
     {
     public:
-        Shader(const std::string& srcVertex, const std::string& srcFragment);;
-        ~Shader();
+        virtual ~Shader() = default;
 
-        void bind() const;
-        void unbind() const;
+        virtual void bind() const = 0;
+        virtual void unbind() const = 0;
 
-        void setUniformMat4(const std::string& name, const glm::mat4& matrix) const;
-
+        static Shader* Create(const std::string& srcVertex, const std::string& srcFragment);
     private:
         uint32_t m_rendererId;
     };
