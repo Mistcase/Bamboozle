@@ -45,14 +45,8 @@ namespace bubble
 		ImGuiLayer* m_imGuiLayer;
 		bool m_running = true;
 
-        std::shared_ptr<Shader> m_shader;
-        std::shared_ptr<VertexBuffer> m_vertexBuffer;
-        std::shared_ptr<IndexBuffer> m_indexBuffer;
-        std::shared_ptr<VertexArray> m_vertexArray;
-        std::shared_ptr<VertexArray> m_squareVA;
-        std::unique_ptr<Camera> m_camera;
-
 		LayerStack m_layerStack;
+        float m_time = 0.0f;
 	};
 
 	// Have to be defined by client

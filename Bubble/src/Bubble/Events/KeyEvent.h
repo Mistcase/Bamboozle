@@ -2,12 +2,12 @@
 
 #include "Event.h"
 
-namespace bubble 
+namespace bubble
 {
 	class BUBBLE_API KeyEvent : public Event
 	{
 	public:
-		inline int GetKeyCode() const { return m_keyCode; }
+		inline int getKeyCode() const { return m_keyCode; }
 
 		EVENT_CLASS_CATEGORY(EventCategoryKeyboard | EventCategoryInput)
 	protected:
@@ -58,7 +58,7 @@ namespace bubble
 	{
 	public:
 		KeyTypedEvent(int keyCode)
-			: KeyEvent(keyCode) 
+			: KeyEvent(keyCode)
 		{
 		}
 

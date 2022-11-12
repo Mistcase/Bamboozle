@@ -16,7 +16,7 @@ namespace
 
 } // nmamespace
 
-namespace bubble 
+namespace bubble
 {
 	static bool GLFWInitialized = false;
 
@@ -61,7 +61,7 @@ namespace bubble
 		glfwSetWindowUserPointer(m_window, &m_data);
 		setVSync(true);
 
-		glfwSetWindowSizeCallback(m_window, [](GLFWwindow* window, int width, int height) 
+		glfwSetWindowSizeCallback(m_window, [](GLFWwindow* window, int width, int height)
 		{
 			auto& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
 			data.width = width;
@@ -71,14 +71,14 @@ namespace bubble
 			data.eventCallback(event);
 		});
 
-		glfwSetWindowCloseCallback(m_window, [](GLFWwindow* window) 
+		glfwSetWindowCloseCallback(m_window, [](GLFWwindow* window)
 		{
 			WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
 			WindowCloseEvent event;
 			data.eventCallback(event);
 		});
 
-		glfwSetKeyCallback(m_window, [](GLFWwindow* window, int key, int scancode, int action, int mods) 
+		glfwSetKeyCallback(m_window, [](GLFWwindow* window, int key, int scancode, int action, int mods)
 		{
 			WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
 
@@ -107,10 +107,10 @@ namespace bubble
 			}
 		});
 
-		glfwSetCharCallback(m_window, [](GLFWwindow* window, unsigned int c) 
+		glfwSetCharCallback(m_window, [](GLFWwindow* window, unsigned int c)
 		{
 			WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
-			
+
 			KeyTypedEvent event(c);
 			data.eventCallback(event);
 		});
@@ -136,10 +136,10 @@ namespace bubble
 			}
 		});
 
-		glfwSetScrollCallback(m_window, [](GLFWwindow* window, double xOffset, double yOffset) 
+		glfwSetScrollCallback(m_window, [](GLFWwindow* window, double xOffset, double yOffset)
 		{
 			WindowData& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
-			
+
 			MouseScrolledEvent event(static_cast<float>(xOffset), static_cast<float>(yOffset));
 			data.eventCallback(event);
 		});

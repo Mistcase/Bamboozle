@@ -13,7 +13,7 @@ namespace bubble
         void setPosition(const glm::vec3& position);
 
         float getRotation() const;
-        void setRotation(float angle);
+        void setRotation(float rotation);
 
         glm::mat4 getViewProjection() const;
 
@@ -21,13 +21,13 @@ namespace bubble
         void updateViewProjection();
 
     private:
-        glm::mat4 m_view;
-        glm::mat4 m_rotation;
-        glm::mat4 m_projection;
+        const glm::mat4 m_projection;
+
+    private:
         glm::mat4 m_viewProjection;
 
         glm::vec3 m_position;
-        float m_angle = 0.0f;
+        float m_rotation = 0.0f;
     };
 
 } // namespace bubble

@@ -12,5 +12,12 @@
 #include "Bubble/Log.h"
 #include "Bubble/ImGui/ImGuiLayer.h"
 
+// Rendering
+#include "Bubble/Renderer/Camera.h"
+#include "Bubble/Renderer/Renderer.h"
+#include "Bubble/Renderer/Shader.h"
+#include "Bubble/Renderer/VertexArray.h"
+#include "Bubble/Renderer/Buffer.h"
+
 // Provide Application symbols for entry point
 #include "Bubble/EntryPoint.h"

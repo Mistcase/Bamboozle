@@ -3,7 +3,7 @@
 #include "Bubble/Core.h"
 #include "Bubble/Events/Event.h"
 
-namespace bubble 
+namespace bubble
 {
 	class BUBBLE_API Layer
 	{
@@ -13,7 +13,7 @@ namespace bubble
 
 		virtual void onAttach() {}
 		virtual void onDetach() {}
-		virtual void onUpdate() {}
+		virtual void onUpdate(float dt) {}
 		virtual void onImGuiRender() {}
 		virtual void onEvent(Event& event) {}
 

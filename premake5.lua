@@ -125,6 +125,7 @@ project "Sandbox"
 
         defines
         {
+            "_ALLOW_COMPILER_AND_STL_VERSION_MISMATCH",
             "BUBBLE_PLATFORM_WINDOWS"
         }
 

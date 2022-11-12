@@ -5,7 +5,7 @@
 
 #include <vector>
 
-namespace bubble 
+namespace bubble
 {
 	class BUBBLE_API LayerStack
 	{
@@ -23,6 +23,8 @@ namespace bubble
 
 		Container::iterator begin() { return m_layers.begin(); }
 		Container::iterator end() { return m_layers.end(); }
+        Container::reverse_iterator rbegin() { return m_layers.rbegin(); }
+        Container::reverse_iterator rend() { return m_layers.rend(); }
 	private:
 		Container m_layers;
 		size_t m_layerInsertIndex = 0;
