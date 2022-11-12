@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <glm/glm.hpp>
 
 namespace bubble
 {
@@ -12,6 +13,8 @@ namespace bubble
 
         void bind() const;
         void unbind() const;
+
+        void setUniformMat4(const std::string& name, const glm::mat4& matrix) const;
 
     private:
         uint32_t m_rendererId;

@@ -4,6 +4,7 @@
 #include "Bubble/Log.h"
 
 #include <glad/glad.h>
+#include <glm/gtc/type_ptr.hpp>
 
 namespace bubble
 {
@@ -129,6 +130,14 @@ namespace bubble
     void Shader::unbind() const
     {
         glUseProgram(0);
+    }
+
+    void Shader::setUniformMat4(const std::string& name, const glm::mat4& matrix) const
+    {
+        auto location = glGetUniformLocation(m_rendererId, name.c_str());
+        BUBBLE_CORE_ASSERT(location != -1, "Uniform is not found");
+
+        glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
     }
 
 } // namespace bubble

@@ -1,5 +1,7 @@
 #pragma once
 
+#define _USE_MATH_DEFINES
+
 #include <iostream>
 #include <memory>
 #include <utility>

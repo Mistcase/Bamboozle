@@ -4,6 +4,8 @@
 
 namespace bubble
 {
+    class Camera;
+    class Shader;
     class VertexArray;
 
     enum class RendererAPI
@@ -17,7 +19,7 @@ namespace bubble
     public:
         static inline RenderAPI::API GetAPI() { return RenderAPI::GetAPI(); }
 
-        static void BeginScene();
+        static void BeginScene(const Camera* camera, const Shader* shader);
         static void EndScene();
 
         static void Submit(const std::shared_ptr<VertexArray>& vertexArray);

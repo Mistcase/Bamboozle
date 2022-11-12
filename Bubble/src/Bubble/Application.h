@@ -6,8 +6,9 @@
 #include "LayerStack.h"
 #include "Window.h"
 
-#include "ImGui/ImGuiLayer.h"
 #include "Bubble/Renderer/Shader.h"
+
+#include "ImGui/ImGuiLayer.h"
 
 class WindowCloseEvent;
 
@@ -16,6 +17,7 @@ namespace bubble
     class IndexBuffer;
     class VertexBuffer;
     class VertexArray;
+    class Camera;
 
 	class BUBBLE_API Application
 	{
@@ -48,6 +50,7 @@ namespace bubble
         std::shared_ptr<IndexBuffer> m_indexBuffer;
         std::shared_ptr<VertexArray> m_vertexArray;
         std::shared_ptr<VertexArray> m_squareVA;
+        std::unique_ptr<Camera> m_camera;
 
 		LayerStack m_layerStack;
 	};
