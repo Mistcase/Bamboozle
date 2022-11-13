@@ -25,6 +25,7 @@ namespace bubble
 		m_instance = this;
 
 		m_window->setEventCallback([this](Event& event) { onEvent(event); });
+        Renderer::Init();
 
 		pushOverlay(m_imGuiLayer);
 	}

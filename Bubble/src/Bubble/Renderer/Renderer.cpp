@@ -12,6 +12,11 @@ namespace bubble
 {
     const Camera* Renderer::m_camera = nullptr;
 
+    void Renderer::Init()
+    {
+        RenderCommand::Init();
+    }
+
     void Renderer::BeginScene(const Camera* camera)
     {
         m_camera = camera;

@@ -7,6 +7,12 @@
 
 namespace bubble
 {
+    void OpenGLRenderAPI::init()
+    {
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    }
+
     void OpenGLRenderAPI::setClearColor(const glm::vec4& color)
     {
         glClearColor(color.r, color.r, color.b, color.a);

@@ -7,6 +7,11 @@ namespace bubble
     class RenderCommand
     {
     public:
+        static inline void Init()
+        {
+            m_renderAPI->init();
+        }
+
         static inline void DrawIndexed(const Ref<VertexArray>& vertexArray)
         {
             m_renderAPI->drawIndexed(vertexArray);

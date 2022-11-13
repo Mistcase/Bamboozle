@@ -34,6 +34,7 @@ public:
         m_vertexArray->setIndexBuffer(m_indexBuffer);
 
         m_texture = bubble::Texture2D::Create("assets\\Checkerboard.png");
+        m_textureSmoke = bubble::Texture2D::Create("assets\\smoke.png");
 
         std::string vertexSource = R"(
         #version 330 core
@@ -150,8 +151,12 @@ public:
                 idx++;
             }
 
-            m_texture->bind();
             const auto transform = glm::translate(glm::mat4(1.0f), glm::vec3(50.0f, 50.0f, 0.0f)) * glm::scale(glm::mat4(1.0f), glm::vec3(8.0f));
+
+            m_texture->bind();
+            bubble::Renderer::Submit(m_textureShader.get(), m_textureVA, transform);
+
+            m_textureSmoke->bind();
             bubble::Renderer::Submit(m_textureShader.get(), m_textureVA, transform);
         }
         bubble::Renderer::EndScene();
@@ -244,6 +249,7 @@ private:
     bubble::Ref<bubble::Shader> m_textureShader;
     bubble::Ref<bubble::VertexArray> m_textureVA;
     bubble::Ref<bubble::Texture> m_texture;
+    bubble::Ref<bubble::Texture> m_textureSmoke;
 
     glm::vec3 m_objectPosition = glm::vec3{ 400.0f, 100.0f, 0.0f };
     const float m_rectangleSize = 50.0f;

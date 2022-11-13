@@ -22,7 +22,8 @@ namespace bubble
         auto data = stbi_load(path.c_str(), &width, &height, &channels, 0);
         BUBBLE_CORE_ASSERT(data != nullptr, "Failed to load image");
 
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+        const auto format = channels == 3 ? GL_RGB : GL_RGBA;
+        glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
 
         stbi_image_free(data);
     }

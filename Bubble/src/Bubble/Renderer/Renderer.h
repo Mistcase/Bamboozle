@@ -19,6 +19,8 @@ namespace bubble
     public:
         static inline RenderAPI::API GetAPI() { return RenderAPI::GetAPI(); }
 
+        static void Init();
+
         static void BeginScene(const Camera* camera);
         static void EndScene();
 

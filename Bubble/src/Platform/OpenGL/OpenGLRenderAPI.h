@@ -7,10 +7,12 @@ namespace bubble
     class OpenGLRenderAPI : public RenderAPI
     {
     public:
-         void setClearColor(const glm::vec4& color) override;
-         void clear() override;
+        void init() override;
 
-         void drawIndexed(const Ref<VertexArray>& vertexArray) override;
+        void setClearColor(const glm::vec4& color) override;
+        void clear() override;
+
+        void drawIndexed(const Ref<VertexArray>& vertexArray) override;
     };
 
 } // namespace bubble
