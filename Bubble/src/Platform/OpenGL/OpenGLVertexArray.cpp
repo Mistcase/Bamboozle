@@ -46,7 +46,7 @@ namespace bubble
         glDeleteVertexArrays(1, &m_rendererId);
     }
 
-    void OpenGLVertexArray::addVertexBuffer(const std::shared_ptr<VertexBuffer>& vertexBuffer)
+    void OpenGLVertexArray::addVertexBuffer(const Ref<VertexBuffer>& vertexBuffer)
     {
         glBindVertexArray(m_rendererId);
         vertexBuffer->bind();
@@ -70,7 +70,7 @@ namespace bubble
         m_vertexBuffers.push_back(vertexBuffer);
     }
 
-    void OpenGLVertexArray::setIndexBuffer(const std::shared_ptr<IndexBuffer>& indexBuffer)
+    void OpenGLVertexArray::setIndexBuffer(const Ref<IndexBuffer>& indexBuffer)
     {
         glBindVertexArray(m_rendererId);
         indexBuffer->bind();
@@ -88,12 +88,12 @@ namespace bubble
         glBindVertexArray(0);
     }
 
-    const std::vector<std::shared_ptr<VertexBuffer>>& OpenGLVertexArray::getVertexBuffers() const
+    const std::vector<Ref<VertexBuffer>>& OpenGLVertexArray::getVertexBuffers() const
     {
         return m_vertexBuffers;
     }
 
-    const std::shared_ptr<IndexBuffer> OpenGLVertexArray::getIndexBuffer() const
+    const Ref<IndexBuffer> OpenGLVertexArray::getIndexBuffer() const
     {
         return m_indexBuffer;
     }

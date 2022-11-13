@@ -26,7 +26,7 @@ public:
 		unsigned int indices[] = { 0, 1, 2, 2, 3, 0 };
         m_indexBuffer.reset(bubble::IndexBuffer::Create(indices, std::size(indices)));
         m_vertexArray.reset(bubble::VertexArray::Create());
-        auto vertexBuffer = std::shared_ptr<bubble::VertexBuffer>(bubble::VertexBuffer::Create(vertices, sizeof(vertices)));
+        auto vertexBuffer = bubble::Ref<bubble::VertexBuffer>(bubble::VertexBuffer::Create(vertices, sizeof(vertices)));
         vertexBuffer->setLayout({
                 { bubble::ShaderDataType::Float3, "a_Position" }
             });
@@ -174,10 +174,10 @@ public:
 
 
 private:
-    std::shared_ptr<bubble::Shader> m_shader;
-    std::shared_ptr<bubble::VertexBuffer> m_vertexBuffer;
-    std::shared_ptr<bubble::IndexBuffer> m_indexBuffer;
-    std::shared_ptr<bubble::VertexArray> m_vertexArray;
+    bubble::Ref<bubble::Shader> m_shader;
+    bubble::Ref<bubble::VertexBuffer> m_vertexBuffer;
+    bubble::Ref<bubble::IndexBuffer> m_indexBuffer;
+    bubble::Ref<bubble::VertexArray> m_vertexArray;
     std::unique_ptr<bubble::Camera> m_camera;
 
     glm::vec3 m_objectPosition = glm::vec3{ 400.0f, 100.0f, 0.0f };

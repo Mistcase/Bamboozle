@@ -21,3 +21,12 @@
 #define BUBBLE_ASSERT(x, ...)
 #define BUBBLE_CORE_ASSERT(x, ...)
 #endif
+
+#include <memory>
+
+namespace bubble
+{
+    template <typename T>
+        using Ref = std::shared_ptr<T>;
+
+} // namespace bubble

@@ -21,7 +21,7 @@ namespace bubble
     {
     }
 
-    void Renderer::Submit(const Shader* shader, const std::shared_ptr<VertexArray>& vertexArray, const glm::mat4& transform)
+    void Renderer::Submit(const Shader* shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform)
     {
         BUBBLE_CORE_ASSERT(shader != nullptr, "Shader is nullptr");
 

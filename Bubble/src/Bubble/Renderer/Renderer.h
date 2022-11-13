@@ -22,7 +22,7 @@ namespace bubble
         static void BeginScene(const Camera* camera);
         static void EndScene();
 
-        static void Submit(const Shader* shader, const std::shared_ptr<VertexArray>& vertexArray, const glm::mat4& transform);
+        static void Submit(const Shader* shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform);
 
     private:
         static const Camera* m_camera;
