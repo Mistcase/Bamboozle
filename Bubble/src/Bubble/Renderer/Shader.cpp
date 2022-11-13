@@ -9,19 +9,17 @@
 
 namespace bubble
 {
-    Shader* Shader::Create(const std::string& srcVertex, const std::string& srcFragment)
+    Ref<Shader> Shader::Create(const std::string& srcVertex, const std::string& srcFragment)
     {
         switch (Renderer::GetAPI())
         {
         case RenderAPI::API::OpenGL:
-            return new OpenGLShader(srcVertex, srcFragment);
+            return std::make_unique<OpenGLShader>(srcVertex, srcFragment);
 
         default:
-            break;
+            BUBBLE_CORE_ASSERT(false, "Unknown render API");
+            return nullptr;
         }
-
-        BUBBLE_CORE_ASSERT(false, "Unknown render API");
-        return nullptr;
     }
 
 } // namespace bubble

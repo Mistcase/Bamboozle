@@ -6,7 +6,7 @@
 
 namespace bubble
 {
-    VertexArray* VertexArray::Create()
+    Ref<VertexArray> VertexArray::Create()
     {
         switch (Renderer::GetAPI())
         {
@@ -15,7 +15,7 @@ namespace bubble
             break;
 
         case RenderAPI::API::OpenGL:
-            return new OpenGLVertexArray();
+            return std::make_shared<OpenGLVertexArray>();
             break;
         }
 

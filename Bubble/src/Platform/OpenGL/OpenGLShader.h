@@ -2,6 +2,8 @@
 
 #include "Bubble/Renderer/Shader.h"
 
+#include <glm/glm.hpp>
+
 namespace bubble
 {
     class OpenGLShader : public Shader

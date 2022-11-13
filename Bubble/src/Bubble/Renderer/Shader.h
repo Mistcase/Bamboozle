@@ -1,7 +1,8 @@
 #pragma once
 
 #include <string>
-#include <glm/glm.hpp>
+
+#include "Bubble/Core.h"
 
 namespace bubble
 {
@@ -13,7 +14,7 @@ namespace bubble
         virtual void bind() const = 0;
         virtual void unbind() const = 0;
 
-        static Shader* Create(const std::string& srcVertex, const std::string& srcFragment);
+        static Ref<Shader> Create(const std::string& srcVertex, const std::string& srcFragment);
     private:
         uint32_t m_rendererId;
     };

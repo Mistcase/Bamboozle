@@ -18,6 +18,7 @@
 #include "Bubble/Renderer/Shader.h"
 #include "Bubble/Renderer/VertexArray.h"
 #include "Bubble/Renderer/Buffer.h"
+#include "Bubble/Renderer/Texture.h"
 
 // Provide Application symbols for entry point
 #include "Bubble/EntryPoint.h"

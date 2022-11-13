@@ -88,7 +88,7 @@ namespace bubble
     class VertexBuffer
     {
     public:
-        static VertexBuffer* Create(float* vertices, size_t size);
+        static Ref<VertexBuffer> Create(float* vertices, size_t size);
 
     public:
         virtual ~VertexBuffer() = default;
@@ -103,7 +103,7 @@ namespace bubble
     class IndexBuffer
     {
     public:
-        static IndexBuffer* Create(uint32_t* indices, size_t count);
+        static Ref<IndexBuffer> Create(uint32_t* indices, size_t count);
 
     public:
         virtual ~IndexBuffer() = default;

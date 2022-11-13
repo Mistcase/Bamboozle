@@ -9,7 +9,7 @@ namespace bubble
     class VertexArray
     {
     public:
-        static VertexArray* Create();
+        static Ref<VertexArray> Create();
 
     public:
         virtual ~VertexArray() = default;

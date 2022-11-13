@@ -17,6 +17,7 @@ IncludeDir["GLFW"] = "Bubble/third-party/GLFW/include"
 IncludeDir["Glad"] = "Bubble/third-party/Glad/include"
 IncludeDir["ImGui"] = "Bubble/third-party/ImGui"
 IncludeDir["glm"] = "Bubble/third-party/glm"
+IncludeDir["stb"] = "Bubble/third-party/stb"
 
 include "Bubble/third-party/GLFW"
 include "Bubble/third-party/Glad"
@@ -40,7 +41,9 @@ project "Bubble"
         "%{prj.name}/src/**.h",
         "%{prj.name}/src/**.cpp",
         "%{prj.name}/third-party/glm/glm/**.hpp",
-         "%{prj.name}/third-party/glm/glm/**.inl"
+        "%{prj.name}/third-party/glm/glm/**.inl",
+        "%{prj.name}/third-party/stb/**.h",
+        "%{prj.name}/third-party/stb/**.cpp"
     }
 
     defines
@@ -56,7 +59,8 @@ project "Bubble"
         "%{IncludeDir.GLFW}",
         "%{IncludeDir.Glad}",
         "%{IncludeDir.ImGui}",
-        "%{IncludeDir.glm}"
+        "%{IncludeDir.glm}",
+        "%{IncludeDir.stb}"
     }
 
     links
