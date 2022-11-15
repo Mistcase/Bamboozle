@@ -15,19 +15,25 @@ namespace bubble
         float getRotation() const;
         void setRotation(float rotation);
 
+        float getZoom() const;
+        void setZoom(float zoom);
+
         glm::mat4 getViewProjection() const;
 
     private:
         void updateViewProjection();
 
     private:
-        const glm::mat4 m_projection;
+        glm::mat4 m_projection;
 
     private:
         glm::mat4 m_viewProjection;
+        const float m_width;
+        const float m_height;
 
         glm::vec3 m_position;
         float m_rotation = 0.0f;
+        float m_zoom = 1.0f;
     };
 
 } // namespace bubble

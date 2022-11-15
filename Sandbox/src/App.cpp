@@ -1,3 +1,4 @@
+#include "Bubble/CameraController.h"
 #include "Bubble/Renderer/Shaders.h"
 #include <Bubble.h>
 
@@ -14,6 +15,7 @@ public:
 	{
         auto& window = bubble::Application::GetInstance().getWindow();
         m_camera = std::make_unique<bubble::Camera>(window.getWidth(), window.getHeight());
+        m_cameraController = std::make_unique<bubble::CameraController>(m_camera.get());
         m_camera->setPosition(glm::vec3(0.0f));
 
         m_shaderManager = bubble::Shaders::Create();
@@ -40,18 +42,38 @@ public:
 
 	void onUpdate(float dt) override
 	{
+        m_cameraController->onUpdate(dt);
+
         bubble::Renderer::BeginScene(m_camera.get());
         {
             bubble::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
             bubble::RenderCommand::Clear();
 
             auto idx = 0;
-            for (int x = 0; x < 10; x++)
+            for (int x = 0; x < 6; x++)
             {
-                for (int y = 0; y < 10; y++)
+                for (int y = 0; y < 6; y++)
                 {
                     const auto o = 1.1f * m_rectangleSize;
                     const auto transform = glm::translate(glm::mat4(1.0f), m_objectPosition + glm::vec3(o * x, o * y, 0.0f));
+
+                    static_cast<const bubble::OpenGLShader*>(m_shader)->setUniform4f("u_Color", (idx++ % 2 == 0)
+                                                                                     ? glm::vec4(0.78f, 0.75f, 0.68f, 1.0f)
+                                                                                     : glm::vec4(0.45f, 0.44f, 0.41f, 1.0f));
+
+                    bubble::Renderer::Submit(m_shader, m_vertexArray, transform);
+                }
+
+                idx++;
+            }
+
+            idx = 0;
+            for (int x = 0; x < 6; x++)
+            {
+                for (int y = 0; y < 6; y++)
+                {
+                    const auto o = 1.1f * m_rectangleSize;
+                    const auto transform = glm::translate(glm::mat4(1.0f), glm::vec3(500, 500, 0) + glm::vec3(o * x, o * y, 0.0f));
 
                     static_cast<const bubble::OpenGLShader*>(m_shader)->setUniform4f("u_Color", (idx++ % 2 == 0)
                                                                                      ? glm::vec4(0.78f, 0.75f, 0.68f, 1.0f)
@@ -84,8 +106,9 @@ public:
 
 	void onEvent(bubble::Event& event) override
 	{
+        m_cameraController->onEvent(event);
+
         bubble::EventDispatcher dispatcher(event);
-        dispatcher.dispatch<bubble::KeyPressedEvent>([this](bubble::KeyPressedEvent& event) { return onKeyPressed(event); });
         dispatcher.dispatch<bubble::KeyReleasedEvent>([this](bubble::KeyReleasedEvent& event) { return onKeyReleased(event); });
 	}
 
@@ -112,22 +135,6 @@ public:
             m_camera->setPosition(position + glm::vec3(0.0f, 10.0f, 0.0f));
             return true;
 
-        case BUBBLE_KEY_A:
-            m_objectPosition.x -= 10.0f;
-            return true;
-
-        case BUBBLE_KEY_D:
-            m_objectPosition.x += 10.0f;
-            return true;
-
-        case BUBBLE_KEY_W:
-            m_objectPosition.y -= 10.0f;
-            return true;
-
-        case BUBBLE_KEY_S:
-            m_objectPosition.y += 10.0f;
-            return true;
-
         default:
             return false;
         }
@@ -152,13 +159,14 @@ private:
     bubble::Ref<bubble::IndexBuffer> m_indexBuffer;
     bubble::Ref<bubble::VertexArray> m_vertexArray;
     std::unique_ptr<bubble::Camera> m_camera;
+    std::unique_ptr<bubble::CameraController> m_cameraController;
 
     bubble::Ref<bubble::Shader> m_textureShader;
     bubble::Ref<bubble::VertexArray> m_textureVA;
     bubble::Ref<bubble::Texture> m_texture;
     bubble::Ref<bubble::Texture> m_textureSmoke;
 
-    glm::vec3 m_objectPosition = glm::vec3{ 400.0f, 100.0f, 0.0f };
+    glm::vec3 m_objectPosition = glm::vec3{ -275.0f, -275.0f, 0.0f };
     const float m_rectangleSize = 50.0f;
 };
 
