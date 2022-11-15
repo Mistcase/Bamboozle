@@ -1,3 +1,4 @@
+#include "Bubble/Renderer/Shaders.h"
 #include <Bubble.h>
 
 #include <Platform/OpenGL/OpenGLShader.h>
@@ -14,6 +15,9 @@ public:
         auto& window = bubble::Application::GetInstance().getWindow();
         m_camera = std::make_unique<bubble::Camera>(window.getWidth(), window.getHeight());
         m_camera->setPosition(glm::vec3(0.0f));
+
+        m_shaderManager = bubble::Shaders::Create();
+        m_shader = m_shaderManager->createFromFile("assets\\shaders\\default.glsl");
 
 		float vertices[] = {
             0.0f,            0.0f,            0.0f,
@@ -32,98 +36,6 @@ public:
 
         m_vertexArray->addVertexBuffer(vertexBuffer);
         m_vertexArray->setIndexBuffer(m_indexBuffer);
-
-        m_texture = bubble::Texture2D::Create("assets\\Checkerboard.png");
-        m_textureSmoke = bubble::Texture2D::Create("assets\\smoke.png");
-
-        std::string vertexSource = R"(
-        #version 330 core
-
-        layout(location = 0) in vec3 a_Position;
-        uniform mat4 u_VP;
-        uniform mat4 u_Transform;
-        uniform vec4 u_Color;
-
-        out vec4 v_Color;
-
-        void main()
-        {
-            v_Color = u_Color;
-            gl_Position = u_VP * u_Transform * vec4(a_Position, 1.0);
-        }
-        )";
-
-        std::string fragmentSource = R"(
-        #version 330 core
-
-        layout(location = 0) out vec4 color;
-
-        in vec2 v_TexCoords;
-        in vec4 v_Color;
-
-        void main()
-        {
-            color = v_Color;
-        }
-        )";
-
-        m_shader = bubble::Shader::Create(vertexSource, fragmentSource);
-
-        std::string srcTextureShaderV = R"(
-        #version 330 core
-
-        layout(location = 0) in vec3 a_Position;
-        layout(location = 1) in vec2 a_TexCoords;
-
-        uniform mat4 u_VP;
-        uniform mat4 u_Transform;
-        uniform vec4 u_Color;
-
-        out vec4 v_Color;
-        out vec2 v_TexCoords;
-
-        void main()
-        {
-            v_TexCoords = a_TexCoords;
-            v_Color = u_Color;
-            gl_Position = u_VP * u_Transform * vec4(a_Position, 1.0);
-        }
-        )";
-
-        std::string srcTextureShaderF = R"(
-        #version 330 core
-
-        layout(location = 0) out vec4 color;
-
-        in vec4 v_Color;
-        in vec2 v_TexCoords;
-
-        uniform sampler2D u_Texture;
-
-        void main()
-        {
-            color = texture(u_Texture, v_TexCoords);
-            // color = vec4(v_TexCoords, 0.0, 1.0);
-        }
-        )";
-
-        float squareVertices[] = {
-            0.0f,            0.0f,            0.0f, 0.0f, 0.0f,
-            m_rectangleSize, 0.0f,            0.0f, 1.0f, 0.0f,
-            m_rectangleSize, m_rectangleSize, 0.0f, 1.0f, 1.0f,
-            0.0f,            m_rectangleSize, 0.0f, 0.0f, 1.0f,
-		};
-
-        auto textureVB = bubble::VertexBuffer::Create(squareVertices, sizeof(squareVertices));
-        textureVB->setLayout({
-                { bubble::ShaderDataType::Float3, "a_Position" },
-                { bubble::ShaderDataType::Float2, "a_TexCoords" }
-            });
-
-        m_textureVA = bubble::VertexArray::Create();
-        m_textureVA->addVertexBuffer(bubble::Ref<bubble::VertexBuffer>(textureVB));
-        m_textureVA->setIndexBuffer(m_indexBuffer);
-        m_textureShader = bubble::Shader::Create(srcTextureShaderV, srcTextureShaderF);
 	}
 
 	void onUpdate(float dt) override
@@ -141,24 +53,17 @@ public:
                     const auto o = 1.1f * m_rectangleSize;
                     const auto transform = glm::translate(glm::mat4(1.0f), m_objectPosition + glm::vec3(o * x, o * y, 0.0f));
 
-                    static_cast<const bubble::OpenGLShader*>(m_shader.get())->setUniform4f("u_Color", (idx++ % 2 == 0)
-                                           ? glm::vec4(0.78f, 0.75f, 0.68f, 1.0f)
-                                           : glm::vec4(0.45f, 0.44f, 0.41f, 1.0f));
+                    static_cast<const bubble::OpenGLShader*>(m_shader)->setUniform4f("u_Color", (idx++ % 2 == 0)
+                                                                                     ? glm::vec4(0.78f, 0.75f, 0.68f, 1.0f)
+                                                                                     : glm::vec4(0.45f, 0.44f, 0.41f, 1.0f));
 
-                    bubble::Renderer::Submit(m_shader.get(), m_vertexArray, transform);
+                    bubble::Renderer::Submit(m_shader, m_vertexArray, transform);
                 }
 
                 idx++;
             }
-
-            const auto transform = glm::translate(glm::mat4(1.0f), glm::vec3(50.0f, 50.0f, 0.0f)) * glm::scale(glm::mat4(1.0f), glm::vec3(8.0f));
-
-            m_texture->bind();
-            bubble::Renderer::Submit(m_textureShader.get(), m_textureVA, transform);
-
-            m_textureSmoke->bind();
-            bubble::Renderer::Submit(m_textureShader.get(), m_textureVA, transform);
         }
+
         bubble::Renderer::EndScene();
         // Renderer::Flush();
 	}
@@ -240,7 +145,9 @@ public:
     }
 
 private:
-    bubble::Ref<bubble::Shader> m_shader;
+    std::shared_ptr<bubble::Shaders> m_shaderManager;
+    bubble::Shader* m_shader;
+
     bubble::Ref<bubble::VertexBuffer> m_vertexBuffer;
     bubble::Ref<bubble::IndexBuffer> m_indexBuffer;
     bubble::Ref<bubble::VertexArray> m_vertexArray;

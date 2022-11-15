@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <string>
 
 namespace bubble
 {
@@ -27,6 +28,11 @@ namespace bubble
     constexpr uint32_t operator"" _hash(const char* s, size_t size)
     {
         return hash_impl::fnv1a_32(s, size);
+    }
+
+    inline uint32_t hash(const std::string& s)
+    {
+        return hash_impl::fnv1a_32(s.c_str(), s.length());
     }
 
 } // namespace bubble

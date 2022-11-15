@@ -14,10 +14,10 @@ class WindowCloseEvent;
 
 namespace bubble
 {
+    class Camera;
     class IndexBuffer;
     class VertexBuffer;
     class VertexArray;
-    class Camera;
 
 	class BUBBLE_API Application
 	{
@@ -40,12 +40,13 @@ namespace bubble
 
 	private:
 		static Application* m_instance;
-
 		std::unique_ptr<Window> m_window;
-		ImGuiLayer* m_imGuiLayer;
-		bool m_running = true;
 
-		LayerStack m_layerStack;
+        LayerStack m_layerStack;
+		ImGuiLayer* m_imGuiLayer;
+
+    private:
+        bool m_running = true;
         float m_time = 0.0f;
 	};
 

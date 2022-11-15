@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <filesystem>
 
 #include "Bubble/Core.h"
 
@@ -14,9 +15,7 @@ namespace bubble
         virtual void bind() const = 0;
         virtual void unbind() const = 0;
 
-        static Ref<Shader> Create(const std::string& srcVertex, const std::string& srcFragment);
-    private:
-        uint32_t m_rendererId;
+        virtual const char* getName() const = 0;
     };
 
 } // namespace bubble

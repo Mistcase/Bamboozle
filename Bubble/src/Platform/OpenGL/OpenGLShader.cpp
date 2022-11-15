@@ -8,59 +8,49 @@
 
 namespace bubble
 {
-    OpenGLShader::OpenGLShader(const std::string& srcVertex, const std::string& srcFragment)
+    OpenGLShader::OpenGLShader(const std::string& name, const std::string& srcVertex, const std::string& srcFragment)
+        : m_name(name)
     {
-        GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-
-        const GLchar *source = srcVertex.c_str();
-        glShaderSource(vertexShader, 1, &source, 0);
-
-        glCompileShader(vertexShader);
-
-        GLint isCompiled = 0;
-        glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &isCompiled);
-        if(isCompiled == GL_FALSE)
+        auto compileShader = [](GLenum type, const std::string& name, const std::string& src)
         {
-            GLint maxLength = 0;
-            glGetShaderiv(vertexShader, GL_INFO_LOG_LENGTH, &maxLength);
+            GLuint shader = glCreateShader(type);
+            const GLchar *source = src.c_str();
+            glShaderSource(shader, 1, &source, 0);
+            glCompileShader(shader);
 
-            std::vector<GLchar> infoLog(maxLength);
-            glGetShaderInfoLog(vertexShader, maxLength, &maxLength, &infoLog[0]);
+            GLint isCompiled = 0;
+            glGetShaderiv(shader, GL_COMPILE_STATUS, &isCompiled);
+            if(isCompiled == GL_FALSE)
+            {
+                GLint maxLength = 0;
+                glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &maxLength);
 
-            glDeleteShader(vertexShader);
+                std::vector<GLchar> infoLog(maxLength);
+                glGetShaderInfoLog(shader, maxLength, &maxLength, &infoLog[0]);
 
-            BUBBLE_CORE_ERROR("{0}", infoLog.data());
-            BUBBLE_CORE_ASSERT(false, "Vertex shader compilation failure!");
-        }
+                glDeleteShader(shader);
 
-        GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+                BUBBLE_CORE_ERROR("Shader {0} compilation failed!", name);
+                BUBBLE_CORE_ERROR("{0}\n\n", infoLog.data());
+            }
 
-        source = (const GLchar *)srcFragment.c_str();
-        glShaderSource(fragmentShader, 1, &source, 0);
+            return shader;
+        };
 
-        glCompileShader(fragmentShader);
-
-        glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &isCompiled);
-        if (isCompiled == GL_FALSE)
-        {
-            GLint maxLength = 0;
-            glGetShaderiv(fragmentShader, GL_INFO_LOG_LENGTH, &maxLength);
-
-            std::vector<GLchar> infoLog(maxLength);
-            glGetShaderInfoLog(fragmentShader, maxLength, &maxLength, &infoLog[0]);
-
-            glDeleteShader(fragmentShader);
-            glDeleteShader(vertexShader);
-
-            BUBBLE_CORE_ERROR("{0}", infoLog.data());
-            BUBBLE_CORE_ASSERT(false, "Fragment shader compilation failure!");
-        }
-
+        auto vertexShader = compileShader(GL_VERTEX_SHADER, name, srcVertex);
+        auto fragmentShader = compileShader(GL_FRAGMENT_SHADER, name, srcFragment);
         m_rendererId = glCreateProgram();
+
+        if (!vertexShader || !fragmentShader)
+        {
+            glDeleteProgram(m_rendererId);
+            glDeleteShader(vertexShader);
+            glDeleteShader(fragmentShader);
+            return;
+        }
 
         glAttachShader(m_rendererId, vertexShader);
         glAttachShader(m_rendererId, fragmentShader);
-
         glLinkProgram(m_rendererId);
 
         GLint isLinked = 0;
@@ -77,13 +67,15 @@ namespace bubble
             glDeleteShader(vertexShader);
             glDeleteShader(fragmentShader);
 
-            BUBBLE_CORE_ERROR("{0}", infoLog.data());
-            BUBBLE_CORE_ASSERT(false, "Shader link failure!");
+            BUBBLE_CORE_ERROR("Shader \"{0}\" link error", name);
+            BUBBLE_CORE_ERROR("{0}\n\n", infoLog.data());
         }
 
         // Always detach shaders after a successful link.
         glDetachShader(m_rendererId, vertexShader);
         glDetachShader(m_rendererId, fragmentShader);
+
+        m_isAssembled = true;
     }
 
     OpenGLShader::~OpenGLShader()
@@ -100,6 +92,11 @@ namespace bubble
     void OpenGLShader::unbind() const
     {
         glUseProgram(0);
+    }
+
+    const char* OpenGLShader::getName() const
+    {
+        return m_name.c_str();
     }
 
     void OpenGLShader::setUniformMat4(const std::string& name, const glm::mat4& data) const
