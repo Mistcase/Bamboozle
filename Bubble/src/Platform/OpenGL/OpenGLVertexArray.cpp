@@ -59,11 +59,11 @@ namespace bubble
         {
             glEnableVertexAttribArray(index);
             glVertexAttribPointer(index,
-                                  element.getComponentCount(),
+                                  (GLuint)element.getComponentCount(),
                                   ShaderDataTypeToOpenGLBaseType(element.type),
                                   element.normalized ? GL_TRUE : GL_FALSE,
                                   layout.getStride(),
-                                  (const void*)element.offset);
+                                  ((const void*)(size_t)element.offset));
             index++;
         }
 
