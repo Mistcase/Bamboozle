@@ -2,6 +2,7 @@
 #include "Renderer.h"
 
 #include "Bubble/Renderer/Camera.h"
+#include "Bubble/Renderer/Renderer2D.h"
 #include "Bubble/Renderer/Shader.h"
 #include "Bubble/Renderer/VertexArray.h"
 
@@ -15,6 +16,12 @@ namespace bubble
     void Renderer::Init()
     {
         RenderCommand::Init();
+        Renderer2D::Init();
+    }
+
+    void Renderer::Destroy()
+    {
+        Renderer2D::Destroy();
     }
 
     void Renderer::BeginScene(const Camera* camera)

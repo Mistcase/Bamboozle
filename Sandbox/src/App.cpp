@@ -1,6 +1,9 @@
+#include "Sandbox2D.h"
+
 #include "Bubble/CameraController.h"
 #include "Bubble/Renderer/Shaders.h"
 #include <Bubble.h>
+#include <Bubble/EntryPoint.h>
 
 #include <Platform/OpenGL/OpenGLShader.h>
 
@@ -112,34 +115,6 @@ public:
         dispatcher.dispatch<bubble::KeyReleasedEvent>([this](bubble::KeyReleasedEvent& event) { return onKeyReleased(event); });
 	}
 
-    bool onKeyPressed(bubble::KeyPressedEvent event)
-    {
-        const auto& position = m_camera->getPosition();
-
-        const auto& keyEvent = static_cast<const bubble::KeyEvent&>(event);
-        switch (keyEvent.getKeyCode())
-        {
-        case BUBBLE_KEY_LEFT:
-            m_camera->setPosition(position - glm::vec3(10.0f, 0.0f, 0.0f));
-            return true;
-
-        case BUBBLE_KEY_RIGHT:
-            m_camera->setPosition(position + glm::vec3(10.0f, 0.0f, 0.0f));
-            return true;
-
-        case BUBBLE_KEY_UP:
-            m_camera->setPosition(position - glm::vec3(0.0f, 10.0f, 0.0f));
-            return true;
-
-        case BUBBLE_KEY_DOWN:
-            m_camera->setPosition(position + glm::vec3(0.0f, 10.0f, 0.0f));
-            return true;
-
-        default:
-            return false;
-        }
-    }
-
     bool onKeyReleased(bubble::KeyReleasedEvent& event)
     {
         if (event.getKeyCode() == BUBBLE_KEY_ESCAPE)
@@ -175,7 +150,8 @@ class Sandbox : public bubble::Application
 public:
 	Sandbox()
 	{
-		pushLayer(new ExampleLayer());
+		// pushLayer(new ExampleLayer());
+        pushLayer(new Sandbox2DLayer());
 	}
 
 	~Sandbox()

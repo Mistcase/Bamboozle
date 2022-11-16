@@ -99,6 +99,15 @@ namespace bubble
         return m_name.c_str();
     }
 
+    void OpenGLShader::setUniform1i(const std::string name, int i) const
+    {
+        // TODO: make uniform location cache
+        auto location = glGetUniformLocation(m_rendererId, name.c_str());
+        BUBBLE_CORE_ASSERT(location != -1, "Uniform is not found");
+
+        glUniform1i(location, i);
+    }
+
     void OpenGLShader::setUniformMat4(const std::string& name, const glm::mat4& data) const
     {
         // TODO: make uniform location cache

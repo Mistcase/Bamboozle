@@ -13,7 +13,8 @@ namespace bubble
 
         virtual ~Shaders() = default;
 
-        virtual Shader* createFromFile(std::filesystem::path filepath) = 0;
-        virtual Shader* get(uint32_t hash) = 0;
+        virtual Shader* createFromFile(const std::filesystem::path& filepath) = 0;
+        virtual Shader* get(uint32_t id) = 0;
+        virtual std::unique_ptr<Shader> extract(uint32_t id) = 0;
     };
 };

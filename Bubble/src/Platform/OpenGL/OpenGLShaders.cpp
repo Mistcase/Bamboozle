@@ -11,12 +11,12 @@ namespace bubble
 {
     OpenGLShaders::~OpenGLShaders() = default;
 
-    Shader* OpenGLShaders::createFromFile(std::filesystem::path filepath)
+    Shader* OpenGLShaders::createFromFile(const std::filesystem::path& filepath)
     {
         const auto srcRaw = loadSource(filepath);
         const auto src = preprocess(srcRaw);
 
-        const auto name = filepath.filename().string();
+        const auto name = filepath.stem().string();
         auto instance = build(name, src);
         if (instance != nullptr)
         {
@@ -41,6 +41,15 @@ namespace bubble
         return it->second.get();
     }
 
+    std::unique_ptr<Shader> OpenGLShaders::extract(uint32_t id)
+    {
+        auto handle = m_shaders.extract(id);
+        if (handle.empty())
+            return nullptr;
+
+        return std::unique_ptr<Shader>(handle.mapped().release());
+    }
+
     std::string OpenGLShaders::loadSource(const std::filesystem::path& filepath) const
     {
         std::string source;
@@ -59,6 +68,8 @@ namespace bubble
         fs.seekg(0, std::ios::end);
         fsz = fs.tellg() - fsz;
         fs.seekg(0, std::ios::beg);
+
+        BUBBLE_CORE_TRACE("Shader file opened: size={0}, ({1})", fsz, strPath);
 
         source.resize(fsz);
         fs.read(source.data(), fsz);

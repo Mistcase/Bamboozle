@@ -20,6 +20,7 @@ namespace bubble
         static inline RenderAPI::API GetAPI() { return RenderAPI::GetAPI(); }
 
         static void Init();
+        static void Destroy();
 
         static void BeginScene(const Camera* camera);
         static void EndScene();

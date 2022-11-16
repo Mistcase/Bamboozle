@@ -15,8 +15,9 @@ namespace bubble
     public:
         ~OpenGLShaders() override;
 
-        Shader* createFromFile(std::filesystem::path filepath) override;
+        Shader* createFromFile(const std::filesystem::path& filepath) override;
         Shader* get(uint32_t id) override;
+        std::unique_ptr<Shader> extract(uint32_t id) override;
 
     private:
         using SourcePair = std::pair<std::string, std::string>;
@@ -27,7 +28,7 @@ namespace bubble
 
     private:
         using Container = std::unordered_map<uint32_t, std::unique_ptr<OpenGLShader>>;
-        std::unordered_map<uint32_t, std::unique_ptr<OpenGLShader>> m_shaders;
+        Container m_shaders;
     };
 
 } // namespace bubble

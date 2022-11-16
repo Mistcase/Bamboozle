@@ -16,6 +16,7 @@ namespace bubble
 
         const char* getName() const override;
 
+        void setUniform1i(const std::string name, int i) const;
         void setUniformMat4(const std::string& name, const glm::mat4& data) const;
         void setUniform4f(const std::string& name, const glm::vec4& data) const;
 
