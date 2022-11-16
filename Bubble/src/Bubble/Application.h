@@ -37,6 +37,7 @@ namespace bubble
 
 	private:
 		bool onWindowClose(WindowCloseEvent& e);
+        bool onWindowResize(WindowResizeEvent& e);
 
 	private:
 		static Application* m_instance;

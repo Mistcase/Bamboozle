@@ -8,6 +8,7 @@ namespace bubble
     {
     public:
         Camera(float width, float height);
+        void setSize(float width, float height);
 
         const glm::vec3& getPosition() const;
         void setPosition(const glm::vec3& position);
@@ -28,8 +29,8 @@ namespace bubble
 
     private:
         glm::mat4 m_viewProjection;
-        const float m_width;
-        const float m_height;
+        float m_width;
+        float m_height;
 
         glm::vec3 m_position;
         float m_rotation = 0.0f;

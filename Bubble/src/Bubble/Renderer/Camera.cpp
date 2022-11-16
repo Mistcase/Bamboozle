@@ -5,6 +5,8 @@
 #include "glm/ext/matrix_clip_space.hpp"
 #include "glm/ext/matrix_transform.hpp"
 
+// TODO: optimize code
+
 namespace bubble
 {
     Camera::Camera(float width, float height)
@@ -14,6 +16,16 @@ namespace bubble
     {
         setPosition(glm::vec3(0.0f));
         setRotation(0.0f);
+    }
+
+    void Camera::setSize(float width, float height)
+    {
+        m_width = width;
+        m_height = height;
+
+        setZoom(m_zoom);
+
+        updateViewProjection();
     }
 
     void Camera::setPosition(const glm::vec3& position)

@@ -52,4 +52,10 @@ void Sandbox2DLayer::onImGuiRender()
 void Sandbox2DLayer::onEvent(bubble::Event& event)
 {
     m_cameraController->onEvent(event);
+
+    if (event.getEventType() == bubble::EventType::WindowResize)
+    {
+        auto& e = static_cast<bubble::WindowResizeEvent&>(event);
+        m_camera->setSize(e.getWidth(), e.getHeight());
+    }
 }

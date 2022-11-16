@@ -40,6 +40,12 @@ namespace bubble
 		return true;
 	}
 
+    bool Application::onWindowResize(WindowResizeEvent& e)
+    {
+        Renderer::OnWindowResize(e.getWidth(), e.getHeight());
+        return false;
+    }
+
 	void Application::run()
 	{
 		while (m_running)
@@ -64,6 +70,7 @@ namespace bubble
 	{
 		EventDispatcher dispatcher(e);
 		dispatcher.dispatch<WindowCloseEvent>([this](WindowCloseEvent& e) { return onWindowClose(e); });
+        dispatcher.dispatch<WindowResizeEvent>([this](WindowResizeEvent& e) { return onWindowResize(e); });
 
 		for (auto it = m_layerStack.rbegin(), end = m_layerStack.rend(); it != end; ++it)
 		{

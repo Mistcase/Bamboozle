@@ -24,6 +24,11 @@ namespace bubble
         Renderer2D::Destroy();
     }
 
+    void Renderer::OnWindowResize(uint32_t width, uint32_t height)
+    {
+        RenderCommand::SetViewport(width, height);
+    }
+
     void Renderer::BeginScene(const Camera* camera)
     {
         m_camera = camera;

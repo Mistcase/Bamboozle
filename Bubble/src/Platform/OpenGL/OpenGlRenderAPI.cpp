@@ -15,6 +15,11 @@ namespace bubble
         glEnable(GL_DEPTH_TEST);
     }
 
+    void OpenGLRenderAPI::setViewport(uint32_t left, uint32_t bottom, uint32_t width, uint32_t height)
+    {
+        glViewport(left, bottom, width, height);
+    }
+
     void OpenGLRenderAPI::setClearColor(const glm::vec4& color)
     {
         glClearColor(color.r, color.r, color.b, color.a);
