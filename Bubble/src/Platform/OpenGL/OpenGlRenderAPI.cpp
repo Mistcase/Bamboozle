@@ -35,4 +35,9 @@ namespace bubble
         glDrawElements(GL_TRIANGLES, (GLsizei)(vertexArray->getIndexBuffer()->getCount()), GL_UNSIGNED_INT, nullptr);
     }
 
+    void OpenGLRenderAPI::drawIndexed(const Ref<VertexArray>& vertexArray, size_t count)
+    {
+        glDrawElements(GL_TRIANGLES, (GLuint)count, GL_UNSIGNED_INT, nullptr);
+    }
+
 } // namespace bubble

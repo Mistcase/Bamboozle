@@ -7,14 +7,16 @@ namespace bubble
     class OpenGLVertexBuffer : public VertexBuffer
     {
     public:
-        OpenGLVertexBuffer(float* vertices, size_t size);
+        OpenGLVertexBuffer(size_t size, const void* data);
         ~OpenGLVertexBuffer() override;
 
-        void bind() override;
-        void unbind() override;
+        void setData(const void* data, size_t size) override;
 
         const BufferLayout& getLayout() const override;
         void setLayout(const BufferLayout& layout) override;
+
+        void bind() override;
+        void unbind() override;
 
     private:
         BufferLayout m_layout;
@@ -26,13 +28,15 @@ namespace bubble
     class OpenGLIndexBuffer : public IndexBuffer
     {
     public:
-        OpenGLIndexBuffer(uint32_t* indices, size_t count);
+        OpenGLIndexBuffer(size_t count, uint32_t* indices);
         ~OpenGLIndexBuffer() override;
+
+        void setData(uint32_t* indices, size_t count) override;
+
+        size_t getCount() const override;
 
         void bind() override;
         void unbind() override;
-
-        size_t getCount() const override;
 
     private:
         size_t m_count;

@@ -11,6 +11,7 @@ namespace bubble
     OpenGLTexture2D::OpenGLTexture2D(const std::string& path)
     {
         glGenTextures(1, &m_rendererId);
+        glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, m_rendererId);
 
         glTextureParameteri(m_rendererId, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -40,7 +41,11 @@ namespace bubble
         , m_height(height)
     {
         glGenTextures(1, &m_rendererId);
+        glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, m_rendererId);
+
+        const auto format = m_channels == 3 ? GL_RGB8 : GL_RGBA8;
+        glTextureStorage2D(m_rendererId, 1, format, m_width, m_height); // RGBA8
 
         glTextureParameteri(m_rendererId, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTextureParameteri(m_rendererId, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -51,7 +56,7 @@ namespace bubble
         BUBBLE_CORE_ASSERT(static_cast<uint32_t>(size) == m_width * m_height * sizeof(uint32_t), "Different sizes");
 
         const auto format = m_channels == 3 ? GL_RGB : GL_RGBA;
-        glTexImage2D(GL_TEXTURE_2D, 0, format, m_width, m_height, 0, format, GL_UNSIGNED_BYTE, data);
+        glTextureSubImage2D(m_rendererId, 0, 0, 0, m_width, m_height, format, GL_UNSIGNED_BYTE, data);
     }
 
     OpenGLTexture2D::~OpenGLTexture2D()
@@ -59,14 +64,22 @@ namespace bubble
         glDeleteTextures(1, &m_rendererId);
     }
 
-    void OpenGLTexture2D::bind()
+    void OpenGLTexture2D::bind(uint32_t slot)
     {
+        m_slot = slot;
+        glActiveTexture(GL_TEXTURE0 + m_slot);
         glBindTexture(GL_TEXTURE_2D, m_rendererId);
     }
 
     void OpenGLTexture2D::unbind()
     {
+        glActiveTexture(GL_TEXTURE0 + m_slot);
         glBindTexture(GL_TEXTURE_2D, 0);
+    }
+
+    bool OpenGLTexture2D::operator==(const Texture& other)
+    {
+        return m_rendererId == static_cast<const OpenGLTexture2D&>(other).m_rendererId;
     }
 
 } // namespace bubble

@@ -126,4 +126,13 @@ namespace bubble
         glUniform4f(location, data.r, data.g, data.b, data.a);
     }
 
+    void OpenGLShader::setUniformIntArray(const std::string& name, const int* data, uint32_t count) const
+    {
+        // TODO: make uniform location cache
+        auto location = glGetUniformLocation(m_rendererId, name.c_str());
+        BUBBLE_CORE_ASSERT(location != -1, "Uniform is not found");
+
+        glUniform1iv(location, count, data);
+    }
+
 } // namespace bubble

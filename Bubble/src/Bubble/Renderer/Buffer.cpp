@@ -58,7 +58,7 @@ namespace bubble
         }
     }
 
-    Ref<VertexBuffer> VertexBuffer::Create(float* vertices, size_t size)
+    Ref<VertexBuffer> VertexBuffer::Create(size_t size, void* data)
     {
         switch (Renderer::GetAPI())
         {
@@ -67,7 +67,7 @@ namespace bubble
             break;
 
         case RenderAPI::API::OpenGL:
-            return std::make_shared<OpenGLVertexBuffer>(vertices, size);
+            return std::make_shared<OpenGLVertexBuffer>(size, data);
             break;
         }
 
@@ -75,7 +75,7 @@ namespace bubble
         return nullptr;
     }
 
-    Ref<IndexBuffer> IndexBuffer::Create(uint32_t* indices, size_t count)
+    Ref<IndexBuffer> IndexBuffer::Create(size_t count, uint32_t* indices)
     {
         switch (Renderer::GetAPI())
         {
@@ -84,7 +84,7 @@ namespace bubble
             break;
 
         case RenderAPI::API::OpenGL:
-            return std::make_shared<OpenGLIndexBuffer>(indices, count);
+            return std::make_shared<OpenGLIndexBuffer>(count, indices);
             break;
         }
 

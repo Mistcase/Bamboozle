@@ -13,12 +13,15 @@ namespace bubble
 
         void setData(const void* data, size_t size) override;
 
-        void bind() override;
+        void bind(uint32_t slot) override;
         void unbind() override;
 
+        bool operator==(const Texture& other) override;
+
     private:
-        uint32_t m_width, m_height, m_channels;
+        uint32_t m_width, m_height, m_channels = 4;
         uint32_t m_rendererId;
+        uint32_t m_slot = 0;
     };
 
 } // namespace bubble

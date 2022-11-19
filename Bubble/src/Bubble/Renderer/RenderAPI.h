@@ -29,6 +29,7 @@ namespace bubble
         virtual void clear() = 0;
 
         virtual void drawIndexed(const Ref<VertexArray>& vertexArray) = 0;
+        virtual void drawIndexed(const Ref<VertexArray>& vertexArray, size_t count) = 0;
 
     private:
         static API m_renderAPI;

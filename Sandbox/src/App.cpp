@@ -24,23 +24,23 @@ public:
         m_shaderManager = bubble::Shaders::Create();
         m_shader = m_shaderManager->createFromFile("assets\\shaders\\default.glsl");
 
-		float vertices[] = {
-            0.0f,            0.0f,            0.0f,
-            m_rectangleSize, 0.0f,            0.0f,
-            m_rectangleSize, m_rectangleSize, 0.0f,
-            0.0f,            m_rectangleSize, 0.0f,
-		};
+		// float vertices[] = {
+        //     0.0f,            0.0f,            0.0f,
+        //     m_rectangleSize, 0.0f,            0.0f,
+        //     m_rectangleSize, m_rectangleSize, 0.0f,
+        //     0.0f,            m_rectangleSize, 0.0f,
+		// };
 
-		unsigned int indices[] = { 0, 1, 2, 2, 3, 0 };
-        m_indexBuffer = bubble::IndexBuffer::Create(indices, std::size(indices));
-        m_vertexArray = bubble::VertexArray::Create();
-        auto vertexBuffer = bubble::Ref<bubble::VertexBuffer>(bubble::VertexBuffer::Create(vertices, sizeof(vertices)));
-        vertexBuffer->setLayout({
-                { bubble::ShaderDataType::Float3, "a_Position" }
-            });
+		// unsigned int indices[] = { 0, 1, 2, 2, 3, 0 };
+        // m_indexBuffer = bubble::IndexBuffer::Create(indices, std::size(indices));
+        // m_vertexArray = bubble::VertexArray::Create();
+        // auto vertexBuffer = bubble::Ref<bubble::VertexBuffer>(bubble::VertexBuffer::Create(vertices, sizeof(vertices)));
+        // vertexBuffer->setLayout({
+        //         { bubble::ShaderDataType::Float3, "a_Position" }
+        //     });
 
-        m_vertexArray->addVertexBuffer(vertexBuffer);
-        m_vertexArray->setIndexBuffer(m_indexBuffer);
+        // m_vertexArray->addVertexBuffer(vertexBuffer);
+        // m_vertexArray->setIndexBuffer(m_indexBuffer);
 	}
 
 	void onUpdate(float dt) override

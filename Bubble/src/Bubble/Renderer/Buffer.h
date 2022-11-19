@@ -88,13 +88,14 @@ namespace bubble
     class VertexBuffer
     {
     public:
-        static Ref<VertexBuffer> Create(float* vertices, size_t size);
+        static Ref<VertexBuffer> Create(size_t size, void* data = nullptr);
 
     public:
         virtual ~VertexBuffer() = default;
 
         virtual const BufferLayout& getLayout() const = 0;
         virtual void setLayout(const BufferLayout& layout) = 0;
+        virtual void setData(const void* data, size_t size) = 0;
 
         virtual void bind() = 0;
         virtual void unbind() = 0;
@@ -103,15 +104,17 @@ namespace bubble
     class IndexBuffer
     {
     public:
-        static Ref<IndexBuffer> Create(uint32_t* indices, size_t count);
+        static Ref<IndexBuffer> Create(size_t count, uint32_t* indices = nullptr);
 
     public:
         virtual ~IndexBuffer() = default;
 
-        virtual void bind() = 0;
-        virtual void unbind() = 0;
+        virtual void setData(uint32_t* data, size_t count) = 0;
 
         virtual size_t getCount() const = 0;
+
+        virtual void bind() = 0;
+        virtual void unbind() = 0;
     };
 
 } // namespace bubble

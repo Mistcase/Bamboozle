@@ -19,4 +19,5 @@ private:
     std::unique_ptr<bubble::Camera> m_camera;
     std::unique_ptr<bubble::CameraController> m_cameraController;
     bubble::Ref<bubble::Texture2D> m_texture;
+    bubble::Ref<bubble::Texture2D> m_texture2;
 };

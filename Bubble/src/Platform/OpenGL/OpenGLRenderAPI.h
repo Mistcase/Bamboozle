@@ -15,6 +15,7 @@ namespace bubble
         void clear() override;
 
         void drawIndexed(const Ref<VertexArray>& vertexArray) override;
+        void drawIndexed(const Ref<VertexArray>& vertexArray, size_t count) override;
     };
 
 } // namespace bubble

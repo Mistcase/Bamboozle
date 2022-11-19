@@ -15,6 +15,7 @@ void Sandbox2DLayer::onAttach()
     m_cameraController = std::make_unique<bubble::CameraController>(m_camera.get());
 
     m_texture = bubble::Texture2D::Create("assets/Checkerboard.png");
+    m_texture2 = bubble::Texture2D::Create("assets/smoke.png");
 }
 
 void Sandbox2DLayer::onDetach()
@@ -30,7 +31,9 @@ void Sandbox2DLayer::onUpdate(float dt)
     bubble::RenderCommand::Clear();
 
     bubble::Renderer2D::BeginScene(m_camera.get());
-    bubble::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f }, glm::vec2{ 250.0f, 250.0f } * 100.0f, m_texture);
+    bubble::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f }, { 250.0f, 250.0f }, M_PI_4, { 1.0f, 0.0f, 0.0f, 1.0f }, m_texture);
+    bubble::Renderer2D::DrawQuad({ 300.0f, 300.0f, -0.1f }, { 250.0f, 250.0f }, 0.0f, { 0.0f, 0.0f, 1.0f, 1.0f }, m_texture2 );
+    bubble::Renderer2D::DrawQuad({ -300.0f, -300.0f, -0.1f }, { 250.0f, 250.0f }, { 0.0f, 1.0f, 0.0f, 1.0f });
 
     bubble::Renderer2D::EndScene();
 }

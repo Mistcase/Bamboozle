@@ -22,6 +22,11 @@ namespace bubble
             m_renderAPI->drawIndexed(vertexArray);
         }
 
+        static inline void DrawIndexed(const Ref<VertexArray>& vertexArray, size_t count)
+        {
+            m_renderAPI->drawIndexed(vertexArray, count);
+        }
+
         static inline void SetClearColor(const glm::vec4& color)
         {
             m_renderAPI->setClearColor(color);
