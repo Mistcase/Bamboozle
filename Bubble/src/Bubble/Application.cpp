@@ -17,8 +17,8 @@ namespace bubble
 {
 	Application* Application::m_instance = nullptr;
 
-	Application::Application()
-		: m_window(Window::Create())
+	Application::Application(const std::string& name)
+		: m_window(Window::Create(WindowProps(name)))
 		, m_imGuiLayer(new ImGuiLayer())
 	{
 		BUBBLE_CORE_ASSERT(!m_instance,  "Application already exists");

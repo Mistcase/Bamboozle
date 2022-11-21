@@ -77,6 +77,11 @@ namespace bubble
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 
+    uint32_t OpenGLTexture2D::getRendererId() const
+    {
+        return m_rendererId;
+    }
+
     bool OpenGLTexture2D::operator==(const Texture& other)
     {
         return m_rendererId == static_cast<const OpenGLTexture2D&>(other).m_rendererId;

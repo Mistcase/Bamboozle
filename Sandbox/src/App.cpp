@@ -90,21 +90,10 @@ public:
         }
 
         bubble::Renderer::EndScene();
-        // Renderer::Flush();
 	}
 
 	void onImGuiRender() override
 	{
-        if (ImGui::CollapsingHeader("Camera"))
-        {
-            float rotation = m_camera->getRotation();
-            glm::vec3 position = m_camera->getPosition();
-            ImGui::InputFloat3("Position", (float*)(&position), 10.0f);
-            ImGui::InputFloat("Rotation", (float*)(&rotation), 0.1f);
-
-            m_camera->setPosition(position);
-            m_camera->setRotation(rotation);
-        }
 	}
 
 	void onEvent(bubble::Event& event) override

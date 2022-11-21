@@ -22,7 +22,7 @@ namespace bubble
 	class BUBBLE_API Application
 	{
 	public:
-		Application();
+        Application(const std::string& name);
 		virtual ~Application();
 
 		void run();

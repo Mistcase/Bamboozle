@@ -16,6 +16,8 @@ namespace bubble
         void bind(uint32_t slot) override;
         void unbind() override;
 
+        uint32_t getRendererId() const override;
+
         bool operator==(const Texture& other) override;
 
     private:

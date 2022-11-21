@@ -144,3 +144,53 @@ project "Sandbox"
     filter "configurations:Dist"
         defines "BUBBLE_DIST"
         optimize "on"
+
+project "Bubble-Editor"
+    location "Bubble-Editor"
+    kind "ConsoleApp"
+    language "C++"
+    cppdialect "C++17"
+    staticruntime "on"
+
+    targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+    objdir ("bin/" .. outputdir .. "/%{prj.name}")
+
+    files
+    {
+        "%{prj.name}/src/**.h",
+        "%{prj.name}/src/**.cpp"
+    }
+
+    includedirs
+    {
+        "Bubble/third-party/spdlog/include",
+        "Bubble/src",
+        "Bubble/third-party",
+        "%{IncludeDir.glm}"
+    }
+
+    links
+    {
+        "Bubble"
+    }
+
+    filter "system:windows"
+        systemversion "latest"
+
+        defines
+        {
+            "_ALLOW_COMPILER_AND_STL_VERSION_MISMATCH",
+            "BUBBLE_PLATFORM_WINDOWS"
+        }
+
+    filter "configurations:Debug"
+        defines "BUBBLE_DEBUG"
+        symbols "on"
+
+    filter "configurations:Release"
+        defines "BUBBLE_RELEASE"
+        optimize "on"
+
+    filter "configurations:Dist"
+        defines "BUBBLE_DIST"
+        optimize "on"

@@ -38,7 +38,7 @@ namespace bubble
             static const size_t MaxVertexCount = MaxQuadCount * 4;
             static const size_t MaxIndexCount = MaxQuadCount * 6;
 
-            std::array<Ref<Texture2D>, 3> textureSlots;
+            std::array<Ref<Texture2D>, 32> textureSlots;
             uint32_t textureIndex = 2; // 0 - used for Texture creation; 1 - default white texture.
 
             uint8_t storage[MaxVertexCount * sizeof(VertexDesc)];
@@ -127,7 +127,7 @@ namespace bubble
         {
             Flush();
 
-            BUBBLE_CORE_INFO("Draw calls: {0}", SceneData()->debugDrawCalls);
+            // BUBBLE_CORE_INFO("Draw calls: {0}", SceneData()->debugDrawCalls);
 
 #if defined(BUBBLE_DEBUG)
             SceneData()->debugDrawCalls = 0;

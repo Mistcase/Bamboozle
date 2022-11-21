@@ -2,10 +2,10 @@
 
 #include <Bubble.h>
 
-class Sandbox2DLayer : public bubble::Layer
+class EditorLayer : public bubble::Layer
 {
 public:
-    Sandbox2DLayer();
+    EditorLayer();
 
     void onAttach() override;
     void onDetach() override;
@@ -24,4 +24,6 @@ private:
     bubble::Ref<bubble::Texture2D> m_texture;
     bubble::Ref<bubble::Texture2D> m_texture2;
     bubble::Ref<bubble::Framebuffer> m_framebuffer;
+
+    glm::vec2 m_viewportSize;
 };

@@ -1,13 +1,13 @@
-#include "Sandbox2D.h"
+#include "EditorLayer.h"
 
 #include <ImGui/imgui.h>
 
-Sandbox2DLayer::Sandbox2DLayer()
-    : Layer("Sandbox2DLayer")
+EditorLayer::EditorLayer()
+    : Layer("EditorLayer")
 {
 }
 
-void Sandbox2DLayer::onAttach()
+void EditorLayer::onAttach()
 {
     auto& window = bubble::Application::GetInstance().getWindow();
 
@@ -23,11 +23,11 @@ void Sandbox2DLayer::onAttach()
     m_framebuffer = bubble::Framebuffer::Create(fbSpec);
 }
 
-void Sandbox2DLayer::onDetach()
+void EditorLayer::onDetach()
 {
 }
 
-void Sandbox2DLayer::onUpdate(float dt)
+void EditorLayer::onUpdate(float dt)
 {
     m_cameraController->onUpdate(dt);
 
@@ -45,7 +45,7 @@ void Sandbox2DLayer::onUpdate(float dt)
     m_framebuffer->unbind();
 }
 
-void Sandbox2DLayer::onImGuiRender()
+void EditorLayer::onImGuiRender()
 {
     static bool opt_fullscreen_persistant = true;
     static ImGuiDockNodeFlags opt_flags = ImGuiDockNodeFlags_None;
@@ -100,14 +100,30 @@ void Sandbox2DLayer::onImGuiRender()
     }
 
     ImGui::Begin("Scene");
+
+    const auto contentRegion = ImGui::GetContentRegionAvail();
+    const glm::vec2 viewportSize{ contentRegion.x, contentRegion.y };
+
+    if (viewportSize.x > 0.0f && viewportSize.y > 0.0f)
+    {
+        if (m_viewportSize != viewportSize)
+        {
+            const auto width = static_cast<uint32_t>(viewportSize.x);
+            const auto height = static_cast<uint32_t>(viewportSize.y);
+
+            m_framebuffer->resize(width, height);
+            m_viewportSize = viewportSize;
+        }
+    }
+
     const auto textureId = m_framebuffer->getColorAttachmentRendererId();
-    ImGui::Image((void*)textureId, ImVec2{ 256.0f, 256.0f });
+    ImGui::Image((void*)textureId, { m_viewportSize.x, m_viewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
     ImGui::End();
 
     ImGui::End();
 }
 
-void Sandbox2DLayer::onEvent(bubble::Event& event)
+void EditorLayer::onEvent(bubble::Event& event)
 {
     m_cameraController->onEvent(event);
 
@@ -120,7 +136,7 @@ void Sandbox2DLayer::onEvent(bubble::Event& event)
     });
 }
 
-bool Sandbox2DLayer::onKeyEvent(const bubble::KeyEvent& event)
+bool EditorLayer::onKeyEvent(const bubble::KeyEvent& event)
 {
     if (event.getKeyCode() == BUBBLE_KEY_ESCAPE)
     {
