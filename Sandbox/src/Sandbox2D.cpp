@@ -20,7 +20,6 @@ void Sandbox2DLayer::onAttach()
 
 void Sandbox2DLayer::onDetach()
 {
-
 }
 
 void Sandbox2DLayer::onUpdate(float dt)
@@ -31,7 +30,7 @@ void Sandbox2DLayer::onUpdate(float dt)
     bubble::RenderCommand::Clear();
 
     bubble::Renderer2D::BeginScene(m_camera.get());
-    bubble::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f }, { 250.0f, 250.0f }, M_PI_4, { 1.0f, 0.0f, 0.0f, 1.0f }, m_texture);
+    bubble::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f }, { 250.0f, 250.0f }, glm::radians(45.0f), { 1.0f, 0.0f, 0.0f, 1.0f }, m_texture);
     bubble::Renderer2D::DrawQuad({ 300.0f, 300.0f, -0.1f }, { 250.0f, 250.0f }, 0.0f, { 0.0f, 0.0f, 1.0f, 1.0f }, m_texture2 );
     bubble::Renderer2D::DrawQuad({ -300.0f, -300.0f, -0.1f }, { 250.0f, 250.0f }, { 0.0f, 1.0f, 0.0f, 1.0f });
 
@@ -56,9 +55,22 @@ void Sandbox2DLayer::onEvent(bubble::Event& event)
 {
     m_cameraController->onEvent(event);
 
-    if (event.getEventType() == bubble::EventType::WindowResize)
+    bubble::EventDispatcher dispatcher(event);
+    dispatcher.dispatch<bubble::KeyReleasedEvent>([this](bubble::KeyEvent& e){ return onKeyEvent(e); });
+    dispatcher.dispatch<bubble::WindowResizeEvent>([this](bubble::WindowResizeEvent& e)
     {
-        auto& e = static_cast<bubble::WindowResizeEvent&>(event);
         m_camera->setSize(e.getWidth(), e.getHeight());
+        return true;
+    });
+}
+
+bool Sandbox2DLayer::onKeyEvent(const bubble::KeyEvent& event)
+{
+    if (event.getKeyCode() == BUBBLE_KEY_ESCAPE)
+    {
+        bubble::Application::GetInstance().quit();
+        return true;
     }
+
+    return false;
 }

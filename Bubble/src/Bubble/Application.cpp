@@ -66,6 +66,11 @@ namespace bubble
 		}
 	}
 
+    void Application::quit()
+    {
+        m_running = false;
+    }
+
 	void Application::onEvent(Event& e)
 	{
 		EventDispatcher dispatcher(e);

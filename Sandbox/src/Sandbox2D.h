@@ -16,6 +16,9 @@ public:
 	void onEvent(bubble::Event& event) override;
 
 private:
+    bool onKeyEvent(const bubble::KeyEvent& e);
+
+private:
     std::unique_ptr<bubble::Camera> m_camera;
     std::unique_ptr<bubble::CameraController> m_cameraController;
     bubble::Ref<bubble::Texture2D> m_texture;

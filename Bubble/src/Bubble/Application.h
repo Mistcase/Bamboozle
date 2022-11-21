@@ -26,6 +26,7 @@ namespace bubble
 		virtual ~Application();
 
 		void run();
+        void quit();
 
 		void onEvent(Event& e);
 
