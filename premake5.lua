@@ -1,5 +1,3 @@
-require "export-compile-commands"
-
 workspace "Bubble"
     architecture "x64"
 
