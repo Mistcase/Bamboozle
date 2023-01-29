@@ -1,4 +1,4 @@
-#include "bubblepch.h"
+#include "Bubble/bubblepch.h"
 #include "Renderer2D.h"
 
 #include "Bubble/Renderer/Camera.h"
@@ -38,7 +38,7 @@ namespace bubble
             static const size_t MaxVertexCount = MaxQuadCount * 4;
             static const size_t MaxIndexCount = MaxQuadCount * 6;
 
-            std::array<Ref<Texture2D>, 32> textureSlots;
+            std::array<Ref<Texture2D>, 16> textureSlots;
             uint32_t textureIndex = 2; // 0 - used for Texture creation; 1 - default white texture.
 
             uint8_t storage[MaxVertexCount * sizeof(VertexDesc)];
@@ -68,7 +68,8 @@ namespace bubble
 
             // Temprorary object. Need it because of preprocessing and loading.
             auto shaders = Shaders::Create();
-            shaders->createFromFile("renderer2D\\default_shader.glsl");
+			shaders->createFromFile("/Users/ivan/dev/Projects/Bubble/Sandbox/renderer2D/default_shader.glsl");
+            // shaders->createFromFile("renderer2D\\default_shader.glsl");
             SceneData()->shader = shaders->extract("default_shader"_hash);
             BUBBLE_CORE_ASSERT(SceneData()->shader != nullptr, "Default shader is not loaded");
 
@@ -96,12 +97,13 @@ namespace bubble
 
             SceneData()->vertexArray = std::move(vertexArray);
 
+            auto v = _SceneData::WhiteRGBA8;
             SceneData()->WhiteTexture = Texture2D::Create(1, 1);
-            SceneData()->WhiteTexture->setData(&_SceneData::WhiteRGBA8, sizeof(uint32_t));
+            SceneData()->WhiteTexture->setData(&v, sizeof(uint32_t));
             SceneData()->textureSlots[1] = SceneData()->WhiteTexture;
 
             const auto size = static_cast<int>(SceneData()->textureSlots.size());
-            auto samplers = static_cast<int*>(_alloca(sizeof(int32_t) * size));
+            auto samplers = static_cast<int*>(alloca(sizeof(int32_t) * size));
             for (int i = 0; i < size; i++)
                 samplers[i] = i;
 

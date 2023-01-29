@@ -1,4 +1,4 @@
-#include "bubblepch.h"
+#include "Bubble/bubblepch.h"
 #include "WindowsWindow.h"
 
 #include "Bubble/Events/ApplicationEvent.h"
@@ -53,6 +53,13 @@ namespace bubble
 
 			GLFWInitialized = true;
 		}
+
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+#ifdef __APPLE__
+		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, 1);
+#endif
 
 		m_window = glfwCreateWindow((int)props.width, (int)props.height, m_data.title.c_str(), nullptr, nullptr);
 		m_context = new OpenGLContext(m_window);

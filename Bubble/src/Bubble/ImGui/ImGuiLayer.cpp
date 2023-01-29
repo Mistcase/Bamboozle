@@ -1,4 +1,4 @@
-#include "bubblepch.h"
+#include "Bubble/bubblepch.h"
 #include "ImGuiLayer.h"
 
 #include "imgui.h"
@@ -9,7 +9,7 @@
 
 // Temporary
 #include "GLFW/glfw3.h"
-//#include <glad/glad.h>
+#include <glad/glad.h>
 
 namespace bubble
 {

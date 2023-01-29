@@ -1,7 +1,5 @@
 #pragma once
 
-#ifdef BUBBLE_PLATFORM_WINDOWS
-
 extern bubble::Application* bubble::CreateApplication();
 
 int main(int argc, char** argv)
@@ -13,5 +11,3 @@ int main(int argc, char** argv)
 
 	delete app;
 }
-
-#endif // BUBBLE_PLATFORM_WINDOWS

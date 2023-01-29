@@ -1,4 +1,4 @@
-#include "bubblepch.h"
+#include "Bubble/bubblepch.h"
 #include "OpenGLTexture.h"
 
 #include "Bubble/Log.h"
@@ -14,11 +14,11 @@ namespace bubble
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, m_rendererId);
 
-        glTextureParameteri(m_rendererId, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTextureParameteri(m_rendererId, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-        glTextureParameteri(m_rendererId, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTextureParameteri(m_rendererId, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
         stbi_set_flip_vertically_on_load(1);
 
@@ -45,10 +45,11 @@ namespace bubble
         glBindTexture(GL_TEXTURE_2D, m_rendererId);
 
         const auto format = m_channels == 3 ? GL_RGB8 : GL_RGBA8;
-        glTextureStorage2D(m_rendererId, 1, format, m_width, m_height); // RGBA8
-
-        glTextureParameteri(m_rendererId, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTextureParameteri(m_rendererId, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexImage2D(GL_TEXTURE_2D, 0, format, m_width, m_height, 0, format, GL_UNSIGNED_BYTE, nullptr);
+        // glTexStorage2D(GL_TEXTURE_2D, 1, format, m_width, m_height); // RGBA8
+//
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     }
 
     void OpenGLTexture2D::setData(const void* data, size_t size)
@@ -56,7 +57,7 @@ namespace bubble
         BUBBLE_CORE_ASSERT(static_cast<uint32_t>(size) == m_width * m_height * sizeof(uint32_t), "Different sizes");
 
         const auto format = m_channels == 3 ? GL_RGB : GL_RGBA;
-        glTextureSubImage2D(m_rendererId, 0, 0, 0, m_width, m_height, format, GL_UNSIGNED_BYTE, data);
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_width, m_height, format, GL_UNSIGNED_BYTE, data);
     }
 
     OpenGLTexture2D::~OpenGLTexture2D()

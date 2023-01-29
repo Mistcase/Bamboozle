@@ -1,6 +1,6 @@
 #pragma once
 
-#include "bubblepch.h"
+#include "Bubble/bubblepch.h"
 
 #include "Bubble/Core.h"
 #include "Bubble/Events/Event.h"

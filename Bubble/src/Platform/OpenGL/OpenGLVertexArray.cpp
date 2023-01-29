@@ -1,4 +1,4 @@
-#include "bubblepch.h"
+#include "Bubble/bubblepch.h"
 #include "OpenGLVertexArray.h"
 
 #include "Bubble/Log.h"
@@ -38,7 +38,8 @@ namespace bubble
 
     OpenGLVertexArray::OpenGLVertexArray()
     {
-        glCreateVertexArrays(1, &m_rendererId);
+		glGenVertexArrays(1, &m_rendererId);
+        // glCreateVertexArrays(1, &m_rendererId);
     }
 
     OpenGLVertexArray::~OpenGLVertexArray()

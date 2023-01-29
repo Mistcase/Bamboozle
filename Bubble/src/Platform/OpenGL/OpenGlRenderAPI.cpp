@@ -1,4 +1,4 @@
-#include "bubblepch.h"
+#include "Bubble/bubblepch.h"
 #include "OpenGLRenderAPI.h"
 
 #include "Bubble/Renderer/VertexArray.h"
@@ -22,7 +22,7 @@ namespace bubble
 
     void OpenGLRenderAPI::setClearColor(const glm::vec4& color)
     {
-        glClearColor(color.r, color.r, color.b, color.a);
+        glClearColor(color.r, color.g, color.b, color.a);
     }
 
     void OpenGLRenderAPI::clear()

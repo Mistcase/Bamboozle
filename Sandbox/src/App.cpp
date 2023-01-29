@@ -7,7 +7,7 @@
 
 #include <Platform/OpenGL/OpenGLShader.h>
 
-#include <ImGui/imgui.h>
+#include <imgui.h>
 #include <glm/ext/matrix_transform.hpp>
 
 class ExampleLayer : public bubble::Layer
@@ -139,7 +139,6 @@ class Sandbox : public bubble::Application
 public:
 	Sandbox()
 	{
-		// pushLayer(new ExampleLayer());
         pushLayer(new Sandbox2DLayer());
 	}
 

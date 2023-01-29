@@ -11,13 +11,13 @@
 		#define BUBBLE_API
 	#endif
 #else
-#define BUBBLE_API
+    #define BUBBLE_API
 // #error Build platform is not supported!
 #endif
 
 #ifdef BUBBLE_DEBUG
-#define BUBBLE_ASSERT(x, ...) { if(!(x)) { BUBBLE_ERROR("Assertion Failed: {0}", __VA_ARGS__); /*__debugbreak();*/ } }
-#define BUBBLE_CORE_ASSERT(x, ...) { if(!(x)) { BUBBLE_CORE_ERROR("Assertion Failed: {0}", __VA_ARGS__); /*__debugbreak();*/ } }
+#define BUBBLE_ASSERT(x, ...) { if(!(x)) { BUBBLE_ERROR("Assertion Failed: {0}", __VA_ARGS__); __builtin_debugtrap(); /*__debugbreak();*/ } }
+#define BUBBLE_CORE_ASSERT(x, ...) { if(!(x)) { BUBBLE_CORE_ERROR("Assertion Failed: {0}", __VA_ARGS__);  __builtin_debugtrap(); /*__debugbreak();*/ } }
 #else
 #define BUBBLE_ASSERT(x, ...)
 #define BUBBLE_CORE_ASSERT(x, ...)

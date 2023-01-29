@@ -1,9 +1,9 @@
-#include "bubblepch.h"
+#include "Bubble/bubblepch.h"
 #include "OpenGLContext.h"
 #include "Bubble/Log.h"
 
-#include <GLFW/glfw3.h>
 #include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
 namespace bubble
 {
@@ -20,6 +20,7 @@ namespace bubble
 		BUBBLE_CORE_ASSERT(status, "Failed to initialize Glad");
 
         BUBBLE_CORE_INFO("OpenGL renderer: {0}", reinterpret_cast<const char*>(glGetString(GL_RENDERER)));
+		BUBBLE_CORE_INFO("Version GLSL: {0}\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
 	}
 
 	void OpenGLContext::swapBuffers()
