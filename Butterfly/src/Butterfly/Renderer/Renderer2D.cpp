@@ -1,6 +1,7 @@
 #include "Butterfly/butterflypch.h"
 #include "Renderer2D.h"
 
+#include "Butterfly/Application.h"
 #include "Butterfly/Renderer/Camera.h"
 #include "Butterfly/Hash.h"
 #include "Butterfly/Renderer/RenderCommand.h"
@@ -67,9 +68,10 @@ namespace butterfly
             BUTTERFLY_CORE_ASSERT(SceneData()->textureSlots.size() > 2, "Cannot render user provided textures");
 
             // Temprorary object. Need it because of preprocessing and loading.
+			auto res = Application::GetInstance().getResourcesDirectory();
             auto shaders = Shaders::Create();
-			shaders->createFromFile("/Users/ivan/dev/Projects/Butterfly/Sandbox/renderer2D/default_shader.glsl");
-            // shaders->createFromFile("renderer2D\\default_shader.glsl");
+			shaders->createFromFile(res.concat("default_shader.glsl"));
+
             SceneData()->shader = shaders->extract("default_shader"_hash);
             BUTTERFLY_CORE_ASSERT(SceneData()->shader != nullptr, "Default shader is not loaded");
 

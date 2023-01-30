@@ -22,7 +22,7 @@ namespace butterfly
 	class BUTTERFLY_API Application
 	{
 	public:
-        Application(const std::string& name = "App");
+	    Application(const std::string& name, const std::filesystem::path& resourcesPath);
 		virtual ~Application();
 
 		void run();
@@ -35,6 +35,7 @@ namespace butterfly
 
 	    inline static Application& GetInstance() { return *m_instance; }
 		inline Window& getWindow() { return *m_window; }
+		inline const std::filesystem::path& getResourcesDirectory() const { return m_resourcesPath;  }
 
 	private:
 		bool onWindowClose(WindowCloseEvent& e);
@@ -42,10 +43,12 @@ namespace butterfly
 
 	private:
 		static Application* m_instance;
-		std::unique_ptr<Window> m_window;
 
+		std::unique_ptr<Window> m_window;
         LayerStack m_layerStack;
 		ImGuiLayer* m_imGuiLayer;
+
+		const std::filesystem::path m_resourcesPath;
 
     private:
         bool m_running = true;

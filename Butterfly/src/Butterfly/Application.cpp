@@ -17,9 +17,10 @@ namespace butterfly
 {
 	Application* Application::m_instance = nullptr;
 
-	Application::Application(const std::string& name)
+	Application::Application(const std::string& name, const std::filesystem::path& resourcesPath)
 		: m_window(Window::Create(WindowProps(name)))
 		, m_imGuiLayer(new ImGuiLayer())
+		, m_resourcesPath(resourcesPath)
 	{
 		BUTTERFLY_CORE_ASSERT(!m_instance,  "Application already exists");
 		m_instance = this;
