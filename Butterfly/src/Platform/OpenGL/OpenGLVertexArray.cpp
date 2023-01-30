@@ -39,7 +39,6 @@ namespace butterfly
     OpenGLVertexArray::OpenGLVertexArray()
     {
 		glGenVertexArrays(1, &m_rendererId);
-        // glCreateVertexArrays(1, &m_rendererId);
     }
 
     OpenGLVertexArray::~OpenGLVertexArray()

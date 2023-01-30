@@ -1,5 +1,5 @@
 #include "Butterfly/butterflypch.h"
-#include "WindowsWindow.h"
+#include "WindowImpl.h"
 
 #include "Butterfly/Events/ApplicationEvent.h"
 #include "Butterfly/Events/KeyEvent.h"
@@ -22,20 +22,20 @@ namespace butterfly
 
 	Window* Window::Create(const WindowProps& props)
 	{
-		return new WindowsWindow(props);
+		return new WindowImpl(props);
 	}
 
-	WindowsWindow::WindowsWindow(const WindowProps& props)
+	WindowImpl::WindowImpl(const WindowProps& props)
 	{
 		init(props);
 	}
 
-	WindowsWindow::~WindowsWindow()
+	WindowImpl::~WindowImpl()
 	{
 		shutdown();
 	}
 
-	void WindowsWindow::init(const WindowProps& props)
+	void WindowImpl::init(const WindowProps& props)
 	{
 		m_data.title = props.title;
 		m_data.width = props.width;
@@ -50,7 +50,6 @@ namespace butterfly
 			BUTTERFLY_CORE_ASSERT(success, "Could not intialize GLFW!");
 
 			glfwSetErrorCallback(GLFWErrorCallback);
-
 			GLFWInitialized = true;
 		}
 
@@ -160,29 +159,29 @@ namespace butterfly
 		});
 	}
 
-	void WindowsWindow::shutdown()
+	void WindowImpl::shutdown()
 	{
 		glfwDestroyWindow(m_window);
 	}
 
-	void WindowsWindow::onUpdate()
+	void WindowImpl::onUpdate()
 	{
 		glfwPollEvents();
 		m_context->swapBuffers();
 	}
 
-	void WindowsWindow::setVSync(bool enabled)
+	void WindowImpl::setVSync(bool enabled)
 	{
 		glfwSwapInterval(enabled);
 		m_data.vSync = enabled;
 	}
 
-	bool WindowsWindow::isVSync() const
+	bool WindowImpl::isVSync() const
 	{
 		return m_data.vSync;
 	}
 
-	void* WindowsWindow::getNativeWindow() const
+	void* WindowImpl::getNativeWindow() const
 	{
 		return m_window;
 	}

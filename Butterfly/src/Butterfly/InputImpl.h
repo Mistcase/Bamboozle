@@ -4,7 +4,7 @@
 
 namespace butterfly
 {
-	class WindowsInput : public Input
+	class InputImpl : public Input
 	{
 	protected:
 		bool isKeyPressedImpl(int keycode) override;

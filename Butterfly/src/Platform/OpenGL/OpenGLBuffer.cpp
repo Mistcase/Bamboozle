@@ -7,7 +7,6 @@ namespace butterfly
 {
     OpenGLVertexBuffer::OpenGLVertexBuffer(size_t size, const void* data)
     {
-        // glCreateBuffers(1, &m_rendererId);
 		glGenBuffers(1, &m_rendererId);
         glBindBuffer(GL_ARRAY_BUFFER, m_rendererId);
         glBufferData(GL_ARRAY_BUFFER, size, data, GL_DYNAMIC_DRAW);
@@ -49,7 +48,6 @@ namespace butterfly
     OpenGLIndexBuffer::OpenGLIndexBuffer(size_t count, uint32_t* indices)
         : m_count(count)
     {
-        // glCreateBuffers(1, &m_rendererId);
         glGenBuffers(1, &m_rendererId);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_rendererId);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(uint32_t), indices, GL_STATIC_DRAW);
@@ -80,4 +78,4 @@ namespace butterfly
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     }
 
-} // namespace
+} // namespace butterfly

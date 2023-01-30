@@ -26,15 +26,22 @@ add_subdirectory(third-party/spdlog/)
 add_subdirectory(third-party/glm/)
 
 file(GLOB SRC
- "src/*"
- "src/Butterfly/*"
- "src/Butterfly/Events/*"
- "src/Butterfly/ImGui/*"
- "src/Butterfly/Renderer/*"
- "src/Platform/*"
- "src/Platform/OpenGL/*"
- "src/Platform/Windows/*"
- "third-party/stb/*")
+ "src/*.h"
+ "src/*.cpp"
+ "src/Butterfly/*.h"
+ "src/Butterfly/*.cpp"
+ "src/Butterfly/Events/.h*"
+ "src/Butterfly/Events/.cpp*"
+ "src/Butterfly/ImGui/*.h"
+ "src/Butterfly/ImGui/*.cpp"
+ "src/Butterfly/Renderer/*.h"
+ "src/Butterfly/Renderer/*.cpp"
+ "src/Platform/*.h"
+ "src/Platform/*.cpp"
+ "src/Platform/OpenGL/*.h"
+ "src/Platform/OpenGL/*.cpp"
+ "third-party/stb/*.h"
+ "third-party/stb/*.cpp")
 
 set(LIB_NAME butterfly)
 
