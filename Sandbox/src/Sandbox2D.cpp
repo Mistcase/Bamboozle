@@ -1,3 +1,4 @@
+
 #include "Sandbox2D.h"
 
 #include <imgui.h>
@@ -9,18 +10,18 @@ Sandbox2DLayer::Sandbox2DLayer()
 
 void Sandbox2DLayer::onAttach()
 {
-    auto& window = bubble::Application::GetInstance().getWindow();
+    auto& window = butterfly::Application::GetInstance().getWindow();
 
-    m_camera = std::make_unique<bubble::Camera>(window.getWidth(), window.getHeight());
-    m_cameraController = std::make_unique<bubble::CameraController>(m_camera.get());
+    m_camera = std::make_unique<butterfly::Camera>(window.getWidth(), window.getHeight());
+    m_cameraController = std::make_unique<butterfly::CameraController>(m_camera.get());
 
-    m_texture = bubble::Texture2D::Create("/Users/ivan/dev/Projects/Bubble/Sandbox/assets/Checkerboard.png");
-    m_texture2 = bubble::Texture2D::Create("/Users/ivan/dev/Projects/Bubble/Sandbox/assets/smoke.png");
+    m_texture = butterfly::Texture2D::Create("/Users/ivan/dev/Projects/Butterfly/Sandbox/assets/Checkerboard.png");
+    m_texture2 = butterfly::Texture2D::Create("/Users/ivan/dev/Projects/Butterfly/Sandbox/assets/smoke.png");
 
-    bubble::FramebufferSpecification fbSpec;
+    butterfly::FramebufferSpecification fbSpec;
     fbSpec.width = 1280;
     fbSpec.height = 720;
-    // m_framebuffer = bubble::Framebuffer::Create(fbSpec);
+    // m_framebuffer = butterfly::Framebuffer::Create(fbSpec);
 }
 
 void Sandbox2DLayer::onDetach()
@@ -33,15 +34,15 @@ void Sandbox2DLayer::onUpdate(float dt)
 
     //m_framebuffer->bind();
 
-    bubble::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
-    bubble::RenderCommand::Clear();
+    butterfly::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
+    butterfly::RenderCommand::Clear();
 
-    bubble::Renderer2D::BeginScene(m_camera.get());
-    bubble::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f }, { 250.0f, 250.0f }, glm::radians(45.0f), { 1.0f, 0.0f, 0.0f, 1.0f }, m_texture);
-    bubble::Renderer2D::DrawQuad({ 300.0f, 300.0f, -0.1f }, { 250.0f, 250.0f }, 0.0f, { 0.0f, 0.0f, 1.0f, 1.0f }, m_texture2 );
-    bubble::Renderer2D::DrawQuad({ -300.0f, -300.0f, -0.1f }, { 250.0f, 250.0f }, { 0.0f, 1.0f, 0.0f, 1.0f });
+    butterfly::Renderer2D::BeginScene(m_camera.get());
+    butterfly::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f }, { 250.0f, 250.0f }, glm::radians(45.0f), { 1.0f, 0.0f, 0.0f, 1.0f }, m_texture);
+    butterfly::Renderer2D::DrawQuad({ 300.0f, 300.0f, -0.1f }, { 250.0f, 250.0f }, 0.0f, { 0.0f, 0.0f, 1.0f, 1.0f }, m_texture2 );
+    butterfly::Renderer2D::DrawQuad({ -300.0f, -300.0f, -0.1f }, { 250.0f, 250.0f }, { 0.0f, 1.0f, 0.0f, 1.0f });
 
-    bubble::Renderer2D::EndScene();
+    butterfly::Renderer2D::EndScene();
     // m_framebuffer->unbind();
 }
 
@@ -92,7 +93,7 @@ void Sandbox2DLayer::onImGuiRender()
     //     if (ImGui::BeginMenu("File"))
     //     {
     //         if (ImGui::MenuItem("Quit", NULL, false, true))
-    //             bubble::Application::GetInstance().quit();
+    //             butterfly::Application::GetInstance().quit();
     //         ImGui::EndMenu();
     //     }
 
@@ -107,24 +108,24 @@ void Sandbox2DLayer::onImGuiRender()
     // ImGui::End();
 }
 
-void Sandbox2DLayer::onEvent(bubble::Event& event)
+void Sandbox2DLayer::onEvent(butterfly::Event& event)
 {
     m_cameraController->onEvent(event);
 
-    bubble::EventDispatcher dispatcher(event);
-    dispatcher.dispatch<bubble::KeyReleasedEvent>([this](bubble::KeyEvent& e){ return onKeyEvent(e); });
-    dispatcher.dispatch<bubble::WindowResizeEvent>([this](bubble::WindowResizeEvent& e)
+    butterfly::EventDispatcher dispatcher(event);
+    dispatcher.dispatch<butterfly::KeyReleasedEvent>([this](butterfly::KeyEvent& e){ return onKeyEvent(e); });
+    dispatcher.dispatch<butterfly::WindowResizeEvent>([this](butterfly::WindowResizeEvent& e)
     {
         m_camera->setSize(e.getWidth(), e.getHeight());
         return true;
     });
 }
 
-bool Sandbox2DLayer::onKeyEvent(const bubble::KeyEvent& event)
+bool Sandbox2DLayer::onKeyEvent(const butterfly::KeyEvent& event)
 {
-    if (event.getKeyCode() == BUBBLE_KEY_ESCAPE)
+    if (event.getKeyCode() == BUTTERFLY_KEY_ESCAPE)
     {
-        bubble::Application::GetInstance().quit();
+        butterfly::Application::GetInstance().quit();
         return true;
     }
 

@@ -1,12 +1,12 @@
-[submodule "Bubble/third-party/spdlog"]
-	path = Bubble/third-party/spdlog
+[submodule "Butterfly/third-party/spdlog"]
+	path = Butterfly/third-party/spdlog
 	url = https://github.com/gabime/spdlog.git
-[submodule "Bubble/third-party/GLFW"]
-	path = Bubble/third-party/GLFW
+[submodule "Butterfly/third-party/GLFW"]
+	path = Butterfly/third-party/GLFW
 	url = https://github.com/Mistcase/glfw
-[submodule "Bubble/third-party/ImGui"]
-	path = Bubble/third-party/ImGui
+[submodule "Butterfly/third-party/ImGui"]
+	path = Butterfly/third-party/ImGui
 	url = https://github.com/Mistcase/imgui.git
-[submodule "Bubble/third-party/glm"]
-	path = Bubble/third-party/glm
+[submodule "Butterfly/third-party/glm"]
+	path = Butterfly/third-party/glm
 	url = https://github.com/g-truc/glm.git

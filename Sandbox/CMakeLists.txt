@@ -29,12 +29,12 @@ set_target_properties(${EXECUTABLE_NAME} PROPERTIES
     MACOSX_BUNDLE_SHORT_VERSION_STRING "0.1"
     MACOSX_BUNDLE_INFO_PLIST ${CMAKE_SOURCE_DIR}/cmake/Info.plist)
 
-target_include_directories(${EXECUTABLE_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/../Bubble/src/
-    ${CMAKE_SOURCE_DIR}/../Bubble/src
-    ${CMAKE_SOURCE_DIR}/../Bubble/third-party/spdlog/include
-    ${CMAKE_SOURCE_DIR}/../Bubble/third-party/glm
-    ${CMAKE_SOURCE_DIR}/../Bubble/third-party/ImGui)
+target_include_directories(${EXECUTABLE_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/../Butterfly/src/
+    ${CMAKE_SOURCE_DIR}/../Butterfly/src
+    ${CMAKE_SOURCE_DIR}/../Butterfly/third-party/spdlog/include
+    ${CMAKE_SOURCE_DIR}/../Butterfly/third-party/glm
+    ${CMAKE_SOURCE_DIR}/../Butterfly/third-party/ImGui)
 
-add_subdirectory(../Bubble/ ../Bubble/build/)
+add_subdirectory(../Butterfly/ ../Butterfly/build/)
 
 target_link_libraries(${EXECUTABLE_NAME} butterfly glad glfw spdlog glm imgui)
