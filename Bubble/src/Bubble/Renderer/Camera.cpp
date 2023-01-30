@@ -1,5 +1,3 @@
-#pragma once
-
 #include "Bubble/bubblepch.h"
 #include "Camera.h"
 #include "glm/ext/matrix_clip_space.hpp"

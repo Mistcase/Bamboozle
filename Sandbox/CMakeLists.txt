@@ -6,6 +6,12 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+# include glfw to butterfly
+# disable tests, examples...
+set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+
 set(EXECUTABLE_NAME Sandbox)
 
 file(GLOB SRC
@@ -29,4 +35,6 @@ target_include_directories(${EXECUTABLE_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/../Bubb
     ${CMAKE_SOURCE_DIR}/../Bubble/third-party/glm
     ${CMAKE_SOURCE_DIR}/../Bubble/third-party/ImGui)
 
-# target_link_libraries(${EXECUTABLE_NAME} Butterfly)
+add_subdirectory(../Bubble/ ../Bubble/build/)
+
+target_link_libraries(${EXECUTABLE_NAME} butterfly glad glfw spdlog glm imgui)

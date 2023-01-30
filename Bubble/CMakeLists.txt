@@ -14,10 +14,10 @@ set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 add_subdirectory(third-party/GLFW/)
 
 # include glad
-add_subdirectory(third-party/glad/)
+add_subdirectory(third-party/Glad/)
 
 #iclude imgui
-add_subdirectory(third-party/imgui/)
+add_subdirectory(third-party/ImGui/)
 
 # include spdlog
 add_subdirectory(third-party/spdlog/)
@@ -40,7 +40,7 @@ set(LIB_NAME butterfly)
 
 add_definitions(-DGLFW_INCLUDE_NONE)
 
-add_library(${LIB_NAME} ${SRC})
+add_library(${LIB_NAME} STATIC ${SRC})
 set_target_properties(${LIB_NAME} PROPERTIES LINKER_LANGUAGE CXX)
-target_link_libraries(${LIB_NAME} glad glfw spdlog glm)
-target_include_directories(${LIB_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/src third-party/ImGui third-party/stb)
+target_link_libraries(${LIB_NAME} glad glfw spdlog glm imgui)
+target_include_directories(${LIB_NAME} PRIVATE src third-party/ImGui third-party/stb)
