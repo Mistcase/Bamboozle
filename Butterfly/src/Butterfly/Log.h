@@ -7,7 +7,7 @@
 
 namespace butterfly
 {
-	class BUTTERFLY_API Log
+	class Log
 	{
 	public:
 		using Logger = std::shared_ptr<spdlog::logger>;

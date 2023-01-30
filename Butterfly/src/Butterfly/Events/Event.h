@@ -47,7 +47,7 @@ namespace butterfly
 
 #define EVENT_CLASS_CATEGORY(category) int getCategoryFlags() const override { return category; }
 
-	class BUTTERFLY_API Event
+	class Event
 	{
 		friend class EventDispatcher;
 

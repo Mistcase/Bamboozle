@@ -19,7 +19,7 @@ namespace butterfly
     class VertexBuffer;
     class VertexArray;
 
-	class BUTTERFLY_API Application
+	class Application
 	{
 	public:
 	    Application(const std::string& name, const std::filesystem::path& resourcesPath);

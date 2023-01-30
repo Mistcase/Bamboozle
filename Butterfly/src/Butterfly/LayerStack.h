@@ -7,7 +7,7 @@
 
 namespace butterfly
 {
-	class BUTTERFLY_API LayerStack
+	class LayerStack
 	{
 	public:
 		using Container = std::vector<Layer*>;

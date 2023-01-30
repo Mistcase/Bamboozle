@@ -4,7 +4,7 @@
 
 namespace butterfly
 {
-	class BUTTERFLY_API KeyEvent : public Event
+	class KeyEvent : public Event
 	{
 	public:
 		inline int getKeyCode() const { return m_keyCode; }
@@ -18,7 +18,7 @@ namespace butterfly
 		int m_keyCode;
 	};
 
-	class BUTTERFLY_API KeyPressedEvent : public KeyEvent
+	class KeyPressedEvent : public KeyEvent
 	{
 	public:
 		KeyPressedEvent(int keyCode, int repeatCount)
@@ -38,7 +38,7 @@ namespace butterfly
 		int m_repeatCount;
 	};
 
-	class BUTTERFLY_API KeyReleasedEvent : public KeyEvent
+	class KeyReleasedEvent : public KeyEvent
 	{
 	public:
 		KeyReleasedEvent(int keycode)
@@ -54,7 +54,7 @@ namespace butterfly
 		EVENT_CLASS_TYPE(KeyReleased)
 	};
 
-	class BUTTERFLY_API KeyTypedEvent : public KeyEvent
+	class KeyTypedEvent : public KeyEvent
 	{
 	public:
 		KeyTypedEvent(int keyCode)

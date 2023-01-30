@@ -22,7 +22,7 @@ namespace butterfly {
 	};
 
 	// Interface representing a desktop system based Window
-	class BUTTERFLY_API Window
+	class Window
 	{
 	public:
 		using FnEventCallback = std::function<void(Event&)>;
