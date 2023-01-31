@@ -49,7 +49,7 @@ elseif(APPLE)
 
 elseif(UNIX)
    message("Identified platform: Linux")
-   file(COPY "${CMAKE_SOURCE_DIR}/res/" DESTINATION "${CMAKE_BINARY_DIR}/")
+   file(COPY "${CMAKE_SOURCE_DIR}/res" DESTINATION "${CMAKE_BINARY_DIR}/")
 
 endif()
 
