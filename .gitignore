@@ -13,3 +13,4 @@ imgui.ini
 *.log
 *.tlog
 *.ini
+.DS_Store
