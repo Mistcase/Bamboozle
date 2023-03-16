@@ -6,7 +6,7 @@
 #include "Renderer/VertexArray.h"
 
 #include "Butterfly/Renderer/Renderer.h"
-#include "Butterfly/Renderer/Camera.h"
+#include "Butterfly/Renderer/OrthographicCamera.h"
 
 #include "Input.h"
 

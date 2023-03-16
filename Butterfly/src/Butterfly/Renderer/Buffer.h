@@ -67,7 +67,7 @@ namespace butterfly
 
     public:
         BufferLayout() = default;
-        BufferLayout(const std::initializer_list<BufferElement>& elements);
+        BufferLayout(std::initializer_list<BufferElement> elements);
 
         inline uint32_t getStride() const { return m_stride; }
         inline const Elements& getElements() const { return m_elements; }

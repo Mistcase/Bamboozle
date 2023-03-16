@@ -2,7 +2,7 @@
 #include "Renderer2D.h"
 
 #include "Butterfly/Application.h"
-#include "Butterfly/Renderer/Camera.h"
+#include "Butterfly/Renderer/OrthographicCamera.h"
 #include "Butterfly/Hash.h"
 #include "Butterfly/Renderer/RenderCommand.h"
 #include "Butterfly/Renderer/Shader.h"
@@ -12,6 +12,9 @@
 #include "Platform/OpenGL/OpenGLShader.h"
 
 #include <glm/ext/matrix_transform.hpp>
+
+// Test
+#include "Butterfly/Renderer/PerspectiveCamera.h"
 
 namespace butterfly
 {
@@ -47,6 +50,7 @@ namespace butterfly
             uint8_t* quadVertexBufferPtr = quadVertexBufferBase;
             size_t quadCount = 0;
 
+			butterfly::PerspectiveCamera* perspectiveCamera = nullptr;
             butterfly::Camera* camera = nullptr;
             butterfly::Ref<butterfly::VertexArray> vertexArray;
             std::unique_ptr<butterfly::Shader> shader = nullptr;
@@ -76,7 +80,6 @@ namespace butterfly
             BUTTERFLY_CORE_ASSERT(SceneData()->shader != nullptr, "Default shader is not loaded");
 
             auto vertexArray = VertexArray::Create();
-
             auto vertexBuffer = VertexBuffer::Create(_SceneData::MaxVertexCount * VertexDesc.getStride());
             vertexBuffer->setLayout(VertexDesc);
 
@@ -126,6 +129,15 @@ namespace butterfly
             const auto& viewProjection = SceneData()->camera->getViewProjection();
             static_cast<OpenGLShader*>(SceneData()->shader.get())->setUniformMat4("u_VP", viewProjection);
         }
+
+		void BeginScene(PerspectiveCamera* camera)
+		{
+			SceneData()->perspectiveCamera = camera;
+            SceneData()->shader->bind();
+
+            const auto& viewProjection = SceneData()->perspectiveCamera->getViewProjection();
+            static_cast<OpenGLShader*>(SceneData()->shader.get())->setUniformMat4("u_VP", viewProjection);
+		}
 
         void EndScene()
         {
@@ -193,7 +205,7 @@ namespace butterfly
             if (SceneData()->quadCount >= SceneData()->MaxQuadCount)
                 Flush();
 
-            float textureSlot = 1.0f; // Because int's cannot be interpolated (compile error)
+            float textureSlot = 1.0f; // Because ints cannot be interpolated (compile error)
             if (texture != SceneData()->WhiteTexture)
             {
                 for (uint32_t i = 1, idxEnd = SceneData()->textureIndex; i < idxEnd; i++)
@@ -220,8 +232,8 @@ namespace butterfly
             // Does not support texture atlases yet
             const glm::vec2 texCoords[] = { { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f } };
             const auto transform = glm::translate(glm::mat4(1.0f), position)
-                * glm::rotate(glm::mat4(1.0f), rotation, { 0.0f, 0.0f, 1.0f })
-                * glm::scale(glm::mat4(1.0f), { size.x, size.y, 0.0f });
+                 * glm::rotate(glm::mat4(1.0f), rotation, { 0.0f, 0.0f, 1.0f })
+                 * glm::scale(glm::mat4(1.0f), { size.x, size.y, 0.0f });
 
             for (size_t i = 0; i < 4; i++)
             {
@@ -241,6 +253,11 @@ namespace butterfly
 
             SceneData()->quadCount++;
         }
+
+		butterfly::Shader* Shader()
+		{
+			return SceneData()->shader.get();
+		}
 
     } // namespace Renderer2D
 

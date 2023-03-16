@@ -4,7 +4,7 @@
 #include "Butterfly/Input.h"
 #include "Butterfly/KeyCodes.h"
 #include "Butterfly/Events/MouseEvent.h"
-#include "Butterfly/Renderer/Camera.h"
+#include "Butterfly/Renderer/OrthographicCamera.h"
 
 namespace butterfly
 {

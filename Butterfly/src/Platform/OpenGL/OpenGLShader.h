@@ -16,8 +16,10 @@ namespace butterfly
 
         const char* getName() const override;
 
-        void setUniform1i(const std::string name, int i) const;
+        void setUniform1i(const std::string& name, int i) const;
+		void setUniform1f(const std::string& name, float value) const;
         void setUniformMat4(const std::string& name, const glm::mat4& data) const;
+		void setUniform3f(const std::string& name, const glm::vec3& data) const;
         void setUniform4f(const std::string& name, const glm::vec4& data) const;
         void setUniformIntArray(const std::string& name, const int* data, uint32_t count) const;
 

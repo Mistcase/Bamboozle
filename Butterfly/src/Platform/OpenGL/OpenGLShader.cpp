@@ -99,7 +99,7 @@ namespace butterfly
         return m_name.c_str();
     }
 
-    void OpenGLShader::setUniform1i(const std::string name, int i) const
+    void OpenGLShader::setUniform1i(const std::string& name, int i) const
     {
         // TODO: make uniform location cache
         auto location = glGetUniformLocation(m_rendererId, name.c_str());
@@ -108,14 +108,32 @@ namespace butterfly
         glUniform1i(location, i);
     }
 
+	void OpenGLShader::setUniform1f(const std::string& name, float value) const
+	{
+		// TODO: make uniform location cache
+        auto location = glGetUniformLocation(m_rendererId, name.c_str());
+        BUTTERFLY_CORE_ASSERT(location != -1, "Uniform is not found");
+
+        glUniform1f(location, value);
+	}
+
     void OpenGLShader::setUniformMat4(const std::string& name, const glm::mat4& data) const
     {
         // TODO: make uniform location cache
         auto location = glGetUniformLocation(m_rendererId, name.c_str());
         BUTTERFLY_CORE_ASSERT(location != -1, "Uniform is not found");
 
-        glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(data ));
+        glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(data));
     }
+
+	void OpenGLShader::setUniform3f(const std::string& name, const glm::vec3& data) const
+	{
+		// TODO: make uniform location cache
+        auto location = glGetUniformLocation(m_rendererId, name.c_str());
+        BUTTERFLY_CORE_ASSERT(location != -1, "Uniform is not found");
+
+        glUniform3f(location, data.r, data.g, data.b);
+	}
 
     void OpenGLShader::setUniform4f(const std::string& name, const glm::vec4& data) const
     {

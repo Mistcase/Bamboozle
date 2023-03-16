@@ -39,7 +39,7 @@ namespace butterfly
         return 0;
     }
 
-    BufferLayout::BufferLayout(const std::initializer_list<BufferElement>& elements)
+    BufferLayout::BufferLayout(std::initializer_list<BufferElement> elements)
         : m_elements(elements)
     {
         calculateOffsetsAndStride();
