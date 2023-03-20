@@ -3,6 +3,7 @@
 #include "Butterfly/Core.h"
 #include <glm/glm.hpp>
 #include <filesystem>
+#include <vector>
 
 namespace butterfly
 {
