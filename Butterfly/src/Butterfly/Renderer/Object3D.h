@@ -1,15 +1,13 @@
 #pragma once
 
 #include "Butterfly/Core.h"
-#include <glm/glm.hpp>
 #include <filesystem>
-#include <vector>
+#include <glm/glm.hpp>
 
 namespace butterfly
 {
-	class VertexArray;
-	class VertexBuffer;
-	class IndexBuffer;
+    class Mesh;
+    class Material;
 
 	class PerspectiveCamera;
 
@@ -26,17 +24,10 @@ namespace butterfly
 
 		void draw();
 
-	private:
-		using IndexType = uint32_t;
-		void loadFace(std::ifstream& stream, std::vector<IndexType>& indices);
-
 	protected:
-		Ref<VertexArray> m_vertexArray;
-		Ref<VertexBuffer> m_vertexBuffer;
-		Ref<IndexBuffer> m_indexBuffer;
+        Ref<Mesh> m_mesh;
+        Ref<Material> m_material;
 
 		glm::mat4 m_transform;
-		glm::vec3 m_position;
 	};
-
 }

@@ -75,7 +75,7 @@ namespace butterfly
         return nullptr;
     }
 
-    Ref<IndexBuffer> IndexBuffer::Create(size_t count, uint32_t* indices)
+    Ref<IndexBuffer> IndexBuffer::Create(size_t count, const uint32_t* indices)
     {
         switch (Renderer::GetAPI())
         {

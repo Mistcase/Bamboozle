@@ -25,4 +25,4 @@
 #include "Butterfly/Renderer/Buffer.h"
 #include "Butterfly/Renderer/Texture.h"
 
-#include "Butterfly/Object3D.h"
+#include "Butterfly/Renderer/Object3D.h"

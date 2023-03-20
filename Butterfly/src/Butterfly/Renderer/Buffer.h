@@ -104,7 +104,7 @@ namespace butterfly
     class IndexBuffer
     {
     public:
-        static Ref<IndexBuffer> Create(size_t count, uint32_t* indices = nullptr);
+        static Ref<IndexBuffer> Create(size_t count, const uint32_t* indices = nullptr);
 
     public:
         virtual ~IndexBuffer() = default;
