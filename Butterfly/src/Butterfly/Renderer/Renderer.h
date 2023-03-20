@@ -29,9 +29,7 @@ namespace butterfly
         static void BeginScene(const PerspectiveCamera* camera);
         static void EndScene();
 
-		static void DrawObject(Ref<Object3D> object);
-
-        static void Submit(const Shader* shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform);
+        static class Shader* Shader();
 
     private:
         static const PerspectiveCamera* m_camera;

@@ -1,14 +1,13 @@
 #pragma once
 
 #include "Butterfly/Core.h"
+#include "Butterfly/Renderer/Mesh.h"
+
 #include <filesystem>
 #include <glm/glm.hpp>
 
 namespace butterfly
 {
-    class Mesh;
-    class Material;
-
 	class PerspectiveCamera;
 
 	class Object3D
@@ -22,11 +21,12 @@ namespace butterfly
 
 		const glm::mat4& getWorldTransform() const;
 
-		void draw();
+        void update(float dt);
+		void render() const;
 
 	protected:
         Ref<Mesh> m_mesh;
-        Ref<Material> m_material;
+        Material m_material;
 
 		glm::mat4 m_transform;
 	};

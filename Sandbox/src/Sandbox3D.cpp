@@ -12,19 +12,11 @@ Sandbox3DLayer::Sandbox3DLayer()
 
 void Sandbox3DLayer::onAttach()
 {
-    auto& window = butterfly::Application::GetInstance().getWindow();
+    m_objects.emplace_back(helpers::MakePath("objects/teapot.obj"));
+    m_objects.back().setPosition({0.0f, 0.0f, 0.0f});
 
-	m_camera = std::make_unique<butterfly::PerspectiveCamera>(glm::radians(45.0f), (float)window.getWidth() / window.getHeight(), 0.5f, 40.0f);
-	m_camera->setPosition({ 0.0f, 0.0f, 5.0f });
-
-	m_cameraController = std::make_unique<butterfly::PerspectiveCameraController>(m_camera.get());
-
-	m_teapot = std::make_unique<butterfly::Object3D>(helpers::MakePath("objects/teapot.obj"));
-	m_teapot->setPosition({0.0f, 0.0f, 0.0f});
-
-	m_ka = 0.12f;
-	m_kd = 0.3f;
-    m_ks = 1.0f;
+    m_lights.emplace_back(glm::vec3{ 0.0f, 0.6f, 0.0f }, glm::vec3{ 0.0f, 0.0f, 5.0f }, glm::vec3{ 0.0f, 0.0f, 1.0f });
+    m_lights.emplace_back(glm::vec3{ 0.5f, 0.0f, 0.0f }, glm::vec3{ 0.0f, 0.0f, 5.0f }, glm::vec3{ 0.0f, 0.0f, 1.0f }); // Is OpenGL righthanded
 }
 
 void Sandbox3DLayer::onDetach()
@@ -33,42 +25,8 @@ void Sandbox3DLayer::onDetach()
 
 void Sandbox3DLayer::onUpdate(float dt)
 {
-	static float angle = 0.0f;
-	if (butterfly::Input::IsKeyPressed(BUTTERFLY_KEY_LEFT))
-	{
-		angle += dt;
-		m_teapot->setRotation(angle, glm::vec3(0.0f, 1.0f, 0.0f));
-	}
-	if (butterfly::Input::IsKeyPressed(BUTTERFLY_KEY_RIGHT))
-	{
-		angle -= dt;
-		m_teapot->setRotation(angle, glm::vec3(0.0f, 1.0f, 0.0f));
-	}
-
-	m_cameraController->onUpdate(dt);
-
-	butterfly::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 0.1f });
-	butterfly::RenderCommand::Clear();
-
-	butterfly::Renderer::BeginScene(m_camera.get());
-
-	static_cast<butterfly::OpenGLShader*>(butterfly::Renderer2D::Shader())->setUniform1f("u_ka", m_ka);
-    static_cast<butterfly::OpenGLShader*>(butterfly::Renderer2D::Shader())->setUniform1f("u_kd", m_kd);
-    static_cast<butterfly::OpenGLShader*>(butterfly::Renderer2D::Shader())->setUniform1f("u_ks", m_ks);
-    static_cast<butterfly::OpenGLShader*>(butterfly::Renderer2D::Shader())->setUniform1f("u_a", 20.0f);
-
-    static_cast<butterfly::OpenGLShader*>(butterfly::Renderer2D::Shader())->setUniform3f("u_cameraPosition", m_camera->getPosition());
-
-	static_cast<butterfly::OpenGLShader*>(butterfly::Renderer2D::Shader())->setUniform3f("u_ia", { 1.0f, 0.0f, 0.0f });
-    static_cast<butterfly::OpenGLShader*>(butterfly::Renderer2D::Shader())->setUniform3f("u_id", { 1.0f, 0.0f, 0.0f });
-    static_cast<butterfly::OpenGLShader*>(butterfly::Renderer2D::Shader())->setUniform3f("u_is", { 1.0f, 0.0f, 0.0f });
-
-	m_phase += dt;
-	const glm::vec3 lightDirection{ cos(m_phase), 0.0f, sin(m_phase) };
-	static_cast<butterfly::OpenGLShader*>(butterfly::Renderer2D::Shader())->setUniform3f("u_lightDirection", -lightDirection);
-
-	butterfly::Renderer::DrawObject(m_teapot);
-    butterfly::Renderer::EndScene();
+    Scene::update(dt);
+    Scene::render();
 }
 
 void Sandbox3DLayer::onImGuiRender()

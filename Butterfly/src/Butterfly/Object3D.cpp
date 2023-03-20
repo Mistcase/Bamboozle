@@ -1,7 +1,9 @@
+#include "Butterfly/butterflypch.h"
 #include "Object3D.h"
 
+#include "Butterfly/Renderer/Renderer.h"
 #include "Butterfly/Renderer/PerspectiveCamera.h"
-#include "Butterfly/Renderer/Mesh.h"
+#include "Platform/OpenGL/OpenGLShader.h"
 
 #include <glm/ext/matrix_transform.hpp>
 #include <fstream>
@@ -20,7 +22,7 @@ namespace butterfly
 
 	void Object3D::setRotation(float angle, glm::vec3 axis)
 	{
-        const auto position = glm::vec3(0.0f, 0.0f, 0.0f); // Calculate position from world transform
+        const auto position = glm::vec3(0.0f, 0.0f, 0.0f); // TODO: Calculate position from world transform
 
 		m_transform = glm::translate(glm::mat4(1.0f), position)
 			* glm::rotate(glm::mat4(1.0f), angle, axis);
@@ -31,10 +33,14 @@ namespace butterfly
 		return m_transform;
 	}
 
-	void Object3D::draw()
+    void Object3D::update(float dt)
+    {
+    }
+
+	void Object3D::render() const
 	{
-        // Set model matrix
         // m_material->bind();
+        static_cast<OpenGLShader*>(Renderer::Shader())->setUniformMat4("u_Transform", m_transform); // Temp
         m_mesh->draw();
 	}
 }

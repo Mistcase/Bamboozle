@@ -11,6 +11,7 @@ namespace butterfly
     class VertexArray;
 	class VertexBuffer;
 	class IndexBuffer;
+    class Texture;
 
     class Mesh
     {
@@ -41,6 +42,16 @@ namespace butterfly
 		Ref<IndexBuffer> m_indexBuffer;
 
         VertexContainer m_vertices;
+    };
+
+    struct Material
+    {
+        Ref<Texture> m_texture;
+
+        float m_kAmbient;
+        float m_kDiffuse;
+        float m_kSpecular;
+        float m_shininess;
     };
 
 } // namepsace butterfly

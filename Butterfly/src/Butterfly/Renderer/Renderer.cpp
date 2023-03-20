@@ -1,7 +1,7 @@
-#include "Butterfly/Renderer/Object3D.h"
 #include "Butterfly/butterflypch.h"
 #include "Renderer.h"
 
+#include "Butterfly/Object3D.h"
 #include "Butterfly/Renderer/PerspectiveCamera.h"
 #include "Butterfly/Renderer/Renderer2D.h"
 #include "Butterfly/Renderer/Shader.h"
@@ -36,31 +36,20 @@ namespace butterfly
 
 		const auto& viewProjection = camera->getViewProjection();
 		static_cast<OpenGLShader*>(Renderer2D::Shader())->bind();
+        static_cast<butterfly::OpenGLShader*>(butterfly::Renderer::Shader())->setUniform3f("u_CameraPosition", m_camera->getPosition());
 		static_cast<OpenGLShader*>(Renderer2D::Shader())->setUniformMat4("u_VP", viewProjection);
+
+        RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 0.1f });
+        RenderCommand::Clear();
     }
 
     void Renderer::EndScene()
     {
     }
 
-	void Renderer::DrawObject(Ref<Object3D> object)
-	{
-		const auto& viewProjection = m_camera->getViewProjection();
-		static_cast<OpenGLShader*>(Renderer2D::Shader())->setUniformMat4("u_VP", viewProjection * object->getWorldTransform());
-		object->draw();
-	}
-
-    void Renderer::Submit(const Shader* shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform)
+    class Shader* Renderer::Shader()
     {
-        BUTTERFLY_CORE_ASSERT(shader != nullptr, "Shader is nullptr");
-
-        shader->bind();
-        static_cast<const butterfly::OpenGLShader*>(shader)->setUniformMat4("u_VP", m_camera->getViewProjection());
-        static_cast<const butterfly::OpenGLShader*>(shader)->setUniformMat4("u_Transform", transform);
-
-        // Submit to render command queue
-        vertexArray->bind();
-        RenderCommand::DrawIndexed(vertexArray);
+        return Renderer2D::Shader(); // TODO: Give 3D renderer its own shader
     }
 
 } // namespace butterfly

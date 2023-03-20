@@ -2,7 +2,7 @@
 
 #include <Butterfly.h>
 
-class Sandbox3DLayer : public butterfly::Layer
+class Sandbox3DLayer : public butterfly::Layer, public butterfly::Scene
 {
 public:
     Sandbox3DLayer();
@@ -17,16 +17,4 @@ public:
 
 private:
     bool onKeyEvent(const butterfly::KeyEvent& e);
-
-private:
-	std::unique_ptr<butterfly::PerspectiveCamera> m_camera;
-	std::unique_ptr<butterfly::PerspectiveCameraController> m_cameraController;
-
-	butterfly::Ref<butterfly::Object3D> m_teapot;
-
-	float m_ka;
-	float m_kd;
-    float m_ks;
-
-	float m_phase = 0.0f;
 };
