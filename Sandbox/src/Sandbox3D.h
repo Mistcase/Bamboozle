@@ -24,9 +24,9 @@ private:
 
 	butterfly::Ref<butterfly::Object3D> m_teapot;
 
-	glm::vec3 m_ambientColor;
 	float m_ka;
 	float m_kd;
+    float m_ks;
 
 	float m_phase = 0.0f;
 };

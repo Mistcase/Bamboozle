@@ -125,7 +125,7 @@ namespace butterfly
 				stream >> normal.z;
 
 				// Normals can be non-normalized
-				glm::normalize(normal);
+				normal = glm::normalize(normal);
 
 				++idxNormalCoords;
 			}

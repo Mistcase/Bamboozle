@@ -22,9 +22,9 @@ void Sandbox3DLayer::onAttach()
 	m_teapot = std::make_unique<butterfly::Object3D>(helpers::MakePath("objects/teapot.obj"));
 	m_teapot->setPosition({0.0f, 0.0f, 0.0f});
 
-	m_ka = 0.3f;
-	m_kd = 0.2f;
-	m_ambientColor = { 1.0f, 1.0f, 1.0f };
+	m_ka = 0.12f;
+	m_kd = 0.3f;
+    m_ks = 1.0f;
 }
 
 void Sandbox3DLayer::onDetach()
@@ -53,8 +53,15 @@ void Sandbox3DLayer::onUpdate(float dt)
 	butterfly::Renderer::BeginScene(m_camera.get());
 
 	static_cast<butterfly::OpenGLShader*>(butterfly::Renderer2D::Shader())->setUniform1f("u_ka", m_ka);
-	static_cast<butterfly::OpenGLShader*>(butterfly::Renderer2D::Shader())->setUniform3f("u_ambientColor", m_ambientColor);
-	static_cast<butterfly::OpenGLShader*>(butterfly::Renderer2D::Shader())->setUniform1f("u_kd", m_kd);
+    static_cast<butterfly::OpenGLShader*>(butterfly::Renderer2D::Shader())->setUniform1f("u_kd", m_kd);
+    static_cast<butterfly::OpenGLShader*>(butterfly::Renderer2D::Shader())->setUniform1f("u_ks", m_ks);
+    static_cast<butterfly::OpenGLShader*>(butterfly::Renderer2D::Shader())->setUniform1f("u_a", 20.0f);
+
+    static_cast<butterfly::OpenGLShader*>(butterfly::Renderer2D::Shader())->setUniform3f("u_cameraPosition", m_camera->getPosition());
+
+	static_cast<butterfly::OpenGLShader*>(butterfly::Renderer2D::Shader())->setUniform3f("u_ia", { 1.0f, 0.0f, 0.0f });
+    static_cast<butterfly::OpenGLShader*>(butterfly::Renderer2D::Shader())->setUniform3f("u_id", { 1.0f, 0.0f, 0.0f });
+    static_cast<butterfly::OpenGLShader*>(butterfly::Renderer2D::Shader())->setUniform3f("u_is", { 1.0f, 0.0f, 0.0f });
 
 	m_phase += dt;
 	const glm::vec3 lightDirection{ cos(m_phase), 0.0f, sin(m_phase) };
