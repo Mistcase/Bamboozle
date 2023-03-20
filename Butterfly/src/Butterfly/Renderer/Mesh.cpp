@@ -15,15 +15,15 @@ namespace
         buffer.reserve(3);
 
         std::string word;
-        while (true)
+        auto pos = stream.tellg();
+        while (stream >> word)
         {
-            const auto pos = stream.tellg();
-            stream >> word;
             if (!std::all_of(word.cbegin(), word.cend(), [](auto c){ return std::isdigit(c) || c == '/'; }))
             {
                 stream.seekg(pos);
                 break;
             }
+            pos = stream.tellg();
 
             if (auto idxStart = word.find_first_of("/"); idxStart != std::string::npos)
             {
@@ -34,12 +34,21 @@ namespace
                 }
                 else // Support for vertex//normal format
                 {
-                    assert(idxStart + 1 == idxEnd);
-                    const auto idxPosition = std::stoi(word.substr(0, idxStart + 1));
-                    const auto idxNormal = std::stoi(word.substr(idxEnd + 1, word.size() - idxEnd - 1));
-                    assert(idxPosition == idxNormal);
+					const auto idxPosition = std::stoi(word.substr(0, idxStart + 1));
+                    if (idxStart + 1 == idxEnd)
+					{
+						const auto idxNormal = std::stoi(word.substr(idxEnd + 1, word.size() - idxEnd - 1));
+						// assert(idxPosition == idxNormal);
+					}
+					else
+					{
+						// TODO: load texture
+						const auto idxNormal = std::stoi(word.substr(idxStart + 1, idxEnd - idxStart - 1));
+						const auto idxTexture = std::stoi(word.substr(idxEnd + 1, word.size() - idxEnd - 1));
+						// assert(idxPosition == idxNormal);
+					}
 
-                    buffer.push_back(idxPosition - 1);
+					buffer.push_back(idxPosition - 1);
                 }
             }
             else
