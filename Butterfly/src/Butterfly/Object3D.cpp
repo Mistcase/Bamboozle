@@ -119,18 +119,18 @@ namespace butterfly
 
 	void Object3D::loadFace(std::ifstream& stream, std::vector<IndexType>& indices)
 	{
-		IndexType buffer[4];
-		size_t count = 0;
+		std::vector<IndexType> buffer;
+		buffer.reserve(3);
 
 		std::string word;
-		auto processVertex = [&stream, &buffer, &count, &word]()
+		while (true)
 		{
 			const auto pos = stream.tellg();
 			stream >> word;
 			if (!std::all_of(word.cbegin(), word.cend(), [](auto c){ return std::isdigit(c) || c == '/'; }))
 			{
 				stream.seekg(pos);
-				return;
+				break;
 			}
 
 			if (auto idxStart = word.find_first_of("/"); idxStart != std::string::npos)
@@ -147,36 +147,24 @@ namespace butterfly
 					const auto idxNormal = std::stoi(word.substr(idxEnd + 1, word.size() - idxEnd - 1));
 					assert(idxPosition == idxNormal);
 
-					buffer[count++] = idxPosition - 1;
+					buffer.push_back(idxPosition - 1);
 				}
 			}
 			else
 			{
-				buffer[count++] = std::stoi(word);
+				buffer.push_back(std::stoi(word) - 1);
 			}
-		};
+		}
 
-		for (size_t i = 0; i < 4; i++)
-			processVertex();
+		const auto size = buffer.size();
+		assert(size >= 3);
 
-		switch (count)
+		if (size < 3)
+			throw std::runtime_error("Failed to load mesh");
+
+		for (size_t i = 0, size = buffer.size(); i < size - 2; i++)
 		{
-		case 3:
-			std::copy(std::cbegin(buffer), std::cbegin(buffer) + count, std::back_inserter(indices));
-			break;
-
-		case 4:
-			indices.push_back(buffer[0]);
-			indices.push_back(buffer[1]);
-			indices.push_back(buffer[2]);
-			indices.push_back(buffer[0]);
-			indices.push_back(buffer[2]);
-			indices.push_back(buffer[3]);
-			break;
-
-		default:
-			assert(!"Format is not supported");
-
+			std::copy(std::cbegin(buffer) + i, std::cbegin(buffer) + i + 3, std::back_inserter(indices));
 		}
 	}
 
