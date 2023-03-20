@@ -7,150 +7,80 @@
 #include <fstream>
 #include <vector>
 
-namespace
-{
-    void loadFace(std::ifstream& stream, butterfly::Mesh::IndexContainer& indices)
-    {
-        butterfly::Mesh::IndexContainer buffer;
-        buffer.reserve(3);
-
-        std::string word;
-        auto pos = stream.tellg();
-        while (stream >> word)
-        {
-            if (!std::all_of(word.cbegin(), word.cend(), [](auto c){ return std::isdigit(c) || c == '/'; }))
-            {
-                stream.seekg(pos);
-                break;
-            }
-            pos = stream.tellg();
-
-            if (auto idxStart = word.find_first_of("/"); idxStart != std::string::npos)
-            {
-                const auto idxEnd = word.find_last_of("/");
-                if (idxStart == idxEnd)
-                {
-                    assert(!"Format is not supported");
-                }
-                else // Support for vertex//normal format
-                {
-					const auto idxPosition = std::stoi(word.substr(0, idxStart + 1));
-                    if (idxStart + 1 == idxEnd)
-					{
-						const auto idxNormal = std::stoi(word.substr(idxEnd + 1, word.size() - idxEnd - 1));
-						// assert(idxPosition == idxNormal);
-					}
-					else
-					{
-						// TODO: load texture
-						const auto idxNormal = std::stoi(word.substr(idxStart + 1, idxEnd - idxStart - 1));
-						const auto idxTexture = std::stoi(word.substr(idxEnd + 1, word.size() - idxEnd - 1));
-						// assert(idxPosition == idxNormal);
-					}
-
-					buffer.push_back(idxPosition - 1);
-                }
-            }
-            else
-            {
-                buffer.push_back(std::stoi(word) - 1);
-            }
-        }
-
-        const auto size = buffer.size();
-        assert(size >= 3);
-
-        if (size < 3)
-            throw std::runtime_error("Failed to load face");
-
-        for (size_t i = 0, size = buffer.size(); i < size - 2; i++)
-        {
-            std::copy(std::cbegin(buffer) + i, std::cbegin(buffer) + i + 3, std::back_inserter(indices));
-        }
-    }
-}
+#define TINYOBJLOADER_IMPLEMENTATION
+#include <tiny_obj_loader.h>
 
 namespace butterfly
 {
     Ref<Mesh> Mesh::Create(const std::filesystem::path& path)
     {
-        std::vector<Vertex> vertices;
-		std::vector<IndexType> indices;
+		tinyobj::attrib_t attrib;
+		std::vector<tinyobj::shape_t> shapes;
+		std::vector<tinyobj::material_t> materials;
 
-		std::ifstream stream(path.string());
-		if (!stream.is_open())
+		std::string warn;
+		std::string err;
+		const auto result = tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, path.c_str());
+		if (!result)
 		{
 			assert(false);
 		}
+		assert(shapes.size() == 1);
 
-		size_t idxPosition = 0;
-		size_t idxUVCoords = 0;
-		size_t idxNormalCoords = 0;
+		std::vector<IndexType> indices;
+		std::vector<Vertex> vertices;
 
-		// Check if there is enough space in buffer
-		auto receive_vertex = [&vertices](size_t idx) -> decltype(vertices[idx])
+		// Loop over faces(polygon)
+		size_t index_offset = 0;
+		auto& shape = shapes.front();
+
+		for (size_t f = 0; f < shape.mesh.num_face_vertices.size(); f++)
 		{
-			if (idx >= vertices.size())
-				vertices.emplace_back();
+			size_t fv = size_t(shape.mesh.num_face_vertices[f]);
 
-			return vertices[idx];
-		};
-
-		std::string word;
-		while (stream >> word)
-		{
-			if (word == "v")
+			// Loop over vertices in the face.
+			for (size_t v = 0; v < fv; v++)
 			{
-				// Vertex position
-				auto& vertex = receive_vertex(idxPosition);
-				auto& position = vertex.position;
-				stream >> position.x;
-				stream >> position.y;
-				stream >> position.z;
+				// access to vertex
+				tinyobj::index_t idx = shape.mesh.indices[index_offset + v];
 
-				// Check if 4ht coordinate exists
-				position.w = 1.0f; // 1.0f by default
+				auto requiredSize = std::max(idx.vertex_index, std::max(idx.normal_index, idx.texcoord_index)) + 1;
 
-				++idxPosition;
-			}
-			else if (word == "vt")
-			{
-				// Vertex texture coords
-				// 3rd coordinate is not supported
-				auto& vertex = receive_vertex(idxUVCoords);
-				auto& uvCoords = vertex.uvCoords;
+				if (vertices.size() < requiredSize)
+					vertices.resize(requiredSize);
+				indices.push_back(idx.vertex_index);
 
-				stream >> uvCoords.x;
-				stream >> uvCoords.y;
-				++idxUVCoords;
-			}
-			else if (word == "vn")
-			{
-				// Vertex normal
-				auto& vertex = receive_vertex(idxNormalCoords);
-				auto& normal = vertex.normal;
-				stream >> normal.x;
-				stream >> normal.y;
-				stream >> normal.z;
+				auto& position = vertices[idx.vertex_index].position;
+				auto& normal = vertices[idx.normal_index].normal;
+				auto& texCoords = vertices[idx.texcoord_index].uvCoords;
 
-				// Normals can be non-normalized
-				normal = glm::normalize(normal);
+				position.x = attrib.vertices[3*size_t(idx.vertex_index)+0];
+				position.y = attrib.vertices[3*size_t(idx.vertex_index)+1];
+				position.z = attrib.vertices[3*size_t(idx.vertex_index)+2];
+                position.w = 1.0f;
 
-				++idxNormalCoords;
+				// Check if `normal_index` is zero or positive. negative = no normal data
+				if (idx.normal_index >= 0) {
+					normal.x = attrib.normals[3*size_t(idx.normal_index)+0];
+					normal.y = attrib.normals[3*size_t(idx.normal_index)+1];
+					normal.z = attrib.normals[3*size_t(idx.normal_index)+2];
+					normal = glm::normalize(normal);
+				}
+
+				// Check if `texcoord_index` is zero or positive. negative = no texcoord data
+				if (idx.texcoord_index >= 0) {
+					texCoords.x = attrib.texcoords[2*size_t(idx.texcoord_index)+0];
+					texCoords.y = attrib.texcoords[2*size_t(idx.texcoord_index)+1];
+				}
+				// Optional: vertex colors
+				// tinyobj::real_t red   = attrib.colors[3*size_t(idx.vertex_index)+0];
+				// tinyobj::real_t green = attrib.colors[3*size_t(idx.vertex_index)+1];
+				// tinyobj::real_t blue  = attrib.colors[3*size_t(idx.vertex_index)+2];
 			}
-			else if (word == "vp")
-			{
-				// Unknown
-				assert(false);
-			}
-			else if (word == "f")
-			{
-                loadFace(stream, indices);
-			}
-			else if (word == "g" || word == "o")
-			{
-				// group
-			}
+			index_offset += fv;
+
+			// per-face material
+			// shapes[s].mesh.material_ids[f];
 		}
 
         auto instance = new Mesh(std::move(vertices), indices);
