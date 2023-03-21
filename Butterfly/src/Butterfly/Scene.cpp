@@ -13,7 +13,7 @@ namespace butterfly
     {
         auto& window = butterfly::Application::GetInstance().getWindow();
 
-       	m_camera = std::make_unique<butterfly::PerspectiveCamera>(glm::radians(45.0f), (float)window.getWidth() / window.getHeight(), 0.5f, 40.0f);
+       	m_camera = std::make_unique<butterfly::PerspectiveCamera>(glm::radians(45.0f), (float)window.getWidth() / window.getHeight(), 0.5f, 100.0f);
         m_camera->setPosition({ 0.0f, 0.0f, 20.0f });
 
         m_cameraController = std::make_unique<butterfly::PerspectiveCameraController>(m_camera.get());
@@ -29,7 +29,7 @@ namespace butterfly
             light.update(dt);
 
         for (auto& object : m_objects)
-            object.update(dt);
+            object->update(dt);
     }
 
     void Scene::render() const
@@ -37,9 +37,9 @@ namespace butterfly
         Renderer::BeginScene(m_camera.get());
 
         submitLights();
-        for (auto& object : m_objects)
+        for (const auto& object : m_objects)
         {
-            object.render();
+            object->render();
         }
 
         Renderer::EndScene();

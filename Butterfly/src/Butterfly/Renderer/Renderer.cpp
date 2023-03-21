@@ -19,8 +19,6 @@ namespace butterfly
 {
     const PerspectiveCamera* Renderer::m_camera = nullptr;
 	Shader* skyboxShader = nullptr;
-	Ref<Texture2D> skyTexture = nullptr;
-	Ref<Object3D> sphere = nullptr;
 
     void Renderer::Init()
     {
@@ -30,9 +28,6 @@ namespace butterfly
 		auto shaders = Shaders::Create();
         shaders->createFromFile(Application::GetInstance().getResourcesDirectory().string() + "skybox_shader.glsl");
         skyboxShader = shaders->extract("skybox_shader"_hash).release();
-		skyTexture = Texture2D::Create(Application::GetInstance().getResourcesDirectory() / "textures/sky.jpeg");
-		sphere = std::make_shared<Object3D>(Application::GetInstance().getResourcesDirectory() / "objects/teapot.obj");
-        sphere->setPosition({0.0f, 0.0f, 0.0f});
     }
 
     void Renderer::Destroy()

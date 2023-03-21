@@ -26,5 +26,4 @@ namespace butterfly
         m_mesh->draw();
 	}
 
-
 }

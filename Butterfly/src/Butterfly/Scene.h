@@ -16,7 +16,7 @@ namespace butterfly
     {
     public:
         using Lights = std::vector<DirectionalLight>;
-        using Objects = std::vector<Object3D>;
+        using Objects = std::vector<Ref<Object3D>>;
 
     public:
         Scene();

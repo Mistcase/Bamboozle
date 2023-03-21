@@ -15,10 +15,9 @@ namespace butterfly
 	{
 	public:
 		Object3D(const std::filesystem::path& path);
-		virtual ~Object3D() = default;
 
-		void update(float dt);
-		void render() const;
+		virtual void update(float dt);
+		virtual void render() const;
 
 	protected:
         Ref<Mesh> m_mesh;

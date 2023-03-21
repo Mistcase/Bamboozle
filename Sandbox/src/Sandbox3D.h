@@ -20,4 +20,5 @@ private:
 
 	butterfly::Ref<butterfly::Texture2D> m_texture;
 	butterfly::Object3D* m_teapot;
+	butterfly::Object3D* m_skybox;
 };
