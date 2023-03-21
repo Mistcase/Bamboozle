@@ -10,30 +10,37 @@ namespace butterfly
 	PerspectiveCamera::PerspectiveCamera(float fov, float aspectRatio, float zNear, float zFar)
 		: m_projection(glm::perspective(fov, aspectRatio, zNear, zFar))
 	{
-		setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
+        updateViewProjection();
 	}
 
-	const glm::vec3& PerspectiveCamera::getPosition() const
+	void PerspectiveCamera::setViewDirection(glm::vec3 direction)
 	{
-		return m_position;
+		m_viewDirection = direction;
+		m_isDirtyTransform = true;
 	}
 
-	void PerspectiveCamera::setPosition(const glm::vec3& position)
+	glm::vec3 PerspectiveCamera::getViewDirection() const
 	{
-		m_position = position;
-		updateViewProjection();
+		return m_viewDirection;
 	}
 
-	glm::mat4 PerspectiveCamera::getViewProjection() const
+	const glm::mat4& PerspectiveCamera::getViewProjection() const
 	{
 		return m_viewProjection;
 	}
 
 	void PerspectiveCamera::updateViewProjection()
 	{
-		m_view = glm::lookAt(m_position, { 0.0f, 0.0f, 0.0f }, { 0.0f, 1.0f, 0.0f });
-		// m_viewProjection = m_projection * glm::inverse(m_view);
+		const auto right = glm::cross(m_viewDirection, { 0.0f, 1.0f, 0.0f });
+		const auto up = glm::cross(right, m_viewDirection);
+
+		m_view = glm::lookAt(m_position, m_position + m_viewDirection, up);
 		m_viewProjection = m_projection * m_view;
+	}
+
+	void PerspectiveCamera::transformChanged()
+	{
+		updateViewProjection();
 	}
 
 } // namespace butterfly

@@ -22,28 +22,18 @@ namespace butterfly
 
         if (Input::IsKeyPressed(BUTTERFLY_KEY_S))
             m_camera->setPosition(m_camera->getPosition() + glm::vec3(0.0f, 0.0f, 5 * -delta));
+
+		if (Input::IsKeyPressed(BUTTERFLY_KEY_A))
+            m_camera->setPosition(m_camera->getPosition() + glm::vec3(5 * delta, 0.0f, 0.0f));
+
+		if (Input::IsKeyPressed(BUTTERFLY_KEY_D))
+            m_camera->setPosition(m_camera->getPosition() + glm::vec3(5 * -delta, 0.0f, 0.0f));
+
+		m_camera->update();
 	}
 
 	void PerspectiveCameraController::onEvent(Event& event)
 	{
-		// EventDispatcher dispatcher(event);
-		// dispatcher.dispatch<MouseScrolledEvent>([this](MouseScrolledEvent& event){ return onMouseScrolled(event); });
-
-		// const auto delta = event.getYOffset();
-
-        // if (Input::IsKeyPressed(BUTTERFLY_KEY_LEFT_CONTROL))
-        // {
-        //     m_camera->setRotation(m_camera->getRotation() + 0.2f * delta);
-        // }
-        // else
-        // {
-        //     const auto zoom = m_camera->getZoom();
-        //     const auto newZoom = zoom + 0.1f * delta;
-
-        //     m_camera->setZoom(newZoom);
-        // }
-
-        // return true;
 	}
 
 } // namesapce butterfly

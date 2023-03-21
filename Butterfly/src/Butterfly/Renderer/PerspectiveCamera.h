@@ -1,29 +1,29 @@
 #pragma once
 
-#include <glm/glm.hpp>
+#include "Butterfly/Transformable.h"
 
 namespace butterfly
 {
-	class PerspectiveCamera
+	class PerspectiveCamera : public Transformable
 	{
 	public:
 		PerspectiveCamera(float fov, float aspectRatio, float zNear, float zFar);
 
-		const glm::vec3& getPosition() const;
-		void setPosition(const glm::vec3& position);
+		void setViewDirection(glm::vec3 direction);
 
-		glm::mat4 getViewProjection() const;
+		glm::vec3 getViewDirection() const;
+		const glm::mat4& getViewProjection() const;
 
 	private:
 		void updateViewProjection();
+		void transformChanged() override;
 
 	private:
 		glm::mat4 m_view;
 		glm::mat4 m_projection;
 		glm::mat4 m_viewProjection;
 
-	private:
-		glm::vec3 m_position;
+		glm::vec3 m_viewDirection = { 0.0f, 0.0f, -1.0f };
 	};
 
 } // namespace butterfly
