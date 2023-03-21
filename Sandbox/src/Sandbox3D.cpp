@@ -13,7 +13,7 @@ Sandbox3DLayer::Sandbox3DLayer()
 void Sandbox3DLayer::onAttach()
 {
     m_objects.emplace_back(helpers::MakePath("objects/teapot.obj"));
-    m_objects.back().setPosition({0.0f, 0.0f, 0.0f});
+	m_teapot = &m_objects.back();
 
     m_lights.emplace_back(glm::vec3{ 0.0f, 0.6f, 0.0f }, glm::vec3{ 0.0f, 0.0f, 5.0f }, glm::vec3{ 0.0f, 0.0f, 1.0f });
     m_lights.emplace_back(glm::vec3{ 0.5f, 0.0f, 0.0f }, glm::vec3{ 0.0f, 0.0f, 5.0f }, glm::vec3{ 0.0f, 0.0f, 1.0f }); // Is OpenGL righthanded
@@ -48,11 +48,28 @@ void Sandbox3DLayer::onEvent(butterfly::Event& event)
 
 bool Sandbox3DLayer::onKeyEvent(const butterfly::KeyEvent& event)
 {
-    if (event.getKeyCode() == BUTTERFLY_KEY_ESCAPE)
-    {
-        butterfly::Application::GetInstance().quit();
-        return true;
-    }
+	switch (event.getKeyCode())
+	{
+	case BUTTERFLY_KEY_ESCAPE:
+		butterfly::Application::GetInstance().quit();
+		return true;
+
+	case BUTTERFLY_KEY_LEFT:
+		m_teapot->setPosition(m_teapot->getPosition() - glm::vec3{ 1.0f, 0.0f, 0.0f });
+		return true;
+
+	case BUTTERFLY_KEY_RIGHT:
+		m_teapot->setPosition(m_teapot->getPosition() + glm::vec3{ 1.0f, 0.0f, 0.0f });
+		return true;
+
+	case BUTTERFLY_KEY_EQUAL:
+		m_teapot->setScale(m_teapot->getScale() + glm::vec3(0.5f, 0.5f, 0.5f));
+		return true;
+
+	case BUTTERFLY_KEY_MINUS:
+		m_teapot->setScale(m_teapot->getScale() - glm::vec3(0.5f, 0.5f, 0.5f));
+		return true;
+	}
 
     return false;
 }

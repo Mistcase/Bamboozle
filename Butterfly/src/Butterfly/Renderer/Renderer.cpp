@@ -50,22 +50,12 @@ namespace butterfly
         m_camera = camera;
 		const auto& viewProjection = m_camera->getViewProjection();
 
-		RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 0.1f });
-        RenderCommand::Clear();
-
-		// static_cast<OpenGLShader*>(skyboxShader)->bind();
-		// skyTexture->bind(0);
-		// static_cast<OpenGLShader*>(skyboxShader)->setUniform1i("u_Skybox", 0);
-		// static_cast<OpenGLShader*>(skyboxShader)->setUniformMat4("u_VP", viewProjection);
-		// sphere->render();
-
 		static_cast<OpenGLShader*>(Renderer2D::Shader())->bind();
         static_cast<butterfly::OpenGLShader*>(butterfly::Renderer::Shader())->setUniform3f("u_CameraPosition", m_camera->getPosition());
 		static_cast<OpenGLShader*>(Renderer2D::Shader())->setUniformMat4("u_VP", viewProjection);
 
-		// static_cast<OpenGLShader*>(Renderer2D::Shader())->setUniform1i("u_Skybox", 0);
-		// skyTexture->bind(0);
-		// sphere->render();
+		RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 0.1f });
+        RenderCommand::Clear();
     }
 
     void Renderer::EndScene()
@@ -78,11 +68,6 @@ namespace butterfly
     }
 
 	class Shader* Renderer::SkyboxShader()
-	{
-		return skyboxShader;
-	}
-
-	class Shader* CurrentShader()
 	{
 		return skyboxShader;
 	}
