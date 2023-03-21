@@ -18,6 +18,7 @@ namespace butterfly
 
 		void setPosition(glm::vec3 position);
 		void setRotation(float angle, glm::vec3 axis);
+		void setScale(glm::vec3 scale);
 
 		const glm::mat4& getWorldTransform() const;
 

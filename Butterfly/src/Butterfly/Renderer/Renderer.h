@@ -30,6 +30,8 @@ namespace butterfly
         static void EndScene();
 
         static class Shader* Shader();
+		static class Shader* SkyboxShader();
+		static class Shader* CurrentShader();
 
     private:
         static const PerspectiveCamera* m_camera;

@@ -25,67 +25,67 @@ namespace butterfly
 		{
 			assert(false);
 		}
-		assert(shapes.size() == 1);
 
-		std::vector<IndexType> indices;
+		size_t indexCount = 0;
+		for (const auto& shape : shapes)
+        {
+            for (auto numFaceVertices : shape.mesh.num_face_vertices)
+				indexCount += numFaceVertices;
+        }
+
 		std::vector<Vertex> vertices;
+		std::vector<IndexType> indices;
+		vertices.reserve(indexCount);
+		indices.reserve(indexCount);
 
-		// Loop over faces(polygon)
-		size_t index_offset = 0;
-		auto& shape = shapes.front();
-
-		for (size_t f = 0; f < shape.mesh.num_face_vertices.size(); f++)
+		size_t idxTotal = 0;
+		for (const auto& shape : shapes)
 		{
-			size_t fv = size_t(shape.mesh.num_face_vertices[f]);
+			size_t indexOffset = 0;
+			const auto& mesh = shape.mesh;
 
-			// Loop over vertices in the face.
-			for (size_t v = 0; v < fv; v++)
+			for (auto numFaceVertices : mesh.num_face_vertices)
 			{
-				// access to vertex
-				tinyobj::index_t idx = shape.mesh.indices[index_offset + v];
+				for (size_t i = 0; i < size_t(numFaceVertices); i++)
+				{
+					// TODO: Dont create duplicate vertices if it is possible
+					vertices.emplace_back();
+					auto& last = vertices.back();
+					auto& position = last.position;
+					auto& normal = last.normal;
+					auto& texCoords = last.uvCoords;
 
-				auto requiredSize = std::max(idx.vertex_index, std::max(idx.normal_index, idx.texcoord_index)) + 1;
+					tinyobj::index_t idx = mesh.indices[indexOffset + i];
+					indices.push_back(idxTotal + i);
 
-				if (vertices.size() < requiredSize)
-					vertices.resize(requiredSize);
-				indices.push_back(idx.vertex_index);
+					position.x = attrib.vertices[3 * size_t(idx.vertex_index) + 0];
+					position.y = attrib.vertices[3 * size_t(idx.vertex_index) + 1];
+					position.z = attrib.vertices[3 * size_t(idx.vertex_index) + 2];
+					position.w = 1.0f;
 
-				auto& position = vertices[idx.vertex_index].position;
-				auto& normal = vertices[idx.normal_index].normal;
-				auto& texCoords = vertices[idx.texcoord_index].uvCoords;
+					if (idx.normal_index >= 0)
+					{
+						normal.x = attrib.normals[3 * size_t(idx.normal_index) + 0];
+						normal.y = attrib.normals[3 * size_t(idx.normal_index) + 1];
+						normal.z = attrib.normals[3 * size_t(idx.normal_index) + 2];
+						normal = glm::normalize(normal);
+					}
 
-				position.x = attrib.vertices[3*size_t(idx.vertex_index)+0];
-				position.y = attrib.vertices[3*size_t(idx.vertex_index)+1];
-				position.z = attrib.vertices[3*size_t(idx.vertex_index)+2];
-                position.w = 1.0f;
-
-				// Check if `normal_index` is zero or positive. negative = no normal data
-				if (idx.normal_index >= 0) {
-					normal.x = attrib.normals[3*size_t(idx.normal_index)+0];
-					normal.y = attrib.normals[3*size_t(idx.normal_index)+1];
-					normal.z = attrib.normals[3*size_t(idx.normal_index)+2];
-					normal = glm::normalize(normal);
+					if (idx.texcoord_index >= 0)
+					{
+						texCoords.x = attrib.texcoords[2 * size_t(idx.texcoord_index) + 0];
+						texCoords.y = attrib.texcoords[2 * size_t(idx.texcoord_index) + 1];
+					}
 				}
 
-				// Check if `texcoord_index` is zero or positive. negative = no texcoord data
-				if (idx.texcoord_index >= 0) {
-					texCoords.x = attrib.texcoords[2*size_t(idx.texcoord_index)+0];
-					texCoords.y = attrib.texcoords[2*size_t(idx.texcoord_index)+1];
-				}
-				// Optional: vertex colors
-				// tinyobj::real_t red   = attrib.colors[3*size_t(idx.vertex_index)+0];
-				// tinyobj::real_t green = attrib.colors[3*size_t(idx.vertex_index)+1];
-				// tinyobj::real_t blue  = attrib.colors[3*size_t(idx.vertex_index)+2];
+				indexOffset += numFaceVertices;
+				idxTotal += numFaceVertices;
 			}
-			index_offset += fv;
-
-			// per-face material
-			// shapes[s].mesh.material_ids[f];
 		}
 
-        auto instance = new Mesh(std::move(vertices), indices);
-        return Ref<Mesh>(instance);
-    }
+		auto instance = new Mesh(std::move(vertices), indices);
+		return Ref<Mesh>(instance);
+	}
 
     Mesh::Mesh(VertexContainer&& vertices, const IndexContainer& indices)
         : m_vertices(std::move(vertices))

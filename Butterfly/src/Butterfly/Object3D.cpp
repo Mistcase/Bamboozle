@@ -28,6 +28,14 @@ namespace butterfly
 			* glm::rotate(glm::mat4(1.0f), angle, axis);
 	}
 
+	void Object3D::setScale(glm::vec3 scale)
+	{
+		const auto position = glm::vec3(0.0f, 0.0f, 0.0f); // TODO: Calculate position from world transform
+
+		m_transform = glm::translate(glm::mat4(1.0f), position)
+			* glm::scale(glm::mat4(1.0f), scale);
+	}
+
 	const glm::mat4& Object3D::getWorldTransform() const
 	{
 		return m_transform;
@@ -40,7 +48,8 @@ namespace butterfly
 	void Object3D::render() const
 	{
         // m_material->bind();
-        static_cast<OpenGLShader*>(Renderer::Shader())->setUniformMat4("u_Transform", m_transform); // Temp
+        //static_cast<OpenGLShader*>(Renderer::SkyboxShader())->setUniformMat4("u_Transform", m_transform); // Temp
+		static_cast<OpenGLShader*>(Renderer::Shader())->setUniformMat4("u_Transform", m_transform); // Temp
         m_mesh->draw();
 	}
 }

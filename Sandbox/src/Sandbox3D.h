@@ -17,4 +17,6 @@ public:
 
 private:
     bool onKeyEvent(const butterfly::KeyEvent& e);
+
+	butterfly::Ref<butterfly::Texture2D> m_texture;
 };
