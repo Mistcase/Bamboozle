@@ -19,7 +19,11 @@ file(GLOB SRC
 
 file(GLOB_RECURSE RESOURCES "${CMAKE_SOURCE_DIR}/res/*")
 
-add_executable(${EXECUTABLE_NAME} ${SRC} ${RESOURCES})
+if (APPLE)
+  add_executable(${EXECUTABLE_NAME} ${SRC} ${RESOURCES})
+else ()
+  add_executable(${EXECUTABLE_NAME} ${SRC})
+endif()
 
 message("Output directory: ${CMAKE_BINARY_DIR}")
 if(WIN32)
