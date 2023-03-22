@@ -20,7 +20,7 @@ namespace butterfly
 
 		std::string warn;
 		std::string err;
-		const auto result = tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, path.c_str());
+		const auto result = tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, path.generic_string().c_str());
 		if (!result)
 		{
 			assert(false);
