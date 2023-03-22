@@ -81,6 +81,11 @@ namespace butterfly
     void OpenGLVertexArray::bind() const
     {
         glBindVertexArray(m_rendererId);
+
+		// Why?
+		m_vertexBuffers.front()->bind();
+		if (m_indexBuffer != nullptr)
+			m_indexBuffer->bind();
     }
 
     void OpenGLVertexArray::unbind() const
