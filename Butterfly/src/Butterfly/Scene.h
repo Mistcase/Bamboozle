@@ -30,6 +30,7 @@ namespace butterfly
         const Objects getObjects() const;
 
     protected:
+        void drawWorldAxes() const;
         void submitLights() const;
 
         void test(float dt);

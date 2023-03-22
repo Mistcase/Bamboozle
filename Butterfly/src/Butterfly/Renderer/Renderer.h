@@ -19,6 +19,14 @@ namespace butterfly
     class Renderer
     {
     public:
+        struct Line
+        {
+            glm::vec3 from;
+            glm::vec3 to;
+            glm::vec4 color;
+        };
+
+    public:
         static inline RenderAPI::API GetAPI() { return RenderAPI::GetAPI(); }
 
         static void Init();
@@ -28,6 +36,8 @@ namespace butterfly
 
         static void BeginScene(const PerspectiveCamera* camera);
         static void EndScene();
+
+        static void DrawLine(const Line& line);
 
         static class Shader* Shader();
 		static class Shader* SkyboxShader();

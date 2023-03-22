@@ -5,6 +5,7 @@
 #include "Butterfly/Object3D.h"
 #include "Butterfly/DirectionalLight.h"
 #include "Butterfly/Renderer/Renderer.h"
+#include "Butterfly/Renderer/VertexArray.h"
 #include "Platform/OpenGL/OpenGLShader.h"
 
 namespace butterfly
@@ -36,6 +37,8 @@ namespace butterfly
     {
         Renderer::BeginScene(m_camera.get());
 
+        drawWorldAxes();
+
         submitLights();
         for (const auto& object : m_objects)
         {
@@ -47,7 +50,6 @@ namespace butterfly
 
     void Scene::renderImGui()
     {
-
     }
 
     void Scene::test(float dt)
@@ -62,6 +64,17 @@ namespace butterfly
         phase += dt;
         const glm::vec3 lightDirection{ cos(phase), 0.0f, sin(phase) };
         m_lights.back().setDirection(-lightDirection);
+    }
+
+    void Scene::drawWorldAxes() const
+    {
+        const glm::vec3 origin{ 0.0f, 0.0f, 0.0f };
+
+        RenderCommand::SetLineWidth(5);
+
+        Renderer::DrawLine({ origin, { 10.0f, 0.0f, 0.0f }, { 1.0f, 0.0f, 0.0f, 1.0f } });
+        Renderer::DrawLine({ origin, { 0.0f, 10.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 1.0f } });
+        Renderer::DrawLine({ origin, { 0.0f, 0.0f, 10.0f }, { 0.0f, 0.0f, 1.0f, 1.0f } });
     }
 
     void Scene::submitLights() const

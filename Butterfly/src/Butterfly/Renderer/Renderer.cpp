@@ -17,8 +17,26 @@
 
 namespace butterfly
 {
+    namespace
+    {
+        std::unique_ptr<Shader> skyboxShader = nullptr;
+
+        namespace Lines
+        {
+            struct Vertex
+            {
+                glm::vec4 position;
+                glm::vec4 color;
+            };
+
+            Ref<VertexArray> vertexArray;
+            Ref<VertexBuffer> vertexBuffer;
+
+            std::unique_ptr<Shader> shader = nullptr;
+        }
+    }
+
     const PerspectiveCamera* Renderer::m_camera = nullptr;
-	std::unique_ptr<Shader> skyboxShader = nullptr;
 
     void Renderer::Init()
     {
@@ -27,7 +45,16 @@ namespace butterfly
 
 		auto shaders = Shaders::Create();
         shaders->createFromFile(Application::GetInstance().getResourcesDirectory().string() + "skybox_shader.glsl");
+        shaders->createFromFile(Application::GetInstance().getResourcesDirectory().string() + "lines_shader.glsl");
         skyboxShader = shaders->extract("skybox_shader"_hash);
+
+        Lines::shader = shaders->extract("lines_shader"_hash);
+        Lines::vertexBuffer = VertexBuffer::Create(2 * sizeof(Lines::Vertex), nullptr);
+        Lines::vertexBuffer->setLayout({
+                { ShaderDataType::Float4, "a_Position" },
+                { ShaderDataType::Float4, "a_Color" }});
+        Lines::vertexArray = VertexArray::Create();
+        Lines::vertexArray->addVertexBuffer(Lines::vertexBuffer);
     }
 
     void Renderer::Destroy()
@@ -55,6 +82,27 @@ namespace butterfly
 
     void Renderer::EndScene()
     {
+    }
+
+    void Renderer::DrawLine(const Line& line)
+    {
+        assert(m_camera != nullptr);
+        assert(Lines::shader != nullptr);
+
+        Lines::shader->bind();
+        static_cast<OpenGLShader*>(Lines::shader.get())->setUniformMat4("u_Transform", glm::mat4(1.0f));
+        static_cast<OpenGLShader*>(Lines::shader.get())->setUniformMat4("u_VP", m_camera->getViewProjection());
+
+        Lines::Vertex vertices[2] = {
+            { glm::vec4(line.from, 1.0f), line.color },
+            { glm::vec4(line.to, 1.0f), line.color }
+        };
+        Lines::vertexBuffer->setData(vertices, 2 * sizeof(Lines::Vertex));
+
+        Lines::vertexArray->bind();
+        RenderCommand::DrawLines(Lines::vertexArray, 2);
+
+        Shader()->bind();
     }
 
     class Shader* Renderer::Shader()

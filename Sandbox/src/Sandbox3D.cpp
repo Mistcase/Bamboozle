@@ -44,6 +44,8 @@ void Sandbox3DLayer::onUpdate(float dt)
 	{
 		m_teapot->setRotation(glm::quat({0.0f, -0.1f, 0.0f}) * m_teapot->getRotation());
 	}
+
+    m_teapot->setRotation(glm::angleAxis(dt, glm::vec3{ 0.0f, 1.0f, 0.0f }) * m_teapot->getRotation());
 }
 
 void Sandbox3DLayer::onImGuiRender()
