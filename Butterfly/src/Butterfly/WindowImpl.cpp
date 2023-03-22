@@ -61,6 +61,7 @@ namespace butterfly
 #endif
 
 		m_window = glfwCreateWindow((int)props.width, (int)props.height, m_data.title.c_str(), nullptr, nullptr);
+		glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		m_context = new OpenGLContext(m_window);
 		m_context->init();
 
