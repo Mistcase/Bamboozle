@@ -45,7 +45,7 @@ namespace butterfly
 
     //----------------------------------------------
 
-    OpenGLIndexBuffer::OpenGLIndexBuffer(size_t count, uint32_t* indices)
+    OpenGLIndexBuffer::OpenGLIndexBuffer(size_t count, const uint32_t* indices)
         : m_count(count)
     {
         glGenBuffers(1, &m_rendererId);

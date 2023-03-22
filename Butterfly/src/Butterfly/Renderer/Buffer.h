@@ -67,7 +67,7 @@ namespace butterfly
 
     public:
         BufferLayout() = default;
-        BufferLayout(const std::initializer_list<BufferElement>& elements);
+        BufferLayout(std::initializer_list<BufferElement> elements);
 
         inline uint32_t getStride() const { return m_stride; }
         inline const Elements& getElements() const { return m_elements; }
@@ -104,7 +104,7 @@ namespace butterfly
     class IndexBuffer
     {
     public:
-        static Ref<IndexBuffer> Create(size_t count, uint32_t* indices = nullptr);
+        static Ref<IndexBuffer> Create(size_t count, const uint32_t* indices = nullptr);
 
     public:
         virtual ~IndexBuffer() = default;

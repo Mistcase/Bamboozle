@@ -29,6 +29,9 @@ namespace
 
 } // namespace
 
+#include <glm/glm.hpp>
+#include <vector>
+
 namespace helpers
 {
 	std::filesystem::path MakePath(std::string rawPath)

@@ -28,7 +28,7 @@ namespace butterfly
     class OpenGLIndexBuffer : public IndexBuffer
     {
     public:
-        OpenGLIndexBuffer(size_t count, uint32_t* indices);
+        OpenGLIndexBuffer(size_t count, const uint32_t* indices);
         ~OpenGLIndexBuffer() override;
 
         void setData(uint32_t* indices, size_t count) override;

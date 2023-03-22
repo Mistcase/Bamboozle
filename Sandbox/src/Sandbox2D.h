@@ -19,6 +19,9 @@ private:
     bool onKeyEvent(const butterfly::KeyEvent& e);
 
 private:
+	std::unique_ptr<butterfly::PerspectiveCamera> m_pcamera;
+	std::unique_ptr<butterfly::PerspectiveCameraController> m_pcameraController;
+
     std::unique_ptr<butterfly::Camera> m_camera;
     std::unique_ptr<butterfly::CameraController> m_cameraController;
     butterfly::Ref<butterfly::Texture2D> m_texture;

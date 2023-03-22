@@ -39,7 +39,7 @@ namespace butterfly
         return 0;
     }
 
-    BufferLayout::BufferLayout(const std::initializer_list<BufferElement>& elements)
+    BufferLayout::BufferLayout(std::initializer_list<BufferElement> elements)
         : m_elements(elements)
     {
         calculateOffsetsAndStride();
@@ -75,7 +75,7 @@ namespace butterfly
         return nullptr;
     }
 
-    Ref<IndexBuffer> IndexBuffer::Create(size_t count, uint32_t* indices)
+    Ref<IndexBuffer> IndexBuffer::Create(size_t count, const uint32_t* indices)
     {
         switch (Renderer::GetAPI())
         {

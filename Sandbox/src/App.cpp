@@ -1,4 +1,5 @@
 #include "Sandbox2D.h"
+#include "Sandbox3D.h"
 
 #include "Helpers.h"
 
@@ -10,7 +11,7 @@ public:
 	Sandbox()
         : butterfly::Application("Sandbox", helpers::MakePath(""))
 	{
-        pushLayer(new Sandbox2DLayer());
+        pushLayer(new Sandbox3DLayer());
 	}
 
 	~Sandbox()
