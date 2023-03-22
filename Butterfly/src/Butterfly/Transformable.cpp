@@ -23,9 +23,15 @@ namespace butterfly
 		invalidateTransform();
 	}
 
-	void Transformable::setRotation(float angle, glm::vec3 axis)
+	void Transformable::setRotation(glm::quat quaternion)
 	{
-		assert(!"Unsupported");
+		m_rotation = quaternion;
+        invalidateTransform();
+	}
+
+	void Transformable::setRotation(glm::vec3 angles)
+	{
+		setRotation(angles);
 	}
 
 	void Transformable::setScale(glm::vec3 scale)
@@ -44,9 +50,8 @@ namespace butterfly
 		return m_position;
 	}
 
-	glm::vec3 Transformable::getRotation() const
+	glm::quat Transformable::getRotation() const
 	{
-		assert(!"");
 		return m_rotation;
 	}
 
@@ -62,8 +67,7 @@ namespace butterfly
 
 	void Transformable::calculateTransform()
 	{
-		// TODO: Implement rotations
-		m_transform = glm::translate(glm::mat4(1.0f), m_position) * glm::scale(glm::mat4(1.0f), m_scale);
+		m_transform = glm::translate(glm::mat4(1.0f), m_position) * glm::scale(glm::mat4(1.0f), m_scale) * glm::mat4(m_rotation);
 		m_isDirtyTransform = false;
 
 		transformChanged();

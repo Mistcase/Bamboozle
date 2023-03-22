@@ -40,6 +40,7 @@ namespace butterfly
 
 	void PerspectiveCamera::transformChanged()
 	{
+		m_viewDirection = glm::rotate(m_rotation, { 0.0f, 0.0f, -1.0f });
 		updateViewProjection();
 	}
 

@@ -18,7 +18,7 @@
 namespace butterfly
 {
     const PerspectiveCamera* Renderer::m_camera = nullptr;
-	Shader* skyboxShader = nullptr;
+	std::unique_ptr<Shader> skyboxShader = nullptr;
 
     void Renderer::Init()
     {
@@ -27,7 +27,7 @@ namespace butterfly
 
 		auto shaders = Shaders::Create();
         shaders->createFromFile(Application::GetInstance().getResourcesDirectory().string() + "skybox_shader.glsl");
-        skyboxShader = shaders->extract("skybox_shader"_hash).release();
+        skyboxShader = shaders->extract("skybox_shader"_hash);
     }
 
     void Renderer::Destroy()
@@ -64,7 +64,7 @@ namespace butterfly
 
 	class Shader* Renderer::SkyboxShader()
 	{
-		return skyboxShader;
+		return skyboxShader.get();
 	}
 
 } // namespace butterfly
