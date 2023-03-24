@@ -94,6 +94,23 @@ namespace butterfly
         glUseProgram(0);
     }
 
+	void OpenGLShader::bindUniformBlock(const char* blockName, uint32_t bindPoint) const
+	{
+		const auto index = glGetUniformBlockIndex(m_rendererId, blockName);
+		glUniformBlockBinding(m_rendererId, index, bindPoint);
+	}
+
+	void OpenGLShader::setSampler(const char* sampler, uint32_t value) const
+	{
+		setUniform1i(sampler, value);
+	}
+
+	// void OpenGLShader::submitUniformBuffer(, const void* data, size_t size) const
+	// {
+	// 	// Send data to shader
+	// 	static_assert(false);
+	// }
+
     const char* OpenGLShader::getName() const
     {
         return m_name.c_str();

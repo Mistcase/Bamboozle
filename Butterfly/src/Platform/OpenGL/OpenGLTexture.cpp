@@ -10,6 +10,8 @@ namespace butterfly
 {
     OpenGLTexture2D::OpenGLTexture2D(const std::string& path)
     {
+        BUTTERFLY_CORE_INFO("Creating 2D texture: {}\n", path);
+
         glGenTextures(1, &m_rendererId);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, m_rendererId);
@@ -24,7 +26,7 @@ namespace butterfly
 
         int width, height, channels;
         auto data = stbi_load(path.c_str(), &width, &height, &channels, 0);
-        BUTTERFLY_CORE_ASSERT(data != nullptr, "Failed to load image");
+        assert(data != nullptr);
 
         m_width = static_cast<uint32_t>(width);
         m_height = static_cast<uint32_t>(height);
@@ -46,8 +48,7 @@ namespace butterfly
 
         const auto format = m_channels == 3 ? GL_RGB8 : GL_RGBA8;
         glTexImage2D(GL_TEXTURE_2D, 0, format, m_width, m_height, 0, format, GL_UNSIGNED_BYTE, nullptr);
-        // glTexStorage2D(GL_TEXTURE_2D, 1, format, m_width, m_height); // RGBA8
-//
+
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     }

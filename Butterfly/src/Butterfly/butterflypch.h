@@ -9,6 +9,7 @@
 #include <functional>
 
 #include <array>
+#include <cassert>
 #include <string>
 #include <sstream>
 #include <vector>

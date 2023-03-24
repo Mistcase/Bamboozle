@@ -14,22 +14,35 @@ Sandbox3DLayer::Sandbox3DLayer()
 void Sandbox3DLayer::onAttach()
 {
 	m_camera->setPosition({ 7.0f, 8.0f, 10.0f });
-	m_camera->setRotation({ 0.902451932, -0.256114781, 0.291125119, 0.137794882 });
-
-	m_objects.emplace_back(std::make_shared<butterfly::Object3D>(helpers::MakePath("objects/lamp.obj")));
-	m_objects.back()->setPosition({ 10.0f, 0.0f, 0.0f }); // Barrrel doesnt work properly!!!
+	m_camera->setRotation({ -0.902451932, -0.256114781, 0.291125119, 0.137794882 });
 
 	m_objects.push_back(std::make_shared<butterfly::SkyBox>(helpers::MakePath("objects/sphere.obj"), helpers::MakePath("textures/sky.jpeg"), m_camera.get()));
 	m_skybox = m_objects.back().get();
 	m_skybox->setScale({ 50.0f, 50.0f, 50.0f });
 
 	m_objects.emplace_back(std::make_shared<butterfly::Object3D>(helpers::MakePath("objects/scene.obj")));
+	auto scene = m_objects.back();
 
 	m_objects.emplace_back(std::make_shared<butterfly::Object3D>(helpers::MakePath("objects/teapot.obj")));
 	m_teapot = m_objects.back().get();
 
     m_lights.emplace_back(glm::vec3{ 0.0f, 0.6f, 0.0f }, glm::vec3{ 0.0f, 0.0f, 5.0f }, glm::vec3{ 0.0f, 0.0f, 1.0f });
     m_lights.emplace_back(glm::vec3{ 0.5f, 0.0f, 0.0f }, glm::vec3{ 0.0f, 0.0f, 5.0f }, glm::vec3{ 0.0f, 0.0f, 1.0f }); // Is OpenGL righthanded
+
+	std::vector<butterfly::Ref<butterfly::Texture>> textures{ butterfly::Texture2D::Create(helpers::MakePath("textures/wall.jpeg")) };
+
+	auto wallMaterial = butterfly::Material::Create(butterfly::Renderer::Shader(), { 0.12f, 0.3f, 1.0f, 20.0f }, std::move(textures));
+	scene->setMaterial(wallMaterial);
+
+	m_teapot->setMaterial(butterfly::Material::Create(butterfly::Renderer::Shader(), { 0.12f, 0.3f, 1.0f, 20.0f }, {}));
+
+   	m_objects.emplace_back(std::make_shared<butterfly::Object3D>(helpers::MakePath("objects/barrel.obj")));
+	m_barrel = m_objects.back().get();
+
+	std::vector<butterfly::Ref<butterfly::Texture>> textures2{ butterfly::Texture2D::Create(helpers::MakePath("textures/barrel/varil_low_lambert1_BaseColor.png")) };
+	m_barrel->setMaterial(butterfly::Material::Create(butterfly::Renderer::Shader(), { 0.12f, 0.3f, 1.0f, 20.0f }, std::move(textures2)));
+	m_barrel->setPosition({ 5.0f, 1.0f, 5.0f});
+	m_barrel->setScale({ 0.4f, 0.4f, 0.4f });
 }
 
 void Sandbox3DLayer::onDetach()
@@ -50,7 +63,7 @@ void Sandbox3DLayer::onUpdate(float dt)
 		m_teapot->setRotation(glm::quat({0.0f, -0.1f, 0.0f}) * m_teapot->getRotation());
 	}
 
-    // m_teapot->setRotation(glm::angleAxis(dt, glm::vec3{ 0.0f, 1.0f, 0.0f }) * m_teapot->getRotation());
+    m_barrel->setRotation(glm::angleAxis(dt, glm::vec3{ 0.0f, 1.0f, 0.0f }) * m_barrel->getRotation());
 }
 
 void Sandbox3DLayer::onImGuiRender()

@@ -50,10 +50,18 @@ uniform int u_DirectionalLightCount;
 uniform DirectionalLight u_DirectionalLights[64];
 
 // Material attributes
-uniform float u_ka;
-uniform float u_kd;
-uniform float u_ks;
-uniform float u_a;
+layout (std140) uniform Material
+{
+	float ka;
+	float kd;
+	float ks;
+	float sa;
+
+	int textureDefault;
+	int textureSpecularMap;
+};
+
+uniform sampler2D u_Textures[16];
 
 void main()
 {
@@ -63,12 +71,17 @@ void main()
     {
         DirectionalLight light = u_DirectionalLights[i];
 
-        vec3 ambientLight = light.intensity * u_ka;
-        vec3 diffuseLight = light.intensity * u_kd * max(dot(light.direction, v_Normal), 0.0f);
+        vec3 ambientLight = light.intensity * ka;
+        vec3 diffuseLight = light.intensity * kd * max(dot(light.direction, v_Normal), 0.0f);
 
         vec3 reflectedLight = reflect(light.direction, v_Normal);
-        vec3 specularLight = light.intensity * u_ks * pow(max(dot(reflectedLight, v_DirectionToCamera), 0.0f), u_a);
+        vec3 specularLight = light.intensity * ks * pow(max(dot(reflectedLight, v_DirectionToCamera), 0.0f), sa);
 
         color.rgb += ambientLight + diffuseLight + specularLight;
     }
+
+	if (textureDefault != -1)
+	{
+		color += texture(u_Textures[textureDefault], v_TexCoords);
+	}
 }

@@ -44,14 +44,4 @@ namespace butterfly
         VertexContainer m_vertices;
     };
 
-    struct Material
-    {
-        Ref<Texture> m_texture;
-
-        float m_kAmbient;
-        float m_kDiffuse;
-        float m_kSpecular;
-        float m_shininess;
-    };
-
 } // namepsace butterfly

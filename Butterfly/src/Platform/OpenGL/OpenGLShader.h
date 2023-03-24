@@ -14,8 +14,12 @@ namespace butterfly
         void bind() const override;
         void unbind() const override;
 
+		void bindUniformBlock(const char* blockName, uint32_t bindPoint) const override;
+		void setSampler(const char* sampler, uint32_t value) const override;
+
         const char* getName() const override;
 
+		// TODO: Remove it finally
         void setUniform1i(const std::string& name, int i) const;
 		void setUniform1f(const std::string& name, float value) const;
         void setUniformMat4(const std::string& name, const glm::mat4& data) const;

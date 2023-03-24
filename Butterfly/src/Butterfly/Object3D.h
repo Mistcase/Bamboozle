@@ -9,6 +9,7 @@
 namespace butterfly
 {
 	class PerspectiveCamera;
+	class Material;
 	class Mesh;
 
 	class Object3D : public Transformable
@@ -16,11 +17,15 @@ namespace butterfly
 	public:
 		Object3D(const std::filesystem::path& path);
 
+		void setMaterial(Ref<Material> material);
+
 		virtual void update(float dt);
 		virtual void render() const;
 
+		Ref<Material> getMaterial() const;
+
 	protected:
         Ref<Mesh> m_mesh;
-        Material m_material;
+        Ref<Material> m_material;
 	};
 }
