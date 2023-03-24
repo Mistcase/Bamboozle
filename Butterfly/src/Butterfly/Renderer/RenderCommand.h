@@ -17,12 +17,22 @@ namespace butterfly
             m_renderAPI->setViewport(0, 0, width, height);
         }
 
+		static inline void SetPointSize(float size)
+		{
+			m_renderAPI->setPointSize(size);
+		}
+
         static inline void SetLineWidth(float width)
         {
             m_renderAPI->setLineWidth(width);
         }
 
-        static inline void DrawLines(const Ref<VertexArray> vertexArray, size_t count) // Count of vertices
+		static inline void DrawPoints(const Ref<VertexArray> vertexArray, size_t count)
+		{
+			m_renderAPI->drawPoints(vertexArray, count);
+		}
+
+        static inline void DrawLines(const Ref<VertexArray> vertexArray, size_t count)
         {
             m_renderAPI->drawLines(vertexArray, count);
         }

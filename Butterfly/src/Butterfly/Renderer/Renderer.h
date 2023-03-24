@@ -40,6 +40,7 @@ namespace butterfly
         static void BeginScene(const PerspectiveCamera* camera);
         static void EndScene();
 
+		static void DrawPoint(const glm::vec3& position, const glm::vec4& color);
         static void DrawLine(const Line& line);
 
         static class Shader* Shader();
