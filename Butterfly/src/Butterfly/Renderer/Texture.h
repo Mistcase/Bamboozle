@@ -18,8 +18,18 @@ namespace butterfly
 
     class Texture2D : public Texture
     {
+	public:
+		enum class Format
+		{
+			RED,
+			RGB,
+			RGBA,
+
+			Count
+		};
+
     public:
-        static Ref<Texture2D> Create(const std::string& path);
+        static Ref<Texture2D> Create(const std::string& path, Format format = Format::RGB);
         static Ref<Texture2D> Create(uint32_t width, uint32_t height);
 
         virtual void setData(const void* data, size_t size) = 0;

@@ -20,15 +20,15 @@ namespace butterfly
     {
         std::unique_ptr<Shader> skyboxShader = nullptr;
 
-		struct PrimitiveVertex
-		{
-			glm::vec4 position;
-			glm::vec4 color;
-		};
+        struct PrimitiveVertex
+        {
+            glm::vec4 position;
+            glm::vec4 color;
+        };
 
-		std::unique_ptr<Shader> idleShader = nullptr;
-		Ref<VertexArray> idleVertexArray;
-		Ref<VertexBuffer> idleVertexBuffer;
+        std::unique_ptr<Shader> idleShader = nullptr;
+        Ref<VertexArray> idleVertexArray;
+        Ref<VertexBuffer> idleVertexBuffer;
 
     } // namespace
 
@@ -44,8 +44,8 @@ namespace butterfly
         shaders->createFromFile(Application::GetInstance().getResourcesDirectory().string() + "lines_shader.glsl");
         skyboxShader = shaders->extract("skybox_shader"_hash);
 
-		BufferLayout primitiveVertexLayout{ { ShaderDataType::Float4, "a_Position" },
-											{ ShaderDataType::Float4, "a_Color" } };
+        BufferLayout primitiveVertexLayout{ { ShaderDataType::Float4, "a_Position" },
+                                            { ShaderDataType::Float4, "a_Color" } };
 
         idleShader = shaders->extract("lines_shader"_hash);
         idleVertexBuffer = VertexBuffer::Create(2 * sizeof(PrimitiveVertex), nullptr);
@@ -81,24 +81,24 @@ namespace butterfly
     {
     }
 
-	void Renderer::DrawPoint(const glm::vec3& position, const glm::vec4& color)
-	{
-		// Temporary use idleShader
-		assert(m_camera != nullptr);
+    void Renderer::DrawPoint(const glm::vec3& position, const glm::vec4& color)
+    {
+        // Temporary use idleShader
+        assert(m_camera != nullptr);
         assert(idleShader != nullptr);
 
-		idleShader->bind();
-		static_cast<OpenGLShader*>(idleShader.get())->setUniformMat4("u_Transform", glm::mat4(1.0f));
+        idleShader->bind();
+        static_cast<OpenGLShader*>(idleShader.get())->setUniformMat4("u_Transform", glm::mat4(1.0f));
         static_cast<OpenGLShader*>(idleShader.get())->setUniformMat4("u_VP", m_camera->getViewProjection());
 
-		PrimitiveVertex vertex{ glm::vec4(position, 1.0f), color };
+        PrimitiveVertex vertex{ glm::vec4(position, 1.0f), color };
         idleVertexBuffer->setData(&vertex, sizeof(vertex));
 
         idleVertexArray->bind();
         RenderCommand::DrawPoints(idleVertexArray, 1);
 
         Shader()->bind();
-	}
+    }
 
     void Renderer::DrawLine(const Line& line)
     {

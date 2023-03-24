@@ -11,7 +11,7 @@
 namespace
 {
     constexpr size_t MaxPointLightsSimultaneously = 8;
-	constexpr size_t MaxDirectionalLightsSimultaneously = 4;
+    constexpr size_t MaxDirectionalLightsSimultaneously = 4;
 
     struct PointLightsBuffer
     {
@@ -31,18 +31,18 @@ namespace
         PointLight lights[MaxPointLightsSimultaneously];
     };
 
-	struct DirectionalLightsBuffer
-	{
-		struct DirectionalLight
-		{
-			glm::vec3 intensity;
-			glm::vec3 direction;
-		};
+    struct DirectionalLightsBuffer
+    {
+        struct DirectionalLight
+        {
+            glm::vec3 intensity;
+            glm::vec3 direction;
+        };
 
-		uint32_t used;
-		unsigned char __unused1[12];
-		DirectionalLight lights[MaxDirectionalLightsSimultaneously];
-	};
+        uint32_t used;
+        unsigned char __unused1[12];
+        DirectionalLight lights[MaxDirectionalLightsSimultaneously];
+    };
 
 } // namespace
 
@@ -50,7 +50,7 @@ namespace butterfly
 {
     Scene::Scene()
         : m_pointLightsBuffer(UniformBuffer::Create(sizeof(PointLightsBuffer)))
-		, m_directionalLightsBuffer(UniformBuffer::Create(sizeof(DirectionalLightsBuffer)))
+        , m_directionalLightsBuffer(UniformBuffer::Create(sizeof(DirectionalLightsBuffer)))
     {
         auto& window = butterfly::Application::GetInstance().getWindow();
         m_camera = std::make_unique<butterfly::PerspectiveCamera>(glm::radians(45.0f), (float)window.getWidth() / window.getHeight(), 0.5f, 100.0f);
@@ -60,8 +60,8 @@ namespace butterfly
         Renderer::Shader()->bindUniformBlock("PointLights", 2);
         m_pointLightsBuffer->bind(2);
 
-		Renderer::Shader()->bindUniformBlock("DirectionalLights", 3);
-		m_directionalLightsBuffer->bind(3);
+        Renderer::Shader()->bindUniformBlock("DirectionalLights", 3);
+        m_directionalLightsBuffer->bind(3);
     }
 
     void Scene::update(float dt)
@@ -71,8 +71,8 @@ namespace butterfly
         for (auto& light : m_pointLights)
             light.update(dt);
 
-		for (auto& light : m_directionalLights)
-			light.update(dt);
+        for (auto& light : m_directionalLights)
+            light.update(dt);
 
         for (auto& object : m_objects)
             object->update(dt);
@@ -107,8 +107,8 @@ namespace butterfly
         Renderer::DrawLine({ origin, { 0.0f, 10.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 1.0f } });
         Renderer::DrawLine({ origin, { 0.0f, 0.0f, 10.0f }, { 0.0f, 0.0f, 1.0f, 1.0f } });
 
-		RenderCommand::SetPointSize(20);
-		Renderer::DrawPoint( { 0.0, 5.0f, 0.0f }, {1.0f, 0.0f, 0.0f, 0.7f } );
+        RenderCommand::SetPointSize(20);
+        Renderer::DrawPoint({ 0.0, 5.0f, 0.0f }, { 1.0f, 0.0f, 0.0f, 0.7f });
     }
 
     void Scene::submitLights() const
@@ -135,30 +135,30 @@ namespace butterfly
         m_pointLightsBuffer->bind(2);
         m_pointLightsBuffer->submit(&pbuffer, pbufferSize);
 
-		static DirectionalLightsBuffer dbuffer;
-		dbuffer.used = m_directionalLights.size();
-		for (size_t i = 0; i < dbuffer.used; i++)
-		{
-			const auto& light = m_directionalLights[i];
-			auto& dbufferLight = dbuffer.lights[i];
+        static DirectionalLightsBuffer dbuffer;
+        dbuffer.used = m_directionalLights.size();
+        for (size_t i = 0; i < dbuffer.used; i++)
+        {
+            const auto& light = m_directionalLights[i];
+            auto& dbufferLight = dbuffer.lights[i];
 
-			dbufferLight.intensity = light.getIntensity();
-			dbufferLight.direction = light.getDirection();
-		}
-		const auto dbufferSize = offsetof(DirectionalLightsBuffer, lights) + dbuffer.used * sizeof(DirectionalLightsBuffer::DirectionalLight);
+            dbufferLight.intensity = light.getIntensity();
+            dbufferLight.direction = light.getDirection();
+        }
+        const auto dbufferSize = offsetof(DirectionalLightsBuffer, lights) + dbuffer.used * sizeof(DirectionalLightsBuffer::DirectionalLight);
         m_directionalLightsBuffer->bind(3);
         m_directionalLightsBuffer->submit(&dbuffer, dbufferSize);
     }
 
-	const Scene::PointLights& Scene::getPointLights() const
-	{
-		return m_pointLights;
-	}
+    const Scene::PointLights& Scene::getPointLights() const
+    {
+        return m_pointLights;
+    }
 
-	const Scene::DirectionalLights& Scene::getDirectionalLights() const
-	{
-		return m_directionalLights;
-	}
+    const Scene::DirectionalLights& Scene::getDirectionalLights() const
+    {
+        return m_directionalLights;
+    }
 
     const Scene::Objects Scene::getObjects() const
     {

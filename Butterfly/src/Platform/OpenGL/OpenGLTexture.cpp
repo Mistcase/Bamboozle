@@ -5,9 +5,19 @@
 #include <glad/glad.h>
 #include <stb_image.h>
 
+namespace
+{
+    int FormatMappings[] = {
+        GL_RED,
+        GL_RGB,
+        GL_RGBA
+    };
+
+} // namespace
+
 namespace butterfly
 {
-    OpenGLTexture2D::OpenGLTexture2D(const std::string& path)
+    OpenGLTexture2D::OpenGLTexture2D(const std::string& path, Format format)
     {
         BUTTERFLY_CORE_INFO("Creating 2D texture: {}", path);
 
@@ -31,8 +41,8 @@ namespace butterfly
         m_height = static_cast<uint32_t>(height);
         m_channels = static_cast<uint32_t>(channels);
 
-        const auto format = m_channels == 3 ? GL_RGB : GL_RGBA;
-        glTexImage2D(GL_TEXTURE_2D, 0, format, m_width, m_height, 0, format, GL_UNSIGNED_BYTE, data);
+        const auto textureFormat = FormatMappings[static_cast<size_t>(format)];
+        glTexImage2D(GL_TEXTURE_2D, 0, textureFormat, m_width, m_height, 0, textureFormat, GL_UNSIGNED_BYTE, data);
 
         stbi_image_free(data);
     }

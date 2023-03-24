@@ -7,12 +7,14 @@
 
 namespace butterfly
 {
-    Ref<Texture2D> Texture2D::Create(const std::string& path)
+    Ref<Texture2D> Texture2D::Create(const std::string& path, Format format)
     {
+        assert(format != Format::Count);
+
         switch (Renderer::GetAPI())
         {
         case RenderAPI::API::OpenGL:
-            return std::make_shared<OpenGLTexture2D>(path);
+            return std::make_shared<OpenGLTexture2D>(path, format);
 
         default:
             BUTTERFLY_CORE_ASSERT(false, "Unknown RednerAPI provided");
