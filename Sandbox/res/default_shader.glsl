@@ -59,6 +59,18 @@ layout (std140) uniform PointLights
     PointLight lights[8]; // Max 8 lights sumultaniously
 };
 
+struct DirectionalLight
+{
+	vec3 intensity;
+	vec3 direction;
+};
+
+layout (std140) uniform DirectionalLights
+{
+	uint usedDirectionalLights;
+	DirectionalLight directionalLights[4]; // Max 4 lights sumultaniously
+};
+
 // Material attributes
 layout (std140) uniform Material
 {
@@ -103,4 +115,22 @@ void main()
 
         color += vec4(ambientLight + diffuseLight + specularLight, 1.0f);
     }
+
+	for (uint i = 0; i < usedDirectionalLights; i++)
+    {
+        DirectionalLight light = directionalLights[i];
+
+        // Ambient light
+        vec3 ambientLight = light.intensity * ka * textureColor;
+
+        // Diffuse light
+        vec3 diffuseLight = light.intensity * kd * max(dot(light.direction, v_Normal), 0.0f);
+
+        // Specular light
+        vec3 reflectedLight = reflect(light.direction, v_Normal);
+        vec3 specularLight = light.intensity * ks * pow(max(dot(reflectedLight, v_DirectionToCamera), 0.0f), sa);
+
+        color += vec4(ambientLight + diffuseLight + specularLight, 1.0f);
+    }
+
 }

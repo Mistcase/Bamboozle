@@ -21,9 +21,9 @@ void Sandbox3DLayer::onAttach()
     m_objects.emplace_back(std::make_shared<butterfly::Object3D>(helpers::MakePath("objects/scene.obj")));
     auto scene = m_objects.back();
 
-    m_lights.emplace_back(glm::vec3{ 0.0f, 1.0f, 0.0f }, 1.0f, glm::vec3{ 0.0f, 0.5f, 0.0f });
-    m_lights.emplace_back(glm::vec3{ 1.0f, 0.0f, 0.0f }, 2.0f, glm::vec3{ -1.5f, 1.5f, 0.0f });
-    // m_lights.emplace_back(glm::vec3{ 0.0f, 1.0f, 0.0f }, 2.0f, glm::vec3{ 1.5f, 1.5f, 0.0f });
+    m_pointLights.emplace_back(glm::vec3{ 0.0f, 1.0f, 0.0f }, 1.0f, glm::vec3{ 0.0f, 0.5f, 0.0f });
+    m_pointLights.emplace_back(glm::vec3{ 1.0f, 0.0f, 0.0f }, 2.0f, glm::vec3{ -1.5f, 1.5f, 0.0f });
+	m_directionalLights.emplace_back(glm::vec3{ 1.0f, 1.0f, 1.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f });
 
     std::vector<butterfly::Ref<butterfly::Texture>> textures{ butterfly::Texture2D::Create(helpers::MakePath("textures/wall.jpeg").generic_string()) };
     auto wallMaterial = butterfly::Material::Create(butterfly::Renderer::Shader(), { 0.12f, 0.3f, 1.0f, 20.0f }, std::move(textures));
@@ -82,13 +82,13 @@ bool Sandbox3DLayer::onKeyEvent(const butterfly::KeyEvent& event)
         return true;
 
     case BUTTERFLY_KEY_UP:
-        m_lights.back().setAttenuation({ 0.0f, m_lights.back().getAttenuation().quadraticRatio + 0.1f });
-        BUTTERFLY_CORE_INFO("Attenuation: {}\n", m_lights.back().getAttenuation().quadraticRatio);
+        m_pointLights.back().setAttenuation({ 0.0f, m_pointLights.back().getAttenuation().quadraticRatio + 0.1f });
+        BUTTERFLY_CORE_INFO("Attenuation: {}\n", m_pointLights.back().getAttenuation().quadraticRatio);
         return true;
 
     case BUTTERFLY_KEY_DOWN:
-        m_lights.back().setAttenuation({ 0.0f, m_lights.back().getAttenuation().quadraticRatio - 0.1f });
-        BUTTERFLY_CORE_INFO("Attenuation: {}\n", m_lights.back().getAttenuation().quadraticRatio);
+        m_pointLights.back().setAttenuation({ 0.0f, m_pointLights.back().getAttenuation().quadraticRatio - 0.1f });
+        BUTTERFLY_CORE_INFO("Attenuation: {}\n", m_pointLights.back().getAttenuation().quadraticRatio);
         return true;
 
     case BUTTERFLY_KEY_EQUAL:
