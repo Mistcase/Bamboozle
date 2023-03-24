@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Butterfly/Core.h"
-
 #include <glm/glm.hpp>
 
 namespace butterfly
@@ -9,8 +8,8 @@ namespace butterfly
     class Camera;
     class Texture2D;
 
-	class Shader;
-	class PerspectiveCamera;
+    class Shader;
+    class PerspectiveCamera;
 
     namespace Renderer2D
     {
@@ -21,8 +20,7 @@ namespace butterfly
         void EndScene();
         void Flush();
 
-		[[deprecated]]
-		void BeginScene(PerspectiveCamera* camera);
+        [[deprecated]] void BeginScene(PerspectiveCamera* camera);
 
         void DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color);
         void DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color);
@@ -36,7 +34,7 @@ namespace butterfly
         void DrawQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const glm::vec4& color, const Ref<Texture2D>& texture);
         void DrawQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const glm::vec4& color, const Ref<Texture2D>& texture);
 
-		Shader* Shader();
-    }
+        Shader* Shader();
+    } // namespace Renderer2D
 
 } // namespace butterfly

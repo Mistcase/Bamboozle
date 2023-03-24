@@ -1,10 +1,9 @@
-#include "Butterfly/butterflypch.h"
 #include "OpenGLTexture.h"
 
 #include "Butterfly/Log.h"
-
-#include <stb_image.h>
+#include "Butterfly/butterflypch.h"
 #include <glad/glad.h>
+#include <stb_image.h>
 
 namespace butterfly
 {

@@ -1,11 +1,11 @@
-#include "Butterfly/butterflypch.h"
 #include "Scene.h"
 
 #include "Butterfly/Application.h"
 #include "Butterfly/Object3D.h"
 #include "Butterfly/Renderer/Renderer.h"
-#include "Butterfly/Renderer/VertexArray.h"
 #include "Butterfly/Renderer/UniformBuffer.h"
+#include "Butterfly/Renderer/VertexArray.h"
+#include "Butterfly/butterflypch.h"
 #include "Platform/OpenGL/OpenGLShader.h"
 
 namespace
@@ -38,7 +38,7 @@ namespace butterfly
         : m_pointLightsBuffer(UniformBuffer::Create(sizeof(PointLightsBuffer)))
     {
         auto& window = butterfly::Application::GetInstance().getWindow();
-       	m_camera = std::make_unique<butterfly::PerspectiveCamera>(glm::radians(45.0f), (float)window.getWidth() / window.getHeight(), 0.5f, 100.0f);
+        m_camera = std::make_unique<butterfly::PerspectiveCamera>(glm::radians(45.0f), (float)window.getWidth() / window.getHeight(), 0.5f, 100.0f);
         m_cameraController = std::make_unique<butterfly::PerspectiveCameraController>(m_camera.get());
 
         // TODO: do smth with such numeric literals

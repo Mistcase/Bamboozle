@@ -1,16 +1,15 @@
-#include "Butterfly/butterflypch.h"
 #include "Renderer2D.h"
 
 #include "Butterfly/Application.h"
-#include "Butterfly/Renderer/OrthographicCamera.h"
 #include "Butterfly/Hash.h"
+#include "Butterfly/Renderer/OrthographicCamera.h"
 #include "Butterfly/Renderer/RenderCommand.h"
 #include "Butterfly/Renderer/Shader.h"
 #include "Butterfly/Renderer/Shaders.h"
 #include "Butterfly/Renderer/Texture.h"
 #include "Butterfly/Renderer/VertexArray.h"
+#include "Butterfly/butterflypch.h"
 #include "Platform/OpenGL/OpenGLShader.h"
-
 #include <glm/ext/matrix_transform.hpp>
 
 // Test
@@ -21,13 +20,13 @@ namespace butterfly
     namespace
     {
         const glm::vec4 QuadPositions[] = {
-            { -0.5f,  0.5f, 0.0f, 1.0f },
-            {  0.5f,  0.5f, 0.0f, 1.0f },
-            {  0.5f, -0.5f, 0.0f, 1.0f },
+            { -0.5f, 0.5f, 0.0f, 1.0f },
+            { 0.5f, 0.5f, 0.0f, 1.0f },
+            { 0.5f, -0.5f, 0.0f, 1.0f },
             { -0.5f, -0.5f, 0.0f, 1.0f }
         };
 
-        const BufferLayout VertexDesc {
+        const BufferLayout VertexDesc{
             { ShaderDataType::Float4, "a_Position" },
             { ShaderDataType::Float4, "a_Color" },
             { ShaderDataType::Float2, "a_TexCoords" },
@@ -50,7 +49,7 @@ namespace butterfly
             uint8_t* quadVertexBufferPtr = quadVertexBufferBase;
             size_t quadCount = 0;
 
-			butterfly::PerspectiveCamera* perspectiveCamera = nullptr;
+            butterfly::PerspectiveCamera* perspectiveCamera = nullptr;
             butterfly::Camera* camera = nullptr;
             butterfly::Ref<butterfly::VertexArray> vertexArray;
             std::unique_ptr<butterfly::Shader> shader = nullptr;
@@ -59,7 +58,10 @@ namespace butterfly
         };
 
         unsigned char SceneDataStorage[sizeof(_SceneData)];
-        inline _SceneData* SceneData(){ return reinterpret_cast<_SceneData*>(SceneDataStorage); }
+        inline _SceneData* SceneData()
+        {
+            return reinterpret_cast<_SceneData*>(SceneDataStorage);
+        }
 
     } // namespace
 
@@ -72,9 +74,9 @@ namespace butterfly
             BUTTERFLY_CORE_ASSERT(SceneData()->textureSlots.size() > 2, "Cannot render user provided textures");
 
             // Temprorary object. Need it because of preprocessing and loading.
-			auto res = Application::GetInstance().getResourcesDirectory();
+            auto res = Application::GetInstance().getResourcesDirectory();
             auto shaders = Shaders::Create();
-			shaders->createFromFile(res.concat("default_shader.glsl"));
+            shaders->createFromFile(res.concat("default_shader.glsl"));
 
             SceneData()->shader = shaders->extract("default_shader"_hash);
             BUTTERFLY_CORE_ASSERT(SceneData()->shader != nullptr, "Default shader is not loaded");
@@ -130,14 +132,14 @@ namespace butterfly
             static_cast<OpenGLShader*>(SceneData()->shader.get())->setUniformMat4("u_VP", viewProjection);
         }
 
-		void BeginScene(PerspectiveCamera* camera)
-		{
-			SceneData()->perspectiveCamera = camera;
+        void BeginScene(PerspectiveCamera* camera)
+        {
+            SceneData()->perspectiveCamera = camera;
             SceneData()->shader->bind();
 
             const auto& viewProjection = SceneData()->perspectiveCamera->getViewProjection();
             static_cast<OpenGLShader*>(SceneData()->shader.get())->setUniformMat4("u_VP", viewProjection);
-		}
+        }
 
         void EndScene()
         {
@@ -232,8 +234,8 @@ namespace butterfly
             // Does not support texture atlases yet
             const glm::vec2 texCoords[] = { { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f } };
             const auto transform = glm::translate(glm::mat4(1.0f), position)
-                 * glm::rotate(glm::mat4(1.0f), rotation, { 0.0f, 0.0f, 1.0f })
-                 * glm::scale(glm::mat4(1.0f), { size.x, size.y, 0.0f });
+                * glm::rotate(glm::mat4(1.0f), rotation, { 0.0f, 0.0f, 1.0f })
+                * glm::scale(glm::mat4(1.0f), { size.x, size.y, 0.0f });
 
             for (size_t i = 0; i < 4; i++)
             {
@@ -254,10 +256,10 @@ namespace butterfly
             SceneData()->quadCount++;
         }
 
-		butterfly::Shader* Shader()
-		{
-			return SceneData()->shader.get();
-		}
+        butterfly::Shader* Shader()
+        {
+            return SceneData()->shader.get();
+        }
 
     } // namespace Renderer2D
 

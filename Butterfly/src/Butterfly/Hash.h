@@ -11,7 +11,7 @@ namespace butterfly
         constexpr uint32_t fnv1a_32(const char* s, size_t size)
         {
             constexpr uint32_t _FNV_offset_basis = 2166136261;
-            constexpr uint32_t _FNV_prime        = 16777619;
+            constexpr uint32_t _FNV_prime = 16777619;
 
             uint32_t _hash = _FNV_offset_basis;
             for (size_t i = 0; i < size; i++)

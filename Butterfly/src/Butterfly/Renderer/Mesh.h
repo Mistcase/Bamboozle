@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Butterfly/Core.h"
-
 #include <filesystem>
 #include <glm/glm.hpp>
 #include <vector>
@@ -9,8 +8,8 @@
 namespace butterfly
 {
     class VertexArray;
-	class VertexBuffer;
-	class IndexBuffer;
+    class VertexBuffer;
+    class IndexBuffer;
     class Texture;
 
     class Mesh
@@ -38,10 +37,10 @@ namespace butterfly
 
     private:
         Ref<VertexArray> m_vertexArray;
-		Ref<VertexBuffer> m_vertexBuffer;
-		Ref<IndexBuffer> m_indexBuffer;
+        Ref<VertexBuffer> m_vertexBuffer;
+        Ref<IndexBuffer> m_indexBuffer;
 
         VertexContainer m_vertices;
     };
 
-} // namepsace butterfly
+} // namespace butterfly

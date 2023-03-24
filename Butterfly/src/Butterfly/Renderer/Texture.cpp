@@ -1,8 +1,8 @@
-#include "Butterfly/butterflypch.h"
 #include "Texture.h"
 
-#include "Butterfly/Renderer/Renderer.h"
 #include "Butterfly/Log.h"
+#include "Butterfly/Renderer/Renderer.h"
+#include "Butterfly/butterflypch.h"
 #include "Platform/OpenGL/OpenGLTexture.h"
 
 namespace butterfly

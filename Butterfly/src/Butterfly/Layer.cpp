@@ -1,16 +1,16 @@
-#include "Butterfly/butterflypch.h"
 #include "Layer.h"
+
+#include "Butterfly/butterflypch.h"
 
 namespace butterfly
 {
-	Layer::Layer(const std::string& debugName)
-		: m_debugName(debugName)
-	{
-	}
+    Layer::Layer(const std::string& debugName)
+        : m_debugName(debugName)
+    {
+    }
 
-	Layer::~Layer()
-	{
-
-	}
+    Layer::~Layer()
+    {
+    }
 
 } // namespace butterfly

@@ -1,36 +1,35 @@
-#include "Butterfly/butterflypch.h"
 #include "OpenGLVertexArray.h"
 
 #include "Butterfly/Log.h"
-
+#include "Butterfly/butterflypch.h"
 #include <glad/glad.h>
 
 namespace butterfly
 {
     static GLenum ShaderDataTypeToOpenGLBaseType(ShaderDataType type)
     {
-		switch (type)
-		{
-		case butterfly::ShaderDataType::Float:
-		case butterfly::ShaderDataType::Float2:
-		case butterfly::ShaderDataType::Float3:
-		case butterfly::ShaderDataType::Float4:
+        switch (type)
+        {
+        case butterfly::ShaderDataType::Float:
+        case butterfly::ShaderDataType::Float2:
+        case butterfly::ShaderDataType::Float3:
+        case butterfly::ShaderDataType::Float4:
         case butterfly::ShaderDataType::Mat3:
-		case butterfly::ShaderDataType::Mat4:
-			return GL_FLOAT;
+        case butterfly::ShaderDataType::Mat4:
+            return GL_FLOAT;
 
-		case butterfly::ShaderDataType::Int:
-		case butterfly::ShaderDataType::Int2:
-		case butterfly::ShaderDataType::Int3:
-		case butterfly::ShaderDataType::Int4:
+        case butterfly::ShaderDataType::Int:
+        case butterfly::ShaderDataType::Int2:
+        case butterfly::ShaderDataType::Int3:
+        case butterfly::ShaderDataType::Int4:
             return GL_UNSIGNED_INT;
 
-		case butterfly::ShaderDataType::Bool:
-			return GL_BOOL;
+        case butterfly::ShaderDataType::Bool:
+            return GL_BOOL;
 
-		default:
-			break;
-		}
+        default:
+            break;
+        }
 
         BUTTERFLY_CORE_ASSERT(false, "Unknown shader data type");
         return 0;
@@ -38,7 +37,7 @@ namespace butterfly
 
     OpenGLVertexArray::OpenGLVertexArray()
     {
-		glGenVertexArrays(1, &m_rendererId);
+        glGenVertexArrays(1, &m_rendererId);
     }
 
     OpenGLVertexArray::~OpenGLVertexArray()
@@ -82,8 +81,8 @@ namespace butterfly
     {
         glBindVertexArray(m_rendererId);
 
-		if (m_indexBuffer != nullptr)
-			m_indexBuffer->bind();
+        if (m_indexBuffer != nullptr)
+            m_indexBuffer->bind();
     }
 
     void OpenGLVertexArray::unbind() const

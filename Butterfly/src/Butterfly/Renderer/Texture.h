@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Butterfly/Core.h"
-
 #include <string>
 
 namespace butterfly

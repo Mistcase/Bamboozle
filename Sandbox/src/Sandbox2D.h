@@ -11,16 +11,16 @@ public:
     void onDetach() override;
 
     void onUpdate(float dt) override;
-	void onImGuiRender() override;
+    void onImGuiRender() override;
 
-	void onEvent(butterfly::Event& event) override;
+    void onEvent(butterfly::Event& event) override;
 
 private:
     bool onKeyEvent(const butterfly::KeyEvent& e);
 
 private:
-	std::unique_ptr<butterfly::PerspectiveCamera> m_pcamera;
-	std::unique_ptr<butterfly::PerspectiveCameraController> m_pcameraController;
+    std::unique_ptr<butterfly::PerspectiveCamera> m_pcamera;
+    std::unique_ptr<butterfly::PerspectiveCameraController> m_pcameraController;
 
     std::unique_ptr<butterfly::Camera> m_camera;
     std::unique_ptr<butterfly::CameraController> m_cameraController;

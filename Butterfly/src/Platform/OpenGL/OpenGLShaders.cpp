@@ -1,10 +1,9 @@
-#include "Butterfly/butterflypch.h"
 #include "OpenGLShaders.h"
 
 #include "Butterfly/Hash.h"
 #include "Butterfly/Log.h"
 #include "Butterfly/Renderer/Shader.h"
-
+#include "Butterfly/butterflypch.h"
 #include <fstream>
 
 namespace butterfly
@@ -82,7 +81,7 @@ namespace butterfly
     OpenGLShaders::SourcePair OpenGLShaders::preprocess(const std::string& source) const
     {
         static constexpr char labels[] = { '@' };
-        static constexpr char delimiters[] = { ' ', '\r', '\n'};
+        static constexpr char delimiters[] = { ' ', '\r', '\n' };
 
         std::string srcVertex;
         std::string srcFragment;
@@ -96,9 +95,8 @@ namespace butterfly
         std::string label;
         bool readLabel = false;
 
-        auto activateLabel = [&readLabel](){ readLabel = true; };
-        auto handleLabel = [&]()
-        {
+        auto activateLabel = [&readLabel]() { readLabel = true; };
+        auto handleLabel = [&]() {
             if (!readLabel)
                 return;
 

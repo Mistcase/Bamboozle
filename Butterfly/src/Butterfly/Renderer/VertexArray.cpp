@@ -1,7 +1,7 @@
-#include "Butterfly/butterflypch.h"
 #include "VertexArray.h"
 
 #include "Butterfly/Renderer/Renderer.h"
+#include "Butterfly/butterflypch.h"
 #include "Platform/OpenGL/OpenGLVertexArray.h"
 
 namespace butterfly

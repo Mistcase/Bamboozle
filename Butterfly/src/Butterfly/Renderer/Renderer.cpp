@@ -1,19 +1,18 @@
-#include "Butterfly/Renderer/Texture.h"
-#include "Butterfly/butterflypch.h"
 #include "Renderer.h"
 
+#include "Butterfly/Application.h"
 #include "Butterfly/Object3D.h"
 #include "Butterfly/Renderer/PerspectiveCamera.h"
 #include "Butterfly/Renderer/Renderer2D.h"
 #include "Butterfly/Renderer/Shader.h"
-#include "Butterfly/Renderer/VertexArray.h"
-
 #include "Butterfly/Renderer/Shaders.h"
-#include "Butterfly/Application.h"
+#include "Butterfly/Renderer/Texture.h"
+#include "Butterfly/Renderer/VertexArray.h"
+#include "Butterfly/butterflypch.h"
 
-//Temp
-#include "Platform/OpenGL/OpenGLShader.h"
+// Temp
 #include "Butterfly/Hash.h"
+#include "Platform/OpenGL/OpenGLShader.h"
 
 namespace butterfly
 {
@@ -33,8 +32,8 @@ namespace butterfly
             Ref<VertexBuffer> vertexBuffer;
 
             std::unique_ptr<Shader> shader = nullptr;
-        }
-    }
+        } // namespace Lines
+    }     // namespace
 
     const PerspectiveCamera* Renderer::m_camera = nullptr;
 
@@ -43,16 +42,15 @@ namespace butterfly
         RenderCommand::Init();
         Renderer2D::Init();
 
-		auto shaders = Shaders::Create();
+        auto shaders = Shaders::Create();
         shaders->createFromFile(Application::GetInstance().getResourcesDirectory().string() + "skybox_shader.glsl");
         shaders->createFromFile(Application::GetInstance().getResourcesDirectory().string() + "lines_shader.glsl");
         skyboxShader = shaders->extract("skybox_shader"_hash);
 
         Lines::shader = shaders->extract("lines_shader"_hash);
         Lines::vertexBuffer = VertexBuffer::Create(2 * sizeof(Lines::Vertex), nullptr);
-        Lines::vertexBuffer->setLayout({
-                { ShaderDataType::Float4, "a_Position" },
-                { ShaderDataType::Float4, "a_Color" }});
+        Lines::vertexBuffer->setLayout({ { ShaderDataType::Float4, "a_Position" },
+                                         { ShaderDataType::Float4, "a_Color" } });
         Lines::vertexArray = VertexArray::Create();
         Lines::vertexArray->addVertexBuffer(Lines::vertexBuffer);
     }
@@ -70,13 +68,13 @@ namespace butterfly
     void Renderer::BeginScene(const PerspectiveCamera* camera)
     {
         m_camera = camera;
-		const auto& viewProjection = m_camera->getViewProjection();
+        const auto& viewProjection = m_camera->getViewProjection();
 
-		static_cast<OpenGLShader*>(Renderer2D::Shader())->bind();
+        static_cast<OpenGLShader*>(Renderer2D::Shader())->bind();
         static_cast<butterfly::OpenGLShader*>(butterfly::Renderer::Shader())->setUniform3f("u_CameraPosition", m_camera->getPosition());
-		static_cast<OpenGLShader*>(Renderer2D::Shader())->setUniformMat4("u_VP", viewProjection);
+        static_cast<OpenGLShader*>(Renderer2D::Shader())->setUniformMat4("u_VP", viewProjection);
 
-		RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 0.1f });
+        RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 0.1f });
         RenderCommand::Clear();
     }
 
@@ -110,9 +108,9 @@ namespace butterfly
         return Renderer2D::Shader(); // TODO: Give 3D renderer its own shader
     }
 
-	class Shader* Renderer::SkyboxShader()
-	{
-		return skyboxShader.get();
-	}
+    class Shader* Renderer::SkyboxShader()
+    {
+        return skyboxShader.get();
+    }
 
 } // namespace butterfly

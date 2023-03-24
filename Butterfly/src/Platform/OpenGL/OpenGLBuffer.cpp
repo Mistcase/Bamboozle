@@ -1,13 +1,13 @@
-#include "Butterfly/butterflypch.h"
 #include "OpenGLBuffer.h"
 
+#include "Butterfly/butterflypch.h"
 #include <glad/glad.h>
 
 namespace butterfly
 {
     OpenGLVertexBuffer::OpenGLVertexBuffer(size_t size, const void* data)
     {
-		glGenBuffers(1, &m_rendererId);
+        glGenBuffers(1, &m_rendererId);
         glBindBuffer(GL_ARRAY_BUFFER, m_rendererId);
         glBufferData(GL_ARRAY_BUFFER, size, data, GL_DYNAMIC_DRAW);
     }

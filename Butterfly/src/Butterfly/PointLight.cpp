@@ -1,5 +1,6 @@
-#include "Butterfly/butterflypch.h"
 #include "PointLight.h"
+
+#include "Butterfly/butterflypch.h"
 
 namespace butterfly
 {

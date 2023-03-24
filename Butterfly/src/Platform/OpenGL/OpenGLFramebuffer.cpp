@@ -1,6 +1,6 @@
-#include "Butterfly/butterflypch.h"
 #include "OpenGLFramebuffer.h"
 
+#include "Butterfly/butterflypch.h"
 #include <glad/glad.h>
 
 namespace butterfly
@@ -37,10 +37,10 @@ namespace butterfly
             glDeleteTextures(1, &m_depthAttachment);
         }
 
-		glGenFramebuffers(1, &m_rendererId);
+        glGenFramebuffers(1, &m_rendererId);
         glBindFramebuffer(GL_FRAMEBUFFER, m_rendererId);
 
-		glGenTextures(1, &m_colorAttachment);
+        glGenTextures(1, &m_colorAttachment);
         glBindTexture(GL_TEXTURE_2D, m_colorAttachment);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_specification.width, m_specification.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);

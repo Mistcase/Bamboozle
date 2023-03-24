@@ -17,4 +17,4 @@ namespace butterfly
         virtual Shader* get(uint32_t id) = 0;
         virtual std::unique_ptr<Shader> extract(uint32_t id) = 0;
     };
-};
+}; // namespace butterfly

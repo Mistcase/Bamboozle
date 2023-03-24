@@ -5,21 +5,35 @@
 
 namespace butterfly
 {
-	class Layer
-	{
-	public:
-		Layer(const std::string& name = "Layer");
-		virtual ~Layer();
+    class Layer
+    {
+    public:
+        Layer(const std::string& name = "Layer");
+        virtual ~Layer();
 
-		virtual void onAttach() {}
-		virtual void onDetach() {}
-		virtual void onUpdate(float dt) {}
-		virtual void onImGuiRender() {}
-		virtual void onEvent(Event& event) {}
+        virtual void onAttach()
+        {
+        }
+        virtual void onDetach()
+        {
+        }
+        virtual void onUpdate(float dt)
+        {
+        }
+        virtual void onImGuiRender()
+        {
+        }
+        virtual void onEvent(Event& event)
+        {
+        }
 
-		inline const std::string& getName() const { return m_debugName; }
-	protected:
-		std::string m_debugName;
-	};
+        inline const std::string& getName() const
+        {
+            return m_debugName;
+        }
+
+    protected:
+        std::string m_debugName;
+    };
 
 } // namespace butterfly
