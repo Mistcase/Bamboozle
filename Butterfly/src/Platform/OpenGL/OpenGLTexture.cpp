@@ -9,7 +9,7 @@ namespace butterfly
 {
     OpenGLTexture2D::OpenGLTexture2D(const std::string& path)
     {
-        BUTTERFLY_CORE_INFO("Creating 2D texture: {}\n", path);
+        BUTTERFLY_CORE_INFO("Creating 2D texture: {}", path);
 
         glGenTextures(1, &m_rendererId);
         glActiveTexture(GL_TEXTURE0);

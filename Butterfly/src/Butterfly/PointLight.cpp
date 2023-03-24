@@ -7,6 +7,7 @@ namespace butterfly
     PointLight::PointLight(glm::vec3 intensity, float radius, glm::vec3 position)
         : m_intensity(intensity)
         , m_position(position)
+        , m_radius(radius)
     {
     }
 

@@ -31,7 +31,7 @@ namespace butterfly
 
     void Transformable::setRotation(glm::vec3 angles)
     {
-        setRotation(angles);
+        setRotation(glm::quat{ angles });
     }
 
     void Transformable::setScale(glm::vec3 scale)
