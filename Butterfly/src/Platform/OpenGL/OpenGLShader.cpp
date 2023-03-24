@@ -1,8 +1,7 @@
-#include "Butterfly/butterflypch.h"
 #include "OpenGLShader.h"
 
 #include "Butterfly/Log.h"
-
+#include "Butterfly/butterflypch.h"
 #include <glad/glad.h>
 #include <glm/gtc/type_ptr.hpp>
 
@@ -11,16 +10,15 @@ namespace butterfly
     OpenGLShader::OpenGLShader(const std::string& name, const std::string& srcVertex, const std::string& srcFragment)
         : m_name(name)
     {
-        auto compileShader = [](GLenum type, const std::string& name, const std::string& src)
-        {
+        auto compileShader = [](GLenum type, const std::string& name, const std::string& src) {
             GLuint shader = glCreateShader(type);
-            const GLchar *source = src.c_str();
+            const GLchar* source = src.c_str();
             glShaderSource(shader, 1, &source, 0);
             glCompileShader(shader);
 
             GLint isCompiled = 0;
             glGetShaderiv(shader, GL_COMPILE_STATUS, &isCompiled);
-            if(isCompiled == GL_FALSE)
+            if (isCompiled == GL_FALSE)
             {
                 GLint maxLength = 0;
                 glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &maxLength);
@@ -54,7 +52,7 @@ namespace butterfly
         glLinkProgram(m_rendererId);
 
         GLint isLinked = 0;
-        glGetProgramiv(m_rendererId, GL_LINK_STATUS, (int *)&isLinked);
+        glGetProgramiv(m_rendererId, GL_LINK_STATUS, (int*)&isLinked);
         if (isLinked == GL_FALSE)
         {
             GLint maxLength = 0;
@@ -94,6 +92,23 @@ namespace butterfly
         glUseProgram(0);
     }
 
+    void OpenGLShader::bindUniformBlock(const char* blockName, uint32_t bindPoint) const
+    {
+        const auto index = glGetUniformBlockIndex(m_rendererId, blockName);
+        glUniformBlockBinding(m_rendererId, index, bindPoint);
+    }
+
+    void OpenGLShader::setSampler(const char* sampler, uint32_t value) const
+    {
+        setUniform1i(sampler, value);
+    }
+
+    // void OpenGLShader::submitUniformBuffer(, const void* data, size_t size) const
+    // {
+    // 	// Send data to shader
+    // 	static_assert(false);
+    // }
+
     const char* OpenGLShader::getName() const
     {
         return m_name.c_str();
@@ -108,14 +123,14 @@ namespace butterfly
         glUniform1i(location, i);
     }
 
-	void OpenGLShader::setUniform1f(const std::string& name, float value) const
-	{
-		// TODO: make uniform location cache
+    void OpenGLShader::setUniform1f(const std::string& name, float value) const
+    {
+        // TODO: make uniform location cache
         auto location = glGetUniformLocation(m_rendererId, name.c_str());
         BUTTERFLY_CORE_ASSERT(location != -1, "Uniform is not found");
 
         glUniform1f(location, value);
-	}
+    }
 
     void OpenGLShader::setUniformMat4(const std::string& name, const glm::mat4& data) const
     {
@@ -126,14 +141,14 @@ namespace butterfly
         glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(data));
     }
 
-	void OpenGLShader::setUniform3f(const std::string& name, const glm::vec3& data) const
-	{
-		// TODO: make uniform location cache
+    void OpenGLShader::setUniform3f(const std::string& name, const glm::vec3& data) const
+    {
+        // TODO: make uniform location cache
         auto location = glGetUniformLocation(m_rendererId, name.c_str());
         BUTTERFLY_CORE_ASSERT(location != -1, "Uniform is not found");
 
         glUniform3f(location, data.r, data.g, data.b);
-	}
+    }
 
     void OpenGLShader::setUniform4f(const std::string& name, const glm::vec4& data) const
     {

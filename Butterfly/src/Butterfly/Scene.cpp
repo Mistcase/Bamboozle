@@ -1,28 +1,53 @@
-#include "Butterfly/butterflypch.h"
 #include "Scene.h"
 
 #include "Butterfly/Application.h"
 #include "Butterfly/Object3D.h"
-#include "Butterfly/DirectionalLight.h"
 #include "Butterfly/Renderer/Renderer.h"
+#include "Butterfly/Renderer/UniformBuffer.h"
 #include "Butterfly/Renderer/VertexArray.h"
+#include "Butterfly/butterflypch.h"
 #include "Platform/OpenGL/OpenGLShader.h"
+
+namespace
+{
+    constexpr size_t MaxLightsSimultaneously = 8;
+
+    struct PointLightsBuffer
+    {
+        struct PointLight
+        {
+            glm::vec3 position;
+            unsigned char __unused[4];
+            glm::vec3 intensity;
+            float radius;
+            float linearRatio;
+            float quadraticRatio;
+            unsigned char __unused2[8];
+        };
+
+        uint32_t used;
+        unsigned char __unused[12];
+        PointLight lights[MaxLightsSimultaneously];
+    };
+
+} // namespace
 
 namespace butterfly
 {
     Scene::Scene()
+        : m_pointLightsBuffer(UniformBuffer::Create(sizeof(PointLightsBuffer)))
     {
         auto& window = butterfly::Application::GetInstance().getWindow();
-
-       	m_camera = std::make_unique<butterfly::PerspectiveCamera>(glm::radians(45.0f), (float)window.getWidth() / window.getHeight(), 0.5f, 100.0f);
-
+        m_camera = std::make_unique<butterfly::PerspectiveCamera>(glm::radians(45.0f), (float)window.getWidth() / window.getHeight(), 0.5f, 100.0f);
         m_cameraController = std::make_unique<butterfly::PerspectiveCameraController>(m_camera.get());
+
+        // TODO: do smth with such numeric literals
+        Renderer::Shader()->bindUniformBlock("PointLights", 2);
+        m_pointLightsBuffer->bind(2);
     }
 
     void Scene::update(float dt)
     {
-        test(dt);
-
         m_cameraController->onUpdate(dt);
 
         for (auto& light : m_lights)
@@ -51,20 +76,6 @@ namespace butterfly
     {
     }
 
-    void Scene::test(float dt)
-    {
-        static float phase = 0.0f;
-
-        static_cast<butterfly::OpenGLShader*>(butterfly::Renderer::Shader())->setUniform1f("u_ka", 0.12f);
-        static_cast<butterfly::OpenGLShader*>(butterfly::Renderer::Shader())->setUniform1f("u_kd", 0.3f);
-        static_cast<butterfly::OpenGLShader*>(butterfly::Renderer::Shader())->setUniform1f("u_ks", 1.0f);
-        static_cast<butterfly::OpenGLShader*>(butterfly::Renderer::Shader())->setUniform1f("u_a", 20.0f);
-
-        phase += dt;
-        const glm::vec3 lightDirection{ cos(phase), 0.0f, sin(phase) };
-        m_lights.back().setDirection(-lightDirection);
-    }
-
     void Scene::drawWorldAxes() const
     {
         const glm::vec3 origin{ 0.0f, 0.0f, 0.0f };
@@ -74,24 +85,35 @@ namespace butterfly
         Renderer::DrawLine({ origin, { 10.0f, 0.0f, 0.0f }, { 1.0f, 0.0f, 0.0f, 1.0f } });
         Renderer::DrawLine({ origin, { 0.0f, 10.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 1.0f } });
         Renderer::DrawLine({ origin, { 0.0f, 0.0f, 10.0f }, { 0.0f, 0.0f, 1.0f, 1.0f } });
+
+        RenderCommand::SetLineWidth(10);
+        Renderer::DrawLine({ origin, m_lights.front().getPosition(), { 1.0f, 1.0f, 1.0f, 1.0f } });
     }
 
     void Scene::submitLights() const
     {
-        const auto size = m_lights.size();
-        static_cast<const butterfly::OpenGLShader*>(Renderer::Shader())->setUniform1i("u_DirectionalLightCount", size);
+        // Point lights
+        assert(m_lights.size() < MaxLightsSimultaneously);
 
-        for (size_t i = 0; i < size; i++)
+        static PointLightsBuffer buffer;
+        buffer.used = m_lights.size();
+        for (size_t i = 0; i < buffer.used; i++)
         {
-            const auto& light = m_lights[i];
+            auto light = m_lights[i];
+            auto& bufferLight = buffer.lights[i];
 
-            // Temporary OpenGL shader only
-            const auto lightName = "u_DirectionalLights[" + std::to_string(i) + "]";
+            bufferLight.position = light.getPosition();
+            bufferLight.intensity = light.getIntensity();
+            bufferLight.radius = light.getRadius();
 
-            static_cast<const butterfly::OpenGLShader*>(Renderer::Shader())->setUniform3f(lightName + ".intensity", light.getIntensity());
-            static_cast<const butterfly::OpenGLShader*>(Renderer::Shader())->setUniform3f(lightName + ".position", light.getPosition());
-            static_cast<const butterfly::OpenGLShader*>(Renderer::Shader())->setUniform3f(lightName + ".direction", light.getDirection());
+            const auto attenuation = light.getAttenuation();
+            bufferLight.linearRatio = attenuation.linearRatio;
+            bufferLight.quadraticRatio = attenuation.quadraticRatio;
         }
+
+        const auto bufferSize = offsetof(PointLightsBuffer, lights) + buffer.used * sizeof(PointLightsBuffer::PointLight);
+        m_pointLightsBuffer->bind(2);
+        m_pointLightsBuffer->submit(&buffer, bufferSize);
     }
 
     const Scene::Lights& Scene::getLights() const

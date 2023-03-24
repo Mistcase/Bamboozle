@@ -1,10 +1,10 @@
-#include "Butterfly/butterflypch.h"
 #include "CameraController.h"
 
+#include "Butterfly/Events/MouseEvent.h"
 #include "Butterfly/Input.h"
 #include "Butterfly/KeyCodes.h"
-#include "Butterfly/Events/MouseEvent.h"
 #include "Butterfly/Renderer/OrthographicCamera.h"
+#include "Butterfly/butterflypch.h"
 
 namespace butterfly
 {
@@ -33,7 +33,7 @@ namespace butterfly
     void CameraController::onEvent(Event& event)
     {
         EventDispatcher dispatcher(event);
-        dispatcher.dispatch<MouseScrolledEvent>([this](MouseScrolledEvent& event){ return onMouseScrolled(event); });
+        dispatcher.dispatch<MouseScrolledEvent>([this](MouseScrolledEvent& event) { return onMouseScrolled(event); });
     }
 
     bool CameraController::onMouseScrolled(butterfly::MouseScrolledEvent& event)

@@ -1,8 +1,7 @@
 #pragma once
 
-#include <memory>
-
 #include "Butterfly/Renderer/Buffer.h"
+#include <memory>
 
 namespace butterfly
 {

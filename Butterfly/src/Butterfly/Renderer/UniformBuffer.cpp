@@ -1,25 +1,25 @@
-#include "VertexArray.h"
+#include "UniformBuffer.h"
 
 #include "Butterfly/Renderer/Renderer.h"
 #include "Butterfly/butterflypch.h"
-#include "Platform/OpenGL/OpenGLVertexArray.h"
+#include "Platform/OpenGL/OpenGLUniformBuffer.h"
 
 namespace butterfly
 {
-    Ref<VertexArray> VertexArray::Create()
+    Ref<UniformBuffer> UniformBuffer::Create(size_t size)
     {
         switch (Renderer::GetAPI())
         {
         case RenderAPI::API::None:
-            BUTTERFLY_CORE_ASSERT(false, "Current API is None");
+            assert(!"API is None");
             break;
 
         case RenderAPI::API::OpenGL:
-            return std::make_shared<OpenGLVertexArray>();
+            return std::make_shared<OpenGLUniformBuffer>(size);
             break;
         }
 
-        BUTTERFLY_CORE_ASSERT(false, "Unsupported renderer API");
+        assert(!"Unsupported renderer API");
         return nullptr;
     }
 

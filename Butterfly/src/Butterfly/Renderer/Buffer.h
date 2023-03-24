@@ -1,10 +1,9 @@
 #pragma once
 
+#include "Butterfly/Log.h"
 #include <cstdint>
 #include <string>
 #include <vector>
-
-#include "Butterfly/Log.h"
 
 namespace butterfly
 {
@@ -26,19 +25,30 @@ namespace butterfly
 
     static size_t ShaderDataTypeSize(ShaderDataType type)
     {
-        switch(type)
+        switch (type)
         {
-        case ShaderDataType::Float: return 4;
-        case ShaderDataType::Float2: return 8;
-        case ShaderDataType::Float3: return 12;
-        case ShaderDataType::Float4: return 16;
-        case ShaderDataType::Mat3: return 4 * 3 * 3;
-        case ShaderDataType::Mat4: return 4 * 4 *  4;
-        case ShaderDataType::Int: return 4;
-        case ShaderDataType::Int2: return 8;
-        case ShaderDataType::Int3: return 12;
-        case ShaderDataType::Int4: return 16;
-        case ShaderDataType::Bool: return 1;
+        case ShaderDataType::Float:
+            return 4;
+        case ShaderDataType::Float2:
+            return 8;
+        case ShaderDataType::Float3:
+            return 12;
+        case ShaderDataType::Float4:
+            return 16;
+        case ShaderDataType::Mat3:
+            return 4 * 3 * 3;
+        case ShaderDataType::Mat4:
+            return 4 * 4 * 4;
+        case ShaderDataType::Int:
+            return 4;
+        case ShaderDataType::Int2:
+            return 8;
+        case ShaderDataType::Int3:
+            return 12;
+        case ShaderDataType::Int4:
+            return 16;
+        case ShaderDataType::Bool:
+            return 1;
 
         default:
             break;
@@ -69,13 +79,31 @@ namespace butterfly
         BufferLayout() = default;
         BufferLayout(std::initializer_list<BufferElement> elements);
 
-        inline uint32_t getStride() const { return m_stride; }
-        inline const Elements& getElements() const { return m_elements; }
+        inline uint32_t getStride() const
+        {
+            return m_stride;
+        }
+        inline const Elements& getElements() const
+        {
+            return m_elements;
+        }
 
-        inline Elements::iterator begin() { return m_elements.begin(); }
-		inline Elements::iterator end() { return m_elements.end(); }
-        inline Elements::const_iterator begin() const  { return m_elements.begin(); }
-		inline Elements::const_iterator end() const { return m_elements.end(); }
+        inline Elements::iterator begin()
+        {
+            return m_elements.begin();
+        }
+        inline Elements::iterator end()
+        {
+            return m_elements.end();
+        }
+        inline Elements::const_iterator begin() const
+        {
+            return m_elements.begin();
+        }
+        inline Elements::const_iterator end() const
+        {
+            return m_elements.end();
+        }
 
     private:
         void calculateOffsetsAndStride();

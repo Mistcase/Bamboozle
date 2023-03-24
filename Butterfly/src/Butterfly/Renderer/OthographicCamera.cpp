@@ -70,11 +70,10 @@ namespace butterfly
 
     void Camera::updateViewProjection()
     {
-        const auto transform = glm::translate(glm::mat4(1.0f), m_position) *
-                    glm::rotate(glm::mat4(1.0f), m_rotation, glm::vec3(0.0f, 0.0f, 1.0f));
+        const auto transform = glm::translate(glm::mat4(1.0f), m_position) * glm::rotate(glm::mat4(1.0f), m_rotation, glm::vec3(0.0f, 0.0f, 1.0f));
 
-		// m_viewProjection = m_projection * glm::inverse(transform);
-		m_viewProjection = m_projection * glm::inverse(transform);
+        // m_viewProjection = m_projection * glm::inverse(transform);
+        m_viewProjection = m_projection * glm::inverse(transform);
     }
 
 } // namespace butterfly

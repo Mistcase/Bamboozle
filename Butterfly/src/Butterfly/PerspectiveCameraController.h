@@ -2,20 +2,19 @@
 
 namespace butterfly
 {
-	class Event;
-	class PerspectiveCamera;
+    class Event;
+    class PerspectiveCamera;
 
-	class PerspectiveCameraController
-	{
-	public:
-		PerspectiveCameraController(PerspectiveCamera* camera);
+    class PerspectiveCameraController
+    {
+    public:
+        PerspectiveCameraController(PerspectiveCamera* camera);
 
-		void onUpdate(float dt);
-		void onEvent(Event& event);
+        void onUpdate(float dt);
+        void onEvent(Event& event);
 
-	private:
-		PerspectiveCamera* m_camera;
+    private:
+        PerspectiveCamera* m_camera;
+    };
 
-	};
-
-} // namespace butterflyx
+} // namespace butterfly

@@ -1,21 +1,21 @@
 #pragma once
 
 #include "Butterfly/Core.h"
-#include "Butterfly/Renderer/PerspectiveCamera.h"
 #include "Butterfly/PerspectiveCameraController.h"
-#include "DirectionalLight.h"
-
+#include "Butterfly/Renderer/PerspectiveCamera.h"
+#include "PointLight.h"
 #include <vector>
 
 namespace butterfly
 {
     class DirectionalLight;
     class Object3D;
+    class UniformBuffer;
 
     class Scene
     {
     public:
-        using Lights = std::vector<DirectionalLight>;
+        using Lights = std::vector<PointLight>;
         using Objects = std::vector<Ref<Object3D>>;
 
     public:
@@ -33,14 +33,15 @@ namespace butterfly
         void drawWorldAxes() const;
         void submitLights() const;
 
-        void test(float dt);
-
     protected:
         Ref<PerspectiveCamera> m_camera;
         Ref<PerspectiveCameraController> m_cameraController;
 
         Lights m_lights;
         Objects m_objects;
+
+    protected:
+        Ref<UniformBuffer> m_pointLightsBuffer;
     };
 
 } // namespace butterfly

@@ -43,4 +43,4 @@ namespace butterfly
         uint32_t m_rendererId;
     };
 
-} // namespace
+} // namespace butterfly

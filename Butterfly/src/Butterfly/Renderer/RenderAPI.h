@@ -1,9 +1,8 @@
 #pragma once
 
-#include <memory>
-#include <glm/glm.hpp>
-
 #include "Butterfly/Core.h"
+#include <glm/glm.hpp>
+#include <memory>
 
 namespace butterfly
 {
@@ -19,7 +18,10 @@ namespace butterfly
         };
 
     public:
-        inline static API GetAPI() { return m_renderAPI; };
+        inline static API GetAPI()
+        {
+            return m_renderAPI;
+        };
 
         virtual void init() = 0;
 

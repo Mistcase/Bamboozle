@@ -3,7 +3,6 @@
 #include "Butterfly/Core.h"
 #include "Butterfly/Renderer/Shaders.h"
 #include "Platform/OpenGL/OpenGLShader.h"
-
 #include <unordered_map>
 
 namespace butterfly

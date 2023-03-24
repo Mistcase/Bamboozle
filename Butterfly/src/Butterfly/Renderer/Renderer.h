@@ -7,8 +7,8 @@ namespace butterfly
     class Camera;
     class Shader;
     class VertexArray;
-	class Object3D;
-	class PerspectiveCamera;
+    class Object3D;
+    class PerspectiveCamera;
 
     enum class RendererAPI
     {
@@ -27,7 +27,10 @@ namespace butterfly
         };
 
     public:
-        static inline RenderAPI::API GetAPI() { return RenderAPI::GetAPI(); }
+        static inline RenderAPI::API GetAPI()
+        {
+            return RenderAPI::GetAPI();
+        }
 
         static void Init();
         static void Destroy();
@@ -40,7 +43,7 @@ namespace butterfly
         static void DrawLine(const Line& line);
 
         static class Shader* Shader();
-		static class Shader* SkyboxShader();
+        static class Shader* SkyboxShader();
 
     private:
         static const PerspectiveCamera* m_camera;
