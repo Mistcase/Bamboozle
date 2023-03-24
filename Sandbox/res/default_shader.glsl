@@ -128,7 +128,7 @@ void main()
         vec3 diffuseLight = light.intensity * kd * max(dot(light.direction, v_Normal), 0.0f);
 
         // Specular light
-        vec3 reflectedLight = reflect(light.direction, v_Normal);
+        vec3 reflectedLight = reflect(-light.direction, v_Normal);
 		specularLight += (light.intensity * ks * pow(max(dot(reflectedLight, v_DirectionToCamera), 0.0f), sa));
         lightColor += ambientLight + diffuseLight;
     }
