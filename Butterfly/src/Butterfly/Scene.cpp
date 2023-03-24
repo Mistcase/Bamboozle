@@ -17,7 +17,7 @@ namespace
         struct PointLight
         {
             glm::vec3 position;
-            unsigned char __unused[4];
+            unsigned char __unused1[4];
             glm::vec3 intensity;
             float radius;
             float linearRatio;
@@ -26,7 +26,7 @@ namespace
         };
 
         uint32_t used;
-        unsigned char __unused[12];
+        unsigned char __unused1[12];
         PointLight lights[MaxLightsSimultaneously];
     };
 
