@@ -23,27 +23,25 @@ void Sandbox3DLayer::onAttach()
 	m_objects.emplace_back(std::make_shared<butterfly::Object3D>(helpers::MakePath("objects/scene.obj")));
 	auto scene = m_objects.back();
 
-	m_objects.emplace_back(std::make_shared<butterfly::Object3D>(helpers::MakePath("objects/teapot.obj")));
-	m_teapot = m_objects.back().get();
-
-    m_lights.emplace_back(glm::vec3{ 0.0f, 0.6f, 0.0f }, glm::vec3{ 0.0f, 0.0f, 5.0f }, glm::vec3{ 0.0f, 0.0f, 1.0f });
-    m_lights.emplace_back(glm::vec3{ 0.5f, 0.0f, 0.0f }, glm::vec3{ 0.0f, 0.0f, 5.0f }, glm::vec3{ 0.0f, 0.0f, 1.0f }); // Is OpenGL righthanded
+    // m_lights.emplace_back(glm::vec3{ 0.0f, 1.0f, 1.0f }, 1.0f, glm::vec3{ 0.0f, 0.5f, 0.0f });
+    m_lights.emplace_back(glm::vec3{ 1.0f, 0.0f, 0.0f }, 1.0f, glm::vec3{ 1.5f, 1.5f, 0.0f });
+    m_lights.emplace_back(glm::vec3{ 0.0f, 1.0f, 0.0f }, 1.0f, glm::vec3{ 1.5f, 1.5f, 0.0f });
 
 	std::vector<butterfly::Ref<butterfly::Texture>> textures{ butterfly::Texture2D::Create(helpers::MakePath("textures/wall.jpeg")) };
-
 	auto wallMaterial = butterfly::Material::Create(butterfly::Renderer::Shader(), { 0.12f, 0.3f, 1.0f, 20.0f }, std::move(textures));
 	scene->setMaterial(wallMaterial);
 
-	m_teapot->setMaterial(butterfly::Material::Create(butterfly::Renderer::Shader(), { 0.12f, 0.3f, 1.0f, 20.0f }, {}));
+// 	m_teapot->setMaterial(butterfly::Material::Create(butterfly::Renderer::Shader(), { 0.12f, 0.3f, 1.0f, 20.0f }, {}));
+//     m_teapot->setPosition({ -1.0f, 0.0f, 0.0f});
 
-   	m_objects.emplace_back(std::make_shared<butterfly::Object3D>(helpers::MakePath("objects/barrel.obj")));
-	m_barrel = m_objects.back().get();
+//    	m_objects.emplace_back(std::make_shared<butterfly::Object3D>(helpers::MakePath("objects/barrel.obj")));
+// 	m_barrel = m_objects.back().get();
 
-	std::vector<butterfly::Ref<butterfly::Texture>> textures2{ butterfly::Texture2D::Create(helpers::MakePath("textures/barrel/varil_low_lambert1_BaseColor.png")) };
-	m_barrel->setMaterial(butterfly::Material::Create(butterfly::Renderer::Shader(), { 0.12f, 0.3f, 1.0f, 20.0f }, std::move(textures2)));
-	m_barrel->setPosition({ 5.0f, 1.0f, 5.0f});
-	m_barrel->setScale({ 0.4f, 0.4f, 0.4f });
-}
+// 	std::vector<butterfly::Ref<butterfly::Texture>> textures2{ butterfly::Texture2D::Create(helpers::MakePath("textures/barrel/varil_low_lambert1_BaseColor.png")) };
+// 	m_barrel->setMaterial(butterfly::Material::Create(butterfly::Renderer::Shader(), { 0.12f, 0.3f, 1.0f, 20.0f }, std::move(textures2)));
+// 	m_barrel->setPosition({ 5.0f, 1.0f, 5.0f});
+// 	m_barrel->setScale({ 0.4f, 0.4f, 0.4f });
+ }
 
 void Sandbox3DLayer::onDetach()
 {
@@ -53,17 +51,6 @@ void Sandbox3DLayer::onUpdate(float dt)
 {
     Scene::update(dt);
     Scene::render();
-
-	if (butterfly::Input::IsKeyPressed(BUTTERFLY_KEY_LEFT_SUPER) && butterfly::Input::IsKeyPressed(BUTTERFLY_KEY_LEFT))
-	{
-		m_teapot->setRotation(glm::quat({0.0f, 0.1f, 0.0f}) * m_teapot->getRotation());
-	}
-	else if (butterfly::Input::IsKeyPressed(BUTTERFLY_KEY_LEFT_SUPER) && butterfly::Input::IsKeyPressed(BUTTERFLY_KEY_RIGHT))
-	{
-		m_teapot->setRotation(glm::quat({0.0f, -0.1f, 0.0f}) * m_teapot->getRotation());
-	}
-
-    m_barrel->setRotation(glm::angleAxis(dt, glm::vec3{ 0.0f, 1.0f, 0.0f }) * m_barrel->getRotation());
 }
 
 void Sandbox3DLayer::onImGuiRender()
@@ -92,33 +79,29 @@ bool Sandbox3DLayer::onKeyEvent(const butterfly::KeyEvent& event)
 		return true;
 
 	case BUTTERFLY_KEY_LEFT:
-		if (!butterfly::Input::IsKeyPressed(BUTTERFLY_KEY_LEFT_SUPER))
-			m_teapot->setPosition(m_teapot->getPosition() - glm::vec3{ 1.0f, 0.0f, 0.0f });
 		return true;
 
-	case BUTTERFLY_KEY_RIGHT:
-		if (!butterfly::Input::IsKeyPressed(BUTTERFLY_KEY_LEFT_SUPER))
-			m_teapot->setPosition(m_teapot->getPosition() + glm::vec3{ 1.0f, 0.0f, 0.0f });
-		return true;
+    case BUTTERFLY_KEY_RIGHT:
+        return true;
 
 	case BUTTERFLY_KEY_UP:
-		m_teapot->setPosition(m_teapot->getPosition() + glm::vec3{ 0.0f, 1.0f, 0.0f });
+        m_lights.back().setAttenuation({ 0.0f, m_lights.back().getAttenuation().quadraticRatio + 0.1f });
+        BUTTERFLY_CORE_INFO("Attenuation: {}\n", m_lights.back().getAttenuation().quadraticRatio);
 		return true;
 
 	case BUTTERFLY_KEY_DOWN:
-		m_teapot->setPosition(m_teapot->getPosition() - glm::vec3{ 0.0f, 1.0f, 0.0f });
+        m_lights.back().setAttenuation({ 0.0f, m_lights.back().getAttenuation().quadraticRatio - 0.1f });
+        BUTTERFLY_CORE_INFO("Attenuation: {}\n", m_lights.back().getAttenuation().quadraticRatio);
 		return true;
 
 	case BUTTERFLY_KEY_EQUAL:
-		m_teapot->setScale(m_teapot->getScale() + glm::vec3(0.5f, 0.5f, 0.5f));
 		return true;
 
 	case BUTTERFLY_KEY_MINUS:
-		m_teapot->setScale(m_teapot->getScale() - glm::vec3(0.5f, 0.5f, 0.5f));
 		return true;
 
 	case BUTTERFLY_KEY_R:
-		// Loload default shader
+		// Reload default shader
 		butterfly::Renderer2D::Destroy();
 		butterfly::Renderer2D::Init();
 		return true;
