@@ -36,7 +36,9 @@ namespace
         struct DirectionalLight
         {
             glm::vec3 intensity;
+			unsigned char __unused1[4];
             glm::vec3 direction;
+			unsigned char __unused2[4];
         };
 
         uint32_t used;
