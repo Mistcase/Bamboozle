@@ -14,10 +14,10 @@ namespace butterfly
         glEnable(GL_DEPTH_TEST);
         // glDisable(GL_CULL_FACE);
     }
-	void OpenGLRenderAPI::setPointSize(float size)
-	{
-		glPointSize(size);
-	}
+    void OpenGLRenderAPI::setPointSize(float size)
+    {
+        glPointSize(size);
+    }
 
     void OpenGLRenderAPI::setViewport(uint32_t left, uint32_t bottom, uint32_t width, uint32_t height)
     {
@@ -39,10 +39,10 @@ namespace butterfly
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
-	void OpenGLRenderAPI::drawPoints(Ref<VertexArray> vertexArray, size_t count)
-	{
-		glDrawArrays(GL_POINTS, 0, count);
-	}
+    void OpenGLRenderAPI::drawPoints(Ref<VertexArray> vertexArray, size_t count)
+    {
+        glDrawArrays(GL_POINTS, 0, count);
+    }
 
     void OpenGLRenderAPI::drawLines(Ref<VertexArray> vertexArray, size_t count)
     {

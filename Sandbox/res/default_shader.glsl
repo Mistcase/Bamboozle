@@ -93,13 +93,15 @@ void main()
 		textureColor = texture(u_Textures[textureDefault], v_TexCoords).rgb;
 	}
 
-    color = vec4(0.0f);
+    vec3 lightColor = vec3(0.0f);
+	vec3 specularLight = vec3(0.0f);
+
     for (uint i = 0; i < usedPointLights; i++)
     {
         PointLight light = lights[i];
 
         // Ambient light
-        vec3 ambientLight = light.intensity * ka * textureColor;
+        vec3 ambientLight = light.intensity * ka;
 
         // Diffuse light
         float distanceToLight = length(v_PositionWorldSpace - light.position);
@@ -110,10 +112,9 @@ void main()
         vec3 diffuseLight = (light.intensity * kd * max(dot(lightDirection, v_Normal), 0.0f)) / attenuation;
 
         // Specular light
-        vec3 reflectedLight = reflect(lightDirection, v_Normal);
-        vec3 specularLight = (light.intensity * ks * pow(max(dot(reflectedLight, v_DirectionToCamera), 0.0f), sa)) / attenuation;
-
-        color += vec4(ambientLight + diffuseLight + specularLight, 1.0f);
+		vec3 reflectedLight = reflect(lightDirection, v_Normal);
+		specularLight += (light.intensity * ks * pow(max(dot(reflectedLight, v_DirectionToCamera), 0.0f), sa)) / attenuation;
+        lightColor += ambientLight + diffuseLight;
     }
 
 	for (uint i = 0; i < usedDirectionalLights; i++)
@@ -121,16 +122,21 @@ void main()
         DirectionalLight light = directionalLights[i];
 
         // Ambient light
-        vec3 ambientLight = light.intensity * ka * textureColor;
+        vec3 ambientLight = light.intensity * ka;
 
         // Diffuse light
         vec3 diffuseLight = light.intensity * kd * max(dot(light.direction, v_Normal), 0.0f);
 
         // Specular light
         vec3 reflectedLight = reflect(light.direction, v_Normal);
-        vec3 specularLight = light.intensity * ks * pow(max(dot(reflectedLight, v_DirectionToCamera), 0.0f), sa);
-
-        color += vec4(ambientLight + diffuseLight + specularLight, 1.0f);
+		specularLight += (light.intensity * ks * pow(max(dot(reflectedLight, v_DirectionToCamera), 0.0f), sa));
+        lightColor += ambientLight + diffuseLight;
     }
 
+	if (textureSpecularMap != -1)
+	{
+		specularLight *= texture(u_Textures[textureSpecularMap], v_TexCoords).r;
+	}
+
+	color = vec4((lightColor + specularLight) * textureColor, 1.0f);
 }

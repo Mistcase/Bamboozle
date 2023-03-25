@@ -18,7 +18,7 @@ namespace butterfly
         , m_textures(std::move(textures)) // Clang warning?
         , m_uniformBuffer(UniformBuffer::Create(sizeof(MaterialBuffer)))
     {
-        assert(m_textures.size() < static_cast<size_t>(MaterialTextureType::Count));
+        assert(m_textures.size() <= static_cast<size_t>(MaterialTextureType::Count));
 
         // Fill uniform buffer
         m_uniformBufferData.ka = params.kAmbient;
@@ -42,7 +42,7 @@ namespace butterfly
         m_uniformBuffer->bind(1);
         m_uniformBuffer->submit(&m_uniformBufferData, sizeof(m_uniformBufferData));
 
-        assert(m_textures.size() < static_cast<size_t>(MaterialTextureType::Count));
+        assert(m_textures.size() <= static_cast<size_t>(MaterialTextureType::Count));
         for (size_t i = 0, size = m_textures.size(); i < size; i++)
         {
             m_shader->setSampler(("u_Textures[" + std::to_string(i) + "]").c_str(), i); // TEMP

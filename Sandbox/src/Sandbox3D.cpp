@@ -21,7 +21,7 @@ void Sandbox3DLayer::onAttach()
     m_objects.emplace_back(std::make_shared<butterfly::Object3D>(helpers::MakePath("objects/scene.obj")));
     auto scene = m_objects.back();
 
-    m_pointLights.emplace_back(glm::vec3{ 0.0f, 1.0f, 0.0f }, 1.0f, glm::vec3{ 0.0f, 0.5f, 0.0f });
+    m_pointLights.emplace_back(glm::vec3{ 0.0f, 1.0f, 0.0f }, 2.5f, glm::vec3{ 0.0f, 0.5f, 0.0f });
     m_pointLights.emplace_back(glm::vec3{ 1.0f, 0.0f, 0.0f }, 2.0f, glm::vec3{ -1.5f, 1.5f, 0.0f });
 	m_directionalLights.emplace_back(glm::vec3{ 1.0f, 1.0f, 1.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f });
 
@@ -29,16 +29,16 @@ void Sandbox3DLayer::onAttach()
     auto wallMaterial = butterfly::Material::Create(butterfly::Renderer::Shader(), { 0.12f, 0.3f, 1.0f, 20.0f }, std::move(textures));
     scene->setMaterial(wallMaterial);
 
-    // 	m_teapot->setMaterial(butterfly::Material::Create(butterfly::Renderer::Shader(), { 0.12f, 0.3f, 1.0f, 20.0f }, {}));
-    //     m_teapot->setPosition({ -1.0f, 0.0f, 0.0f});
+    m_objects.emplace_back(std::make_shared<butterfly::Object3D>(helpers::MakePath("objects/barrel.obj")));
+    m_barrel = m_objects.back().get();
 
-    //    	m_objects.emplace_back(std::make_shared<butterfly::Object3D>(helpers::MakePath("objects/barrel.obj")));
-    // 	m_barrel = m_objects.back().get();
+    auto t1 = butterfly::Texture2D::Create(helpers::MakePath("textures/barrel/varil_low_lambert1_BaseColor.png"));
+    auto t2 = butterfly::Texture2D::Create(helpers::MakePath("textures/barrel/varil_low_lambert1_Metallic.png"), butterfly::Texture2D::Format::RED);
+    std::vector<butterfly::Ref<butterfly::Texture>> textures2{ t1, t2 };
 
-    // 	std::vector<butterfly::Ref<butterfly::Texture>> textures2{ butterfly::Texture2D::Create(helpers::MakePath("textures/barrel/varil_low_lambert1_BaseColor.png")) };
-    // 	m_barrel->setMaterial(butterfly::Material::Create(butterfly::Renderer::Shader(), { 0.12f, 0.3f, 1.0f, 20.0f }, std::move(textures2)));
-    // 	m_barrel->setPosition({ 5.0f, 1.0f, 5.0f});
-    // 	m_barrel->setScale({ 0.4f, 0.4f, 0.4f });
+    m_barrel->setMaterial(butterfly::Material::Create(butterfly::Renderer::Shader(), { 0.12f, 0.3f, 1.0f, 20.0f }, std::move(textures2)));
+    m_barrel->setPosition({ 2.0f, 1.0f, 2.0f});
+    m_barrel->setScale({ 0.4f, 0.4f, 0.4f });
 }
 
 void Sandbox3DLayer::onDetach()
@@ -47,6 +47,8 @@ void Sandbox3DLayer::onDetach()
 
 void Sandbox3DLayer::onUpdate(float dt)
 {
+	m_directionalLights.back().setDirection(glm::normalize(m_camera->getViewDirection()));
+
     Scene::update(dt);
     Scene::render();
 }
