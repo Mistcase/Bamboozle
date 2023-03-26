@@ -95,10 +95,6 @@ namespace butterfly
         Renderer::EndScene();
     }
 
-    void Scene::renderImGui()
-    {
-    }
-
     void Scene::drawWorldAxes() const
     {
         const glm::vec3 origin{ 0.0f, 0.0f, 0.0f };

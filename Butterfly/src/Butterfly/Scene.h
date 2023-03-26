@@ -26,8 +26,6 @@ namespace butterfly
         void update(float dt);
         void render() const;
 
-        virtual void renderImGui();
-
         const PointLights& getPointLights() const;
 		const DirectionalLights& getDirectionalLights() const;
 
