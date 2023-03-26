@@ -22,4 +22,8 @@ private:
     butterfly::Object3D* m_teapot;
     butterfly::Object3D* m_skybox;
     butterfly::Object3D* m_barrel;
+
+private:
+	bool m_oldCursorVisible = true;
+	butterfly::Window& m_window;
 };

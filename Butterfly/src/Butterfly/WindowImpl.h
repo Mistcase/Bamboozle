@@ -28,8 +28,12 @@ namespace butterfly
         {
             m_data.eventCallback = callback;
         }
+
+		void setCursorVisible(bool visible) override;
         void setVSync(bool enabled) override;
+
         bool isVSync() const override;
+		bool isCursorVisible() const override;
 
         void* getNativeWindow() const override;
 
@@ -46,6 +50,7 @@ namespace butterfly
             std::string title;
             unsigned int width, height;
             bool vSync;
+			bool cursorVisible;
 
             FnEventCallback eventCallback;
         };

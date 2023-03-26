@@ -61,12 +61,12 @@ namespace butterfly
 #endif
 
         m_window = glfwCreateWindow((int)props.width, (int)props.height, m_data.title.c_str(), nullptr, nullptr);
-        glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         m_context = new OpenGLContext(m_window);
         m_context->init();
 
         glfwSetWindowUserPointer(m_window, &m_data);
         setVSync(true);
+		setCursorVisible(true);
 
         glfwSetWindowSizeCallback(m_window, [](GLFWwindow* window, int width, int height) {
             auto& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
@@ -159,6 +159,13 @@ namespace butterfly
         m_context->swapBuffers();
     }
 
+	void WindowImpl::setCursorVisible(bool visible)
+	{
+		assert(m_window != nullptr);
+		glfwSetInputMode(m_window, GLFW_CURSOR, visible ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
+		m_data.cursorVisible = visible;
+	}
+
     void WindowImpl::setVSync(bool enabled)
     {
         glfwSwapInterval(enabled);
@@ -169,6 +176,11 @@ namespace butterfly
     {
         return m_data.vSync;
     }
+
+	bool WindowImpl::isCursorVisible() const
+	{
+		return m_data.cursorVisible;
+	}
 
     void* WindowImpl::getNativeWindow() const
     {

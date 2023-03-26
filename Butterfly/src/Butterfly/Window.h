@@ -40,9 +40,11 @@ namespace butterfly
 
         // Window attributes
         virtual void setEventCallback(const FnEventCallback& callback) = 0;
+		virtual void setCursorVisible(bool visible) = 0;
         virtual void setVSync(bool enabled) = 0;
-        virtual bool isVSync() const = 0;
 
+        virtual bool isVSync() const = 0;
+		virtual bool isCursorVisible() const = 0;
         virtual void* getNativeWindow() const = 0;
 
         static Window* Create(const WindowProps& props = WindowProps());

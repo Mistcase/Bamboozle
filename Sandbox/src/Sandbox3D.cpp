@@ -7,11 +7,15 @@
 
 Sandbox3DLayer::Sandbox3DLayer()
     : Layer("Sandbox3DLayer")
+	, m_window(butterfly::Application::GetInstance().getWindow())
 {
 }
 
 void Sandbox3DLayer::onAttach()
 {
+	m_oldCursorVisible = m_window.isCursorVisible();
+    m_window.setCursorVisible(false);
+
     m_camera->setPosition({ 7.0f, 8.0f, 10.0f });
 
     m_objects.push_back(std::make_shared<butterfly::SkyBox>(helpers::MakePath("objects/sphere.obj"), helpers::MakePath("textures/sky.jpeg"), m_camera.get()));
@@ -43,6 +47,7 @@ void Sandbox3DLayer::onAttach()
 
 void Sandbox3DLayer::onDetach()
 {
+	m_window.setCursorVisible(m_oldCursorVisible);
 }
 
 void Sandbox3DLayer::onUpdate(float dt)
@@ -74,7 +79,14 @@ bool Sandbox3DLayer::onKeyEvent(const butterfly::KeyEvent& event)
     switch (event.getKeyCode())
     {
     case BUTTERFLY_KEY_ESCAPE:
-        butterfly::Application::GetInstance().quit();
+		if (butterfly::Input::IsKeyPressed(BUTTERFLY_KEY_LEFT_SHIFT))
+		{
+			butterfly::Application::GetInstance().quit();
+		}
+		else
+		{
+			m_window.setCursorVisible(!m_window.isCursorVisible());
+		}
         return true;
 
     case BUTTERFLY_KEY_LEFT:
