@@ -71,13 +71,19 @@ namespace butterfly
         m_cameraController->onUpdate(dt);
 
         for (auto& light : m_pointLights)
-            light.update(dt);
+		{
+			light.update(dt);
+		}
 
         for (auto& light : m_directionalLights)
-            light.update(dt);
+		{
+			light.update(dt);
+		}
 
         for (auto& object : m_objects)
-            object->update(dt);
+		{
+			object->update(dt);
+		}
     }
 
     void Scene::render() const
