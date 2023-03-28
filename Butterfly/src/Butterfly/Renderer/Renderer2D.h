@@ -20,8 +20,6 @@ namespace butterfly
         void EndScene();
         void Flush();
 
-        [[deprecated]] void BeginScene(PerspectiveCamera* camera);
-
         void DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color);
         void DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color);
 

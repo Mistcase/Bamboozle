@@ -12,10 +12,6 @@ void Sandbox2DLayer::onAttach()
 {
     auto& window = butterfly::Application::GetInstance().getWindow();
 
-    // Temp
-    m_pcamera = std::make_unique<butterfly::PerspectiveCamera>(glm::radians(45.0f), (float)window.getWidth() / window.getHeight(), 0.5f, 20.0f);
-    m_pcameraController = std::make_unique<butterfly::PerspectiveCameraController>(m_pcamera.get());
-
     m_camera = std::make_unique<butterfly::Camera>(window.getWidth(), window.getHeight());
     m_cameraController = std::make_unique<butterfly::CameraController>(m_camera.get());
 
@@ -29,14 +25,12 @@ void Sandbox2DLayer::onDetach()
 
 void Sandbox2DLayer::onUpdate(float dt)
 {
-    m_pcameraController->onUpdate(dt);
     m_cameraController->onUpdate(dt);
 
     butterfly::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
     butterfly::RenderCommand::Clear();
 
-    // butterfly::Renderer2D::BeginScene(m_camera.get());
-    butterfly::Renderer2D::BeginScene(m_pcamera.get());
+    butterfly::Renderer2D::BeginScene(m_camera.get());
     butterfly::Renderer2D::DrawQuad({ 0.0f, 0.0f, -1.0f }, { 1.0f, 1.0f }, glm::radians(45.0f), { 1.0f, 0.0f, 0.0f, 1.0f }, m_texture);
     butterfly::Renderer2D::DrawQuad({ 0.5f, 0.5f, -1.0f }, { 1.0f, 1.0f }, 0.0f, { 0.0f, 0.0f, 1.0f, 1.0f }, m_texture2);
     // butterfly::Renderer2D::DrawQuad({ -300.0f, -300.0f, -z }, { 250.0f, 250.0f }, { 0.0f, 1.0f, 0.0f, 1.0f });

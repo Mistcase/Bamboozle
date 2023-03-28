@@ -25,5 +25,5 @@
 #include "Butterfly/Renderer/Shader.h"
 #include "Butterfly/Renderer/Texture.h"
 #include "Butterfly/Renderer/VertexArray.h"
-#include "Butterfly/Scene.h"
 #include "Butterfly/Scene/Entity.h"
+#include "Butterfly/Scene/Scene.h"

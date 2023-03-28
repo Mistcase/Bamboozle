@@ -12,9 +12,6 @@
 #include "Platform/OpenGL/OpenGLShader.h"
 #include <glm/ext/matrix_transform.hpp>
 
-// Test
-#include "Butterfly/Renderer/PerspectiveCamera.h"
-
 namespace butterfly
 {
     namespace
@@ -49,7 +46,6 @@ namespace butterfly
             uint8_t* quadVertexBufferPtr = quadVertexBufferBase;
             size_t quadCount = 0;
 
-            butterfly::PerspectiveCamera* perspectiveCamera = nullptr;
             butterfly::Camera* camera = nullptr;
             butterfly::Ref<butterfly::VertexArray> vertexArray;
             std::unique_ptr<butterfly::Shader> shader = nullptr;
@@ -129,15 +125,6 @@ namespace butterfly
             SceneData()->shader->bind();
 
             const auto& viewProjection = SceneData()->camera->getViewProjection();
-            static_cast<OpenGLShader*>(SceneData()->shader.get())->setUniformMat4("u_VP", viewProjection);
-        }
-
-        void BeginScene(PerspectiveCamera* camera)
-        {
-            SceneData()->perspectiveCamera = camera;
-            SceneData()->shader->bind();
-
-            const auto& viewProjection = SceneData()->perspectiveCamera->getViewProjection();
             static_cast<OpenGLShader*>(SceneData()->shader.get())->setUniformMat4("u_VP", viewProjection);
         }
 
