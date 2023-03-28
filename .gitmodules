@@ -10,3 +10,6 @@
 [submodule "Butterfly/third-party/glm"]
 	path = Butterfly/third-party/glm
 	url = https://github.com/g-truc/glm.git
+[submodule "Butterfly/third-party/entt"]
+	path = Butterfly/third-party/entt
+	url = https://github.com/skypjack/entt.git

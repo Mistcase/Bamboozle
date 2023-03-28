@@ -5,6 +5,8 @@
 #include "Butterfly/PerspectiveCameraController.h"
 #include "Butterfly/Renderer/PerspectiveCamera.h"
 #include "Butterfly/PointLight.h"
+
+#include <entt/entt.hpp>
 #include <vector>
 
 namespace butterfly
@@ -46,6 +48,10 @@ namespace butterfly
     protected:
         Ref<UniformBuffer> m_pointLightsBuffer;
 		Ref<UniformBuffer> m_directionalLightsBuffer;
+
+	private:
+		entt::registry m_registry;
+		friend class Entity;
     };
 
 } // namespace butterfly

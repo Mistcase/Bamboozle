@@ -26,3 +26,4 @@
 #include "Butterfly/Renderer/Texture.h"
 #include "Butterfly/Renderer/VertexArray.h"
 #include "Butterfly/Scene.h"
+#include "Butterfly/Scene/Entity.h"
