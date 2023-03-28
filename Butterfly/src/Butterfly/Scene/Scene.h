@@ -25,6 +25,7 @@ namespace butterfly
 
     public:
         Scene();
+		~Scene();
 
 		Entity createEntity(const std::string& name);
 
