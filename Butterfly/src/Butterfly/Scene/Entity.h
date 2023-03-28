@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Butterfly/Scene.h"
+#include "Butterfly/Scene/Scene.h"
 
 namespace butterfly
 {
