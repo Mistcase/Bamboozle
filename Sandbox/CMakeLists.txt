@@ -61,7 +61,8 @@ target_include_directories(${EXECUTABLE_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/../Butt
     ${CMAKE_SOURCE_DIR}/../Butterfly/src
     ${CMAKE_SOURCE_DIR}/../Butterfly/third-party/spdlog/include
     ${CMAKE_SOURCE_DIR}/../Butterfly/third-party/glm
-    ${CMAKE_SOURCE_DIR}/../Butterfly/third-party/ImGui)
+    ${CMAKE_SOURCE_DIR}/../Butterfly/third-party/ImGui
+    ${CMAKE_SOURCE_DIR}/../Butterfly/third-party/entt/src)
 
 add_subdirectory(../Butterfly/ ../../Butterfly/build/)
 

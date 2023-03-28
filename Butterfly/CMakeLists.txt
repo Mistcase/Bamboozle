@@ -25,6 +25,9 @@ add_subdirectory(third-party/spdlog/)
 #include glm
 add_subdirectory(third-party/glm/)
 
+#include entt
+add_subdirectory(third-party/entt/)
+
 file(GLOB SRC
  "src/*.h"
  "src/*.cpp"
@@ -50,4 +53,4 @@ add_definitions(-DGLFW_INCLUDE_NONE)
 add_library(${LIB_NAME} STATIC ${SRC})
 set_target_properties(${LIB_NAME} PROPERTIES LINKER_LANGUAGE CXX)
 target_link_libraries(${LIB_NAME} glad glfw spdlog glm imgui)
-target_include_directories(${LIB_NAME} PRIVATE src third-party/ImGui third-party/stb third-party/tinyobj)
+target_include_directories(${LIB_NAME} PRIVATE src third-party/ImGui third-party/stb third-party/tinyobj third-party/entt/src)
