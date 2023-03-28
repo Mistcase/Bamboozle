@@ -1,3 +1,4 @@
+#include "Butterfly/butterflypch.h"
 #include "Scene.h"
 
 #include "Butterfly/Application.h"
@@ -5,7 +6,7 @@
 #include "Butterfly/Renderer/Renderer.h"
 #include "Butterfly/Renderer/UniformBuffer.h"
 #include "Butterfly/Renderer/VertexArray.h"
-#include "Butterfly/butterflypch.h"
+#include "Butterfly/Scene/Entity.h"
 #include "Platform/OpenGL/OpenGLShader.h"
 
 namespace
@@ -65,6 +66,15 @@ namespace butterfly
         Renderer::Shader()->bindUniformBlock("DirectionalLights", 3);
         m_directionalLightsBuffer->bind(3);
     }
+
+	Entity Scene::createEntity(const std::string& name)
+	{
+		const auto handle = m_registry.create();
+		// Add tag component( name )
+		// Add transform component
+
+		return Entity{ handle, this };
+	}
 
     void Scene::update(float dt)
     {

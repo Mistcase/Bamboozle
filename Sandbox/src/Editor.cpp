@@ -132,7 +132,7 @@ void Editor::onImGuiRender()
 
 	ImGui::Begin("Viewport");
 	{
-		m_isViewportFocused = ImGui::IsWindowFocused();
+		m_isViewportFocused = ImGui::IsWindowFocused() && ImGui::IsWindowHovered();
 
 		const auto available = ImGui::GetContentRegionAvail();
 		const glm::vec2 viewportSize{ available.x, available.y };

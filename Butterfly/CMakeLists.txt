@@ -39,6 +39,8 @@ file(GLOB SRC
  "src/Butterfly/ImGui/*.cpp"
  "src/Butterfly/Renderer/*.h"
  "src/Butterfly/Renderer/*.cpp"
+ "src/Butterfly/Scene/*.h"
+ "src/Butterfly/Scene/*.cpp"
  "src/Platform/*.h"
  "src/Platform/*.cpp"
  "src/Platform/OpenGL/*.h"
