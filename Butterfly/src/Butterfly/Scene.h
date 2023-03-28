@@ -14,6 +14,7 @@ namespace butterfly
     class DirectionalLight;
     class Object3D;
     class UniformBuffer;
+	class Entity;
 
     class Scene
     {
@@ -24,6 +25,8 @@ namespace butterfly
 
     public:
         Scene();
+
+		Entity createEntity(const std::string& name);
 
         void update(float dt);
         void render() const;
