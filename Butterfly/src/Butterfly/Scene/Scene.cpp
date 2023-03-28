@@ -1,3 +1,4 @@
+#include "Butterfly/Scene/Components.h"
 #include "Butterfly/butterflypch.h"
 #include "Scene.h"
 
@@ -67,17 +68,45 @@ namespace butterfly
         m_directionalLightsBuffer->bind(3);
     }
 
+	Scene::~Scene()
+	{
+		m_registry.view<NativeScriptComponent>().each([=](auto entity, auto& scriptComponent)
+		{
+			if (scriptComponent.instance)
+			{
+				scriptComponent.onDestroy(scriptComponent.instance);
+				scriptComponent.destroyScript();
+			}
+		});
+	}
+
 	Entity Scene::createEntity(const std::string& name)
 	{
-		const auto handle = m_registry.create();
+        auto handle = m_registry.create();
 		// Add tag component( name )
 		// Add transform component
 
-		return Entity{ handle, this };
+		m_registry.emplace<TagComponent>(handle, name);
+
+		return { handle, this };
 	}
 
     void Scene::update(float dt)
     {
+		// Update all scripts
+		m_registry.view<NativeScriptComponent>().each([=](auto entity, auto& scriptComponent)
+		{
+			// Call it when scene starts play
+			if (!scriptComponent.instance)
+			{
+				scriptComponent.instantiateScript();
+				scriptComponent.instance->m_entity = { entity, this };
+				scriptComponent.onCreate(scriptComponent.instance);
+			}
+
+			scriptComponent.onUpdate(scriptComponent.instance, dt);
+		});
+
         m_cameraController->onUpdate(dt);
 
         for (auto& light : m_pointLights)
@@ -98,6 +127,7 @@ namespace butterfly
 
     void Scene::render() const
     {
+		butterfly::RenderCommand::Clear();
         Renderer::BeginScene(m_camera.get());
 
         drawWorldAxes();

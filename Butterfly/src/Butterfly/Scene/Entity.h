@@ -14,7 +14,7 @@ namespace butterfly
 		T& addComponent(Args&&... args)
 		{
 			assert(!hasComponent<T>());
-			m_scene->m_registry.emplace(m_handle, std::forward<Args>(args)...);
+			return m_scene->m_registry.emplace<T>(m_handle, std::forward<Args>(args)...);
 		}
 
 		template <typename T>
@@ -27,7 +27,7 @@ namespace butterfly
 		template <typename T>
 		bool hasComponent()
 		{
-			return m_scene->m_registry.any_of<T>();
+			return m_scene->m_registry.any_of<T>(m_handle);
 		}
 
 		template <typename T>
@@ -38,10 +38,12 @@ namespace butterfly
 		}
 
 		operator bool() const;
+        
+        inline bool isValid() const { return m_scene->m_registry.valid(m_handle); }
 
 	private:
 		entt::entity m_handle = entt::null;
-		Scene* m_scene;
+		Scene* m_scene = nullptr;
 	};
 
 } // namespace butterfly
