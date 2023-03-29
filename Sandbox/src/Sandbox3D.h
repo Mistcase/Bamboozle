@@ -2,7 +2,7 @@
 
 #include <Butterfly.h>
 
-class Sandbox3DLayer : public butterfly::Layer, public butterfly::Scene
+class Sandbox3DLayer : public butterfly::Layer
 {
 public:
     Sandbox3DLayer();

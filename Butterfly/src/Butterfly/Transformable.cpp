@@ -4,12 +4,12 @@
 
 namespace butterfly
 {
-    Transformable::Transformable()
+    TransformComponent::TransformComponent()
     {
         calculateTransform();
     }
 
-    void Transformable::update()
+    void TransformComponent::updateWorldTransform()
     {
         if (m_isDirtyTransform)
         {
@@ -17,64 +17,58 @@ namespace butterfly
         }
     }
 
-    void Transformable::setPosition(glm::vec3 position)
+    void TransformComponent::setPosition(glm::vec3 position)
     {
         m_position = position;
         invalidateTransform();
     }
 
-    void Transformable::setRotation(glm::quat quaternion)
+    void TransformComponent::setRotation(glm::quat quaternion)
     {
         m_rotation = quaternion;
         invalidateTransform();
     }
 
-    void Transformable::setRotation(glm::vec3 angles)
+    void TransformComponent::setRotation(glm::vec3 angles)
     {
         setRotation(glm::quat{ angles });
     }
 
-    void Transformable::setScale(glm::vec3 scale)
+    void TransformComponent::setScale(glm::vec3 scale)
     {
         m_scale = scale;
         invalidateTransform();
     }
 
-    const glm::mat4& Transformable::getWorldTransform() const
+    const glm::mat4& TransformComponent::getWorldTransform() const
     {
         return m_transform;
     }
 
-    glm::vec3 Transformable::getPosition() const
+    glm::vec3 TransformComponent::getPosition() const
     {
         return m_position;
     }
 
-    glm::quat Transformable::getRotation() const
+    glm::quat TransformComponent::getRotation() const
     {
         return m_rotation;
     }
 
-    glm::vec3 Transformable::getScale() const
+    glm::vec3 TransformComponent::getScale() const
     {
         return m_scale;
     }
 
-    void Transformable::invalidateTransform()
+    void TransformComponent::invalidateTransform()
     {
         m_isDirtyTransform = true;
     }
 
-    void Transformable::calculateTransform()
+    void TransformComponent::calculateTransform()
     {
         m_transform = glm::translate(glm::mat4(1.0f), m_position) * glm::scale(glm::mat4(1.0f), m_scale) * glm::mat4(m_rotation);
         m_isDirtyTransform = false;
-
-        transformChanged();
-    }
-
-    void Transformable::transformChanged()
-    {
     }
 
 } // namespace butterfly

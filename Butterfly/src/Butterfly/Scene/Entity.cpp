@@ -2,9 +2,9 @@
 
 namespace butterfly
 {
-	Entity::Entity(entt::entity handle, Scene* scene)
+	Entity::Entity(entt::entity handle, entt::registry* registry)
 		: m_handle(handle)
-		, m_scene(scene)
+		, m_registry(registry)
 	{
 	}
 

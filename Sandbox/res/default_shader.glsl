@@ -138,5 +138,6 @@ void main()
 		specularLight *= texture(u_Textures[textureSpecularMap], v_TexCoords).r;
 	}
 
-	color = vec4((lightColor + specularLight) * textureColor, 1.0f);
+    color = vec4((lightColor + specularLight) * textureColor, 1.0f);
+    // color = vec4(textureColor, 1.0f);
 }

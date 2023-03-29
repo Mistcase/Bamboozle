@@ -8,12 +8,7 @@
 
 namespace butterfly
 {
-    Ref<Material> Material::Create(Shader* shader, const LightingParams& params, Textures&& textures)
-    {
-        return std::shared_ptr<Material>(new Material(shader, params, std::move(textures)));
-    }
-
-    Material::Material(Shader* shader, const LightingParams& params, Textures&& textures)
+    MaterialComponent::MaterialComponent(Shader* shader, const LightingParams& params, Textures&& textures)
         : m_shader(shader)
         , m_textures(std::move(textures)) // Clang warning?
         , m_uniformBuffer(UniformBuffer::Create(sizeof(MaterialBuffer)))
@@ -36,7 +31,7 @@ namespace butterfly
         m_shader->bindUniformBlock("Material", 1);
     }
 
-    void Material::apply() const
+    void MaterialComponent::apply() const
     {
         m_shader->bind();
         m_uniformBuffer->bind(1);
@@ -45,7 +40,7 @@ namespace butterfly
         assert(m_textures.size() <= static_cast<size_t>(MaterialTextureType::Count));
         for (size_t i = 0, size = m_textures.size(); i < size; i++)
         {
-            m_shader->setSampler(("u_Textures[" + std::to_string(i) + "]").c_str(), i); // TEMP
+            m_shader->setSampler(("u_Textures[" + std::to_string(i) + "]").c_str(), i); // TODO: FIXME PLEASE
             m_textures[i]->bind(i);
         }
     }

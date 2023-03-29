@@ -44,7 +44,6 @@ void Sandbox2DLayer::onImGuiRender()
 
 void Sandbox2DLayer::onEvent(butterfly::Event& event)
 {
-    m_pcameraController->onEvent(event);
     m_cameraController->onEvent(event);
 
     butterfly::EventDispatcher dispatcher(event);

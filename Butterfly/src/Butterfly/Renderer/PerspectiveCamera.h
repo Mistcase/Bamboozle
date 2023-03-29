@@ -1,29 +1,39 @@
 #pragma once
 
-#include "Butterfly/Transformable.h"
+#include "Butterfly/Scene/Entity.h"
+
+#include <glm/glm.hpp>
 
 namespace butterfly
 {
-    class PerspectiveCamera : public Transformable
+    class Event;
+    class MouseMovedEvent;
+    class KeyEvent;
+
+    class PerspectiveCamera
     {
     public:
-        PerspectiveCamera(float fov, float aspectRatio, float zNear, float zFar);
+		void possess(Entity entity);
 
-        void setViewDirection(glm::vec3 direction);
+        void update(float dt);
 
+        void onEvent(Event& event);
+
+        Entity getPawn() const;
         glm::vec3 getViewDirection() const;
         const glm::mat4& getViewProjection() const;
 
     private:
         void updateViewProjection();
-        void transformChanged() override;
+
+        bool onMouseMovedEvent(MouseMovedEvent& mouseEvent);
+        bool onKeyEvent(KeyEvent& keyEvent);
 
     private:
-        glm::mat4 m_view;
-        glm::mat4 m_projection;
         glm::mat4 m_viewProjection;
 
-        glm::vec3 m_viewDirection = { 0.0f, 0.0f, -1.0f };
+	private:
+		Entity m_entity;
     };
 
 } // namespace butterfly

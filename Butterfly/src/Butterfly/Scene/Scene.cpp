@@ -1,14 +1,19 @@
+#include "Butterfly/Renderer/Material.h"
+#include "Butterfly/Renderer/Mesh.h"
 #include "Butterfly/Scene/Components.h"
 #include "Butterfly/butterflypch.h"
 #include "Scene.h"
 
 #include "Butterfly/Application.h"
-#include "Butterfly/Object3D.h"
 #include "Butterfly/Renderer/Renderer.h"
 #include "Butterfly/Renderer/UniformBuffer.h"
 #include "Butterfly/Renderer/VertexArray.h"
-#include "Butterfly/Scene/Entity.h"
+#include "Butterfly/Transformable.h"
 #include "Platform/OpenGL/OpenGLShader.h"
+
+#include "Butterfly/KeyCodes.h"
+
+#include <glm/glm.hpp>
 
 namespace
 {
@@ -56,90 +61,65 @@ namespace butterfly
         : m_pointLightsBuffer(UniformBuffer::Create(sizeof(PointLightsBuffer)))
         , m_directionalLightsBuffer(UniformBuffer::Create(sizeof(DirectionalLightsBuffer)))
     {
-        auto& window = butterfly::Application::GetInstance().getWindow();
-        m_camera = std::make_unique<butterfly::PerspectiveCamera>(glm::radians(45.0f), (float)window.getWidth() / window.getHeight(), 0.5f, 100.0f);
-        m_cameraController = std::make_unique<butterfly::PerspectiveCameraController>(m_camera.get());
-
         // TODO: do smth with such numeric literals
         Renderer::Shader()->bindUniformBlock("PointLights", 2);
         m_pointLightsBuffer->bind(2);
 
         Renderer::Shader()->bindUniformBlock("DirectionalLights", 3);
-        m_directionalLightsBuffer->bind(3);
+        m_directionalLightsBuffer->bind();
     }
 
 	Scene::~Scene()
 	{
-		m_registry.view<NativeScriptComponent>().each([=](auto entity, auto& scriptComponent)
-		{
-			if (scriptComponent.instance)
-			{
-				scriptComponent.onDestroy(scriptComponent.instance);
-				scriptComponent.destroyScript();
-			}
-		});
 	}
 
 	Entity Scene::createEntity(const std::string& name)
 	{
         auto handle = m_registry.create();
-		// Add tag component( name )
-		// Add transform component
-
 		m_registry.emplace<TagComponent>(handle, name);
+        m_registry.emplace<TransformComponent>(handle);
 
-		return { handle, this };
+		return { handle, &m_registry };
 	}
+
+    void Scene::setCameraPawn(Entity entity)
+    {
+        assert(entity.hasComponent<CameraComponent>());
+        m_cameraController.possess(entity);
+    }
 
     void Scene::update(float dt)
     {
-		// Update all scripts
-		m_registry.view<NativeScriptComponent>().each([=](auto entity, auto& scriptComponent)
-		{
-			// Call it when scene starts play
-			if (!scriptComponent.instance)
-			{
-				scriptComponent.instantiateScript();
-				scriptComponent.instance->m_entity = { entity, this };
-				scriptComponent.onCreate(scriptComponent.instance);
-			}
-
-			scriptComponent.onUpdate(scriptComponent.instance, dt);
-		});
-
-        m_cameraController->onUpdate(dt);
-
-        for (auto& light : m_pointLights)
-		{
-			light.update(dt);
-		}
-
-        for (auto& light : m_directionalLights)
-		{
-			light.update(dt);
-		}
-
-        for (auto& object : m_objects)
-		{
-			object->update(dt);
-		}
+		updateTransforms();
+        m_cameraController.update(dt);
     }
 
     void Scene::render() const
     {
 		butterfly::RenderCommand::Clear();
-        Renderer::BeginScene(m_camera.get());
+        Renderer::BeginScene(&m_cameraController);
 
         drawWorldAxes();
 
+        // Submit lights before meshes
         submitLights();
-        for (const auto& object : m_objects)
-        {
-            object->render();
-        }
+        submitMeshes();
 
         Renderer::EndScene();
     }
+
+    void Scene::onEvent(Event& event)
+    {
+        // m_cameraController.onEvent(event);
+    }
+
+	void Scene::updateTransforms()
+	{
+		m_registry.view<TransformComponent>().each([](auto handle, auto& transformComponent)
+        {
+            transformComponent.updateWorldTransform();
+        });
+	}
 
     void Scene::drawWorldAxes() const
     {
@@ -155,58 +135,59 @@ namespace butterfly
         Renderer::DrawPoint({ 0.0, 5.0f, 0.0f }, { 1.0f, 0.0f, 0.0f, 0.7f });
     }
 
+    void Scene::submitMeshes() const
+    {
+        for (auto &&[entity, mesh, material, transform] : m_registry.group<MeshComponent>(entt::get<MaterialComponent, TransformComponent>).each())
+        {
+            static_cast<OpenGLShader*>(Renderer::Shader())->setUniformMat4("u_Transform", transform.getWorldTransform());
+
+            material.apply();
+            mesh.draw();
+        }
+    }
+
     void Scene::submitLights() const
     {
-        // Point lights
-        assert(m_directionalLights.size() < MaxPointLightsSimultaneously);
+        auto pointLights = m_registry.group<PointLightComponent>(entt::get<TransformComponent>);
+        assert(pointLights.size() < MaxPointLightsSimultaneously);
 
+        auto directionalLights = m_registry.group<DirectionalLightComponent>(entt::get<TransformComponent>);
+        assert(directionalLights.size() < MaxDirectionalLightsSimultaneously);
+
+        size_t idx = 0;
         static PointLightsBuffer pbuffer;
-        pbuffer.used = m_pointLights.size();
-        for (size_t i = 0; i < pbuffer.used; i++)
+        pbuffer.used = pointLights.size();
+        for (auto&& [handle, light, transform] : pointLights.each())
         {
-            const auto& light = m_pointLights[i];
-            auto& pbufferLight = pbuffer.lights[i];
+            auto& pbufferLight = pbuffer.lights[idx];
 
-            pbufferLight.position = light.getPosition();
-            pbufferLight.intensity = light.getIntensity();
-            pbufferLight.radius = light.getRadius();
+            pbufferLight.position = transform.getPosition();
+            pbufferLight.intensity = light.intensity;
+            pbufferLight.radius = light.radius;
 
-            const auto attenuation = light.getAttenuation();
+            const auto attenuation = light.attenuation;
             pbufferLight.linearRatio = attenuation.linearRatio;
             pbufferLight.quadraticRatio = attenuation.quadraticRatio;
+            idx++;
         }
         const auto pbufferSize = offsetof(PointLightsBuffer, lights) + pbuffer.used * sizeof(PointLightsBuffer::PointLight);
         m_pointLightsBuffer->bind(2);
         m_pointLightsBuffer->submit(&pbuffer, pbufferSize);
+        idx = 0;
 
         static DirectionalLightsBuffer dbuffer;
-        dbuffer.used = m_directionalLights.size();
-        for (size_t i = 0; i < dbuffer.used; i++)
+        dbuffer.used = directionalLights.size();
+        for (auto&& [handle, light, transform] : directionalLights.each())
         {
-            const auto& light = m_directionalLights[i];
-            auto& dbufferLight = dbuffer.lights[i];
+            auto& dbufferLight = dbuffer.lights[idx];
 
-            dbufferLight.intensity = light.getIntensity();
-            dbufferLight.direction = light.getDirection();
+            dbufferLight.intensity = light.intensity;
+            dbufferLight.direction = light.direction;
+            idx++;
         }
         const auto dbufferSize = offsetof(DirectionalLightsBuffer, lights) + dbuffer.used * sizeof(DirectionalLightsBuffer::DirectionalLight);
         m_directionalLightsBuffer->bind(3);
         m_directionalLightsBuffer->submit(&dbuffer, dbufferSize);
-    }
-
-    const Scene::PointLights& Scene::getPointLights() const
-    {
-        return m_pointLights;
-    }
-
-    const Scene::DirectionalLights& Scene::getDirectionalLights() const
-    {
-        return m_directionalLights;
-    }
-
-    const Scene::Objects Scene::getObjects() const
-    {
-        return m_objects;
     }
 
 } // namespace butterfly
