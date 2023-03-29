@@ -12,7 +12,7 @@ namespace butterfly
     class IndexBuffer;
     class Texture;
 
-    class Mesh
+    class MeshComponent
     {
     public:
         using IndexType = uint32_t;
@@ -27,13 +27,13 @@ namespace butterfly
         using IndexContainer = std::vector<IndexType>;
 
     public:
-        static Ref<Mesh> Create(const std::filesystem::path& path);
+        static MeshComponent Create(const std::filesystem::path& path); // TODO: Remove it
         const VertexContainer& getRawData() const;
 
         void draw() const;
 
     private:
-        Mesh(VertexContainer&& vertices, const IndexContainer& indices);
+        MeshComponent(VertexContainer&& vertices, const IndexContainer& indices);
 
     private:
         Ref<VertexArray> m_vertexArray;

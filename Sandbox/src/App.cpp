@@ -10,7 +10,7 @@ public:
     Sandbox()
         : butterfly::Application("Sandbox", helpers::MakePath(""))
     {
-        pushLayer(new Editor());
+        pushLayer(new butterfly::EditorLayer());
     }
 
     ~Sandbox()

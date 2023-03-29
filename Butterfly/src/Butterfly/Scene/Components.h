@@ -3,14 +3,8 @@
 #include <glm/glm.hpp>
 #include <string>
 
-#include "ScriptableEntity.h"
-
 namespace butterfly
 {
-    /* struct TransformComponent */
-    /* { */
-    /* }; */
-
     struct TagComponent
     {
         std::string tag;
@@ -19,31 +13,32 @@ namespace butterfly
     struct CameraComponent
     {
         glm::mat4 projection;
+		glm::vec3 viewDirection;
     };
 
-	struct NativeScriptComponent
-	{
-        NativeScriptComponent() = default;
+    struct DirectionalLightComponent
+    {
+        glm::vec3 intensity;
+        glm::vec3 direction;
+    };
 
-		ScriptableEntity* instance = nullptr;
+    struct PointLightComponent
+    {
+        PointLightComponent(const glm::vec3& _intencity, float _radius)
+            : intensity(_intencity)
+            , radius(_radius)
+        {
+        }
 
-		std::function<void()> instantiateScript;
-		std::function<void()> destroyScript;
+        struct Attenuation
+        {
+            float linearRatio = 1.0f;
+            float quadraticRatio = 1.0f;
+        };
 
-		std::function<void(ScriptableEntity*)> onCreate;
-		std::function<void(ScriptableEntity*, float)> onUpdate;
-		std::function<void(ScriptableEntity*)> onDestroy;
-
-		template <typename T>
-		void bind()
-		{
-			instantiateScript = [this](){ instance = new T(); };
-			destroyScript = [this](){ static_cast<T*>(instance)->onDestroy(); instance = nullptr; };
-
-			onCreate = [](ScriptableEntity* instance){ static_cast<T*>(instance)->onCreate(); };
-			onUpdate = [](ScriptableEntity* instance, float dt){ static_cast<T*>(instance)->onUpdate(dt); };
-			onDestroy = [](ScriptableEntity* instance){ static_cast<T*>(instance)->onDestroy(); };
-		}
-	};
+        glm::vec3 intensity;
+        Attenuation attenuation;
+        float radius;
+    };
 
 } // namespace butterfly

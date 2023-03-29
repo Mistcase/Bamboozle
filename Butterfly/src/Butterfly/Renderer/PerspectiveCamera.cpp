@@ -1,26 +1,65 @@
+#include "Butterfly/butterflypch.h"
 #include "PerspectiveCamera.h"
 
-#include "glm/ext/matrix_clip_space.hpp"
-#include "glm/ext/matrix_transform.hpp"
-#include <stdio.h>
+#include "Butterfly/Log.h"
+#include "Butterfly/Scene/Components.h"
+#include "Butterfly/Transformable.h" // TODO: Rename as TransformComponent
+#include "Butterfly/Events/Event.h"
+#include "Butterfly/Events/MouseEvent.h"
+#include "Butterfly/Input.h"
+#include "Butterfly/KeyCodes.h"
 
 namespace butterfly
 {
-    PerspectiveCamera::PerspectiveCamera(float fov, float aspectRatio, float zNear, float zFar)
-        : m_projection(glm::perspective(fov, aspectRatio, zNear, zFar))
+	void PerspectiveCamera::possess(Entity entity)
+	{
+		m_entity = entity;
+		updateViewProjection();
+	}
+
+    void PerspectiveCamera::update(float dt)
     {
+        const auto delta = dt;
+
+        auto& camera = m_entity.getComponent<CameraComponent>();
+		auto& transform = m_entity.getComponent<TransformComponent>();
+
+        if (Input::IsKeyPressed(BUTTERFLY_KEY_W))
+        {
+            transform.setPosition(transform.getPosition() + 0.25f * camera.viewDirection);
+        }
+
+        if (Input::IsKeyPressed(BUTTERFLY_KEY_S))
+        {
+            transform.setPosition(transform.getPosition() - 0.25f * camera.viewDirection);
+        }
+
+        if (Input::IsKeyPressed(BUTTERFLY_KEY_A))
+        {
+            const auto right = glm::cross(camera.viewDirection, glm::vec3(0.0f, 1.0f, 0.0f));
+            transform.setPosition(transform.getPosition() - 0.25f * right);
+        }
+
+        if (Input::IsKeyPressed(BUTTERFLY_KEY_D))
+        {
+            const auto right = glm::cross(camera.viewDirection, glm::vec3(0.0f, 1.0f, 0.0f));
+            transform.setPosition(transform.getPosition() + 0.25f * right);
+        }
+
+        // TODO: FIXME, subscribe to transform changed!
+        camera.viewDirection = glm::rotate(transform.getRotation(), { 0.0f, 0.0f, -1.0f });
         updateViewProjection();
     }
 
-    void PerspectiveCamera::setViewDirection(glm::vec3 direction)
+    void PerspectiveCamera::onEvent(Event& event)
     {
-        m_viewDirection = direction;
-        m_isDirtyTransform = true;
+        EventDispatcher dispatcher(event);
+        dispatcher.dispatch<MouseMovedEvent>([this](MouseMovedEvent& event){ return onMouseMovedEvent(event); });
     }
 
-    glm::vec3 PerspectiveCamera::getViewDirection() const
+    Entity PerspectiveCamera::getPawn() const
     {
-        return m_viewDirection;
+        return m_entity;
     }
 
     const glm::mat4& PerspectiveCamera::getViewProjection() const
@@ -30,17 +69,45 @@ namespace butterfly
 
     void PerspectiveCamera::updateViewProjection()
     {
-        const auto right = glm::cross(m_viewDirection, { 0.0f, 1.0f, 0.0f });
-        const auto up = glm::cross(right, m_viewDirection);
+		assert(m_entity);
 
-        m_view = glm::lookAt(m_position, m_position + m_viewDirection, up);
-        m_viewProjection = m_projection * m_view;
+		const auto& camera = m_entity.getComponent<CameraComponent>();
+		const auto& transform = m_entity.getComponent<TransformComponent>();
+		const auto& position = transform.getPosition();
+
+        const auto right = glm::cross(camera.viewDirection, { 0.0f, 1.0f, 0.0f });
+        const auto up = glm::cross(right, camera.viewDirection);
+
+        const auto view = glm::lookAt(position, position + camera.viewDirection, up);
+        m_viewProjection = camera.projection * view;
     }
 
-    void PerspectiveCamera::transformChanged()
+    bool PerspectiveCamera::onMouseMovedEvent(MouseMovedEvent& mouseEvent)
     {
-        m_viewDirection = glm::rotate(m_rotation, { 0.0f, 0.0f, -1.0f });
+        static bool firstTime = true;
+        static glm::vec2 oldPos;
+
+        if (!firstTime)
+        {
+            auto& camera = m_entity.getComponent<CameraComponent>();
+            auto& transform = m_entity.getComponent<TransformComponent>();
+
+            const auto delta = oldPos - glm::vec2{ mouseEvent.getX(), mouseEvent.getY() };
+            const auto viewDirection = camera.viewDirection;
+            const auto right = glm::cross(viewDirection, { 0.0f, 1.0f, 0.0f });
+
+            auto quat1 = glm::angleAxis(delta.y / 200.0f, right);
+            auto quat2 = glm::angleAxis(delta.x / 200.0f, glm::vec3{ 0.0, 1.0f, 0.0f });
+
+            auto newRotation = quat1 * quat2 * transform.getRotation();
+            transform.setRotation(newRotation);
+        }
+
+        firstTime = false;
+        oldPos = { mouseEvent.getX(), mouseEvent.getY() };
+
         updateViewProjection();
+        return true;
     }
 
 } // namespace butterfly

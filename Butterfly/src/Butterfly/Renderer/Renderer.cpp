@@ -1,13 +1,13 @@
 #include "Renderer.h"
 
 #include "Butterfly/Application.h"
-#include "Butterfly/Object3D.h"
 #include "Butterfly/Renderer/PerspectiveCamera.h"
 #include "Butterfly/Renderer/Renderer2D.h"
 #include "Butterfly/Renderer/Shader.h"
 #include "Butterfly/Renderer/Shaders.h"
 #include "Butterfly/Renderer/Texture.h"
 #include "Butterfly/Renderer/VertexArray.h"
+#include "Butterfly/Transformable.h"
 #include "Butterfly/butterflypch.h"
 
 // Temp
@@ -70,7 +70,9 @@ namespace butterfly
         const auto& viewProjection = m_camera->getViewProjection();
 
         static_cast<OpenGLShader*>(Renderer2D::Shader())->bind();
-        static_cast<butterfly::OpenGLShader*>(butterfly::Renderer::Shader())->setUniform3f("u_CameraPosition", m_camera->getPosition());
+		auto cameraPawn = m_camera->getPawn();
+		const auto& transform = cameraPawn.getComponent<TransformComponent>();
+        static_cast<butterfly::OpenGLShader*>(butterfly::Renderer::Shader())->setUniform3f("u_CameraPosition", transform.getPosition());
         static_cast<OpenGLShader*>(Renderer2D::Shader())->setUniformMat4("u_VP", viewProjection);
 
         RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 0.1f });

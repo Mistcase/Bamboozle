@@ -10,7 +10,7 @@ namespace butterfly
     class Shader;
     class UniformBuffer;
 
-    class Material
+    class MaterialComponent
     {
     public:
         struct LightingParams
@@ -22,12 +22,9 @@ namespace butterfly
         };
 
         using Textures = std::vector<Ref<Texture>>;
-        static Ref<Material> Create(Shader* shader, const LightingParams& params, Textures&& textures);
+        MaterialComponent(Shader* shader, const LightingParams& params, Textures&& textures);
 
         void apply() const;
-
-    private:
-        Material(Shader* shader, const LightingParams& params, Textures&& textures);
 
     private:
         Textures m_textures;

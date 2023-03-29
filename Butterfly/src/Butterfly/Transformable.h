@@ -5,12 +5,12 @@
 
 namespace butterfly
 {
-    class Transformable
+    class TransformComponent final
     {
     public:
-        virtual ~Transformable() = default;
+        TransformComponent();
 
-        void update();
+        void updateWorldTransform();
 
         void setPosition(glm::vec3 position);
         void setRotation(glm::quat quaternion);
@@ -22,15 +22,11 @@ namespace butterfly
         glm::vec3 getScale() const;
         const glm::mat4& getWorldTransform() const;
 
-    protected:
-        Transformable();
-        virtual void transformChanged();
-
     private:
         void invalidateTransform();
         void calculateTransform();
 
-    protected:
+    private:
         glm::mat4 m_transform;
         glm::vec3 m_position = { 0.0f, 0.0f, 0.0f };
         glm::quat m_rotation = glm::identity<glm::quat>();

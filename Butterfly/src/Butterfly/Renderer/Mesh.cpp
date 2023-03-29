@@ -11,7 +11,7 @@
 
 namespace butterfly
 {
-    Ref<Mesh> Mesh::Create(const std::filesystem::path& path)
+    MeshComponent MeshComponent::Create(const std::filesystem::path& path)
     {
         tinyobj::attrib_t attrib;
         std::vector<tinyobj::shape_t> shapes;
@@ -82,11 +82,10 @@ namespace butterfly
             }
         }
 
-        auto instance = new Mesh(std::move(vertices), indices);
-        return Ref<Mesh>(instance);
+        return { std::move(vertices), indices };
     }
 
-    Mesh::Mesh(VertexContainer&& vertices, const IndexContainer& indices)
+    MeshComponent::MeshComponent(VertexContainer&& vertices, const IndexContainer& indices)
         : m_vertices(std::move(vertices))
     {
         for (auto& vertex : m_vertices)
@@ -108,12 +107,12 @@ namespace butterfly
         m_vertexArray->setIndexBuffer(m_indexBuffer);
     }
 
-    const Mesh::VertexContainer& Mesh::getRawData() const
+    const MeshComponent::VertexContainer& MeshComponent::getRawData() const
     {
         return m_vertices;
     }
 
-    void Mesh::draw() const
+    void MeshComponent::draw() const
     {
         m_vertexArray->bind();
         RenderCommand::DrawIndexed(m_vertexArray);
