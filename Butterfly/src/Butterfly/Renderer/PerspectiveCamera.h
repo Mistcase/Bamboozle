@@ -33,10 +33,14 @@ namespace butterfly
 
     private:
         glm::mat4 m_viewProjection;
+		glm::vec3 m_viewDirectionWorld;
 
 	private:
+		glm::vec2 m_oldCursorPos;
+
 		Entity m_entity;
         bool m_blockInput = false;
+		bool m_oldCursorValid = false;
     };
 
 } // namespace butterfly

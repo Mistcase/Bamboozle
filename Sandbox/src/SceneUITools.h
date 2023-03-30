@@ -15,6 +15,8 @@ namespace butterfly
 
         void onEvent(Event& event);
 
+		void onViewportChanged(glm::vec2 viewportSize);
+
     private:
         void drawHierarchyPanel();
         void drawComponentsPanel();

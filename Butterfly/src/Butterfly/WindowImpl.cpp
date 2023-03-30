@@ -66,7 +66,6 @@ namespace butterfly
 
         glfwSetWindowUserPointer(m_window, &m_data);
         setVSync(true);
-		setCursorVisible(true);
 
         glfwSetWindowSizeCallback(m_window, [](GLFWwindow* window, int width, int height) {
             auto& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
@@ -163,7 +162,12 @@ namespace butterfly
 	{
 		assert(m_window != nullptr);
 		glfwSetInputMode(m_window, GLFW_CURSOR, visible ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
+
+		const auto oldVisible = m_data.cursorVisible;
 		m_data.cursorVisible = visible;
+
+		MouseCursorVisibilityChanged e{ m_data.cursorVisible };
+		m_data.eventCallback(e);
 	}
 
     void WindowImpl::setVSync(bool enabled)

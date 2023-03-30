@@ -21,17 +21,17 @@ namespace butterfly
     void SceneUITools::onEvent(Event& event)
     {
         EventDispatcher dispatcher(event);
+		dispatcher.dispatch<MouseCursorVisibilityChanged>([this](MouseCursorVisibilityChanged& e)
+		{
+			m_scene->m_cameraController.blockInput(e.isVisible());
+			return true;
+		});
         dispatcher.dispatch<KeyReleasedEvent>([this](KeyReleasedEvent& event)
         {
 			switch (event.getKeyCode())
 			{
-			case BUTTERFLY_KEY_TAB: {
-				auto& camera = m_scene->m_cameraController;
-                camera.blockInput(!camera.isInputBlocked());
-				break;
-			}
-
-			case BUTTERFLY_KEY_N: {
+			case BUTTERFLY_KEY_N:
+			{
 				if (Input::IsKeyPressed(BUTTERFLY_KEY_LEFT_SHIFT))
 				{
 					m_isNewEntityRequired = true;
@@ -42,6 +42,14 @@ namespace butterfly
             return false;
         });
     }
+
+	void SceneUITools::onViewportChanged(glm::vec2 viewportSize)
+	{
+		m_scene->m_registry.view<CameraComponent>().each([=](CameraComponent& camera)
+		{
+			camera.projection = glm::perspective(glm::radians(45.0f), viewportSize.x / viewportSize.y, 0.5f, 100.0f);
+		});
+	}
 
     void SceneUITools::drawHierarchyPanel()
     {
@@ -68,7 +76,7 @@ namespace butterfly
             });
 
             ImGui::Separator();
-            if (ImGui::Button("Add entity", { 120.0f, 25.0f }) || m_isNewEntityRequired)
+            if (ImGui::Button("New entity", { 120.0f, 25.0f }) || m_isNewEntityRequired)
             {
 				openNewEntityPopup();
             }
@@ -124,6 +132,8 @@ namespace butterfly
 				auto controlledPawn = m_scene->m_cameraController.getPawn();
                 auto& component = m_selected.getComponent<CameraComponent>();
 
+				ImGui::InputFloat3("View direction", glm::value_ptr(component.viewDirection), "%.3f", ImGuiInputTextFlags_ReadOnly);
+
                 if (ImGui::Button("Possess", { 100.0f, 25.0f }))
                 {
                     m_scene->m_cameraController.possess(m_selected);
@@ -157,7 +167,7 @@ namespace butterfly
                 ImGui::DragFloat("Quadratic", &component.attenuation.quadraticRatio, 0.1f);
 			}, "Point light");
 
-            if (ImGui::BeginMenu("Add component"))
+            if (ImGui::BeginMenu("New component"))
             {
                 showComponentsMenu();
                 ImGui::EndMenu();
@@ -170,12 +180,7 @@ namespace butterfly
     void SceneUITools::drawStatusPanel()
     {
         ImGui::Begin("Status");
-
-        // Camera
-        auto blockInput = m_scene->m_cameraController.isInputBlocked();
         ImGui::Text("ActiveCamera: %s", m_scene->m_cameraController.getPawn().getComponent<TagComponent>().tag.c_str());
-        ImGui::Checkbox("Block camera input (Tab)", &blockInput);
-        m_scene->m_cameraController.blockInput(blockInput);
 
         ImGui::End();
     }

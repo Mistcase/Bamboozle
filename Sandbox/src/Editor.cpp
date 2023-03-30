@@ -30,16 +30,9 @@ namespace butterfly
         m_wall.addComponent<MeshComponent>(MeshComponent::Create(helpers::MakePath("objects/scene.obj")));
         m_wall.addComponent<MaterialComponent>(Renderer::Shader(), MaterialComponent::LightingParams{ 0.0f, 0.3f, 1.0f, 20.0f }, std::move(textures));
 
-        // m_directionalLight = m_scene->createEntity("GlobalLight");
-        // m_directionalLight.addComponent<DirectionalLightComponent>(glm::vec3{ 1.0f, 1.0f, 1.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f });
-
-        m_pointLight1 = m_scene->createEntity("Light1");
-        m_pointLight1.addComponent<PointLightComponent>(glm::vec3{ 0.0f, 1.0f, 0.0f }, 2.5f);
-        m_pointLight1.getComponent<TransformComponent>().setPosition({ 0.0f, 0.5f, 0.0f });
-
-        // m_pointLight2 = m_scene->createEntity("Light2");
-        // m_pointLight2.addComponent<PointLightComponent>(glm::vec3{ 1.0f, 0.0f, 0.0f }, 2.0f);
-        // m_pointLight2.getComponent<TransformComponent>().setPosition({ -1.5f, 1.5f, 0.0f });
+        auto pointLight = m_scene->createEntity("Light1");
+        pointLight.addComponent<PointLightComponent>(glm::vec3{ 0.0f, 1.0f, 0.0f }, 2.5f);
+        pointLight.getComponent<TransformComponent>().setPosition({ 0.0f, 0.5f, 0.0f });
 
         // Create camera pawn and controller
         auto& window = butterfly::Application::GetInstance().getWindow();
@@ -49,7 +42,6 @@ namespace butterfly
             auto& cameraComponent = defaultCameraPawn.addComponent<CameraComponent>();
             auto& transformComponent = defaultCameraPawn.getComponent<TransformComponent>();
 
-            cameraComponent.projection = glm::perspective(glm::radians(45.0f), (float)window.getWidth() / window.getHeight(), 0.5f, 100.0f);
             cameraComponent.viewDirection = glm::normalize(glm::vec3{-1.0f, -1.0f, -1.0f});
             transformComponent.setPosition({ 3.0f, 4.0f, 15.0f });
 
@@ -61,10 +53,11 @@ namespace butterfly
             auto& cameraComponent = camera2.addComponent<CameraComponent>();
             auto& transformComponent = camera2.getComponent<TransformComponent>();
 
-            cameraComponent.projection = glm::perspective(glm::radians(45.0f), (float)window.getWidth() / window.getHeight(), 0.5f, 100.0f);
             cameraComponent.viewDirection = glm::normalize(glm::vec3{1.0f, 1.0f, 1.0f});
             transformComponent.setPosition({ 10.0f, 4.0f, 10.0f });
         }
+
+		window.setCursorVisible(false);
     }
 
     void EditorLayer::onDetach()
@@ -131,7 +124,11 @@ namespace butterfly
     void EditorLayer::onEvent(Event& event)
     {
         m_UITools.onEvent(event);
-        m_scene->onEvent(event);
+
+		if (!m_window.isCursorVisible())
+		{
+			m_scene->onEvent(event);
+		}
 
         EventDispatcher dispatcher(event);
         dispatcher.dispatch<KeyReleasedEvent>([this](KeyEvent& e)
@@ -179,13 +176,14 @@ namespace butterfly
         if (m_oldViewportSize != viewportSize)
         {
             BUTTERFLY_CORE_INFO("Resize viewport: {}x{}", viewportSize.x, viewportSize.y);
-
             m_framebuffer->resize(viewportSize.x, viewportSize.y);
             m_oldViewportSize = viewportSize;
+
+			m_UITools.onViewportChanged(viewportSize);
         }
 
         const auto textureId = m_framebuffer->getColorAttachmentRendererId();
-        ImGui::Image(reinterpret_cast<void*>(textureId), available, { 0.0f, 1.0f }, { 1.0f, 0.0f });
+        ImGui::Image(reinterpret_cast<void*>(textureId), available, { 0, 1 }, { 1, 0 });
         ImGui::End();
     }
 
