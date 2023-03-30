@@ -63,7 +63,7 @@ namespace butterfly
 
             cameraComponent.projection = glm::perspective(glm::radians(45.0f), (float)window.getWidth() / window.getHeight(), 0.5f, 100.0f);
             cameraComponent.viewDirection = glm::normalize(glm::vec3{1.0f, 1.0f, 1.0f});
-            transformComponent.setPosition({ -3.0f, 4.0f, -15.0f });
+            transformComponent.setPosition({ 10.0f, 4.0f, 10.0f });
         }
     }
 
