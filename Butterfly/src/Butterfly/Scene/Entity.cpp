@@ -10,7 +10,7 @@ namespace butterfly
 
 	Entity::operator bool() const
 	{
-		return m_handle != entt::null;
+		return m_handle != entt::null && m_registry->valid(m_handle);
 	}
 
 } // namespace butterfly

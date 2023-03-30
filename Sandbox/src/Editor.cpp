@@ -28,18 +28,18 @@ namespace butterfly
         // Add objects to scene for test purposes.
         m_wall = m_scene->createEntity("Wall");
         m_wall.addComponent<MeshComponent>(MeshComponent::Create(helpers::MakePath("objects/scene.obj")));
-        m_wall.addComponent<MaterialComponent>(Renderer::Shader(), MaterialComponent::LightingParams{ 0.12f, 0.3f, 1.0f, 20.0f }, std::move(textures));
+        m_wall.addComponent<MaterialComponent>(Renderer::Shader(), MaterialComponent::LightingParams{ 0.2f, 0.3f, 1.0f, 20.0f }, std::move(textures));
 
-        m_directionalLight = m_scene->createEntity("GlobalLight");
-        m_directionalLight.addComponent<DirectionalLightComponent>(glm::vec3{ 1.0f, 1.0f, 1.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f });
+        // m_directionalLight = m_scene->createEntity("GlobalLight");
+        // m_directionalLight.addComponent<DirectionalLightComponent>(glm::vec3{ 1.0f, 1.0f, 1.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f });
 
         m_pointLight1 = m_scene->createEntity("Light1");
         m_pointLight1.addComponent<PointLightComponent>(glm::vec3{ 0.0f, 1.0f, 0.0f }, 2.5f);
         m_pointLight1.getComponent<TransformComponent>().setPosition({ 0.0f, 0.5f, 0.0f });
 
-        m_pointLight2 = m_scene->createEntity("Light2");
-        m_pointLight2.addComponent<PointLightComponent>(glm::vec3{ 1.0f, 0.0f, 0.0f }, 2.0f);
-        m_pointLight2.getComponent<TransformComponent>().setPosition({ -1.5f, 1.5f, 0.0f });
+        // m_pointLight2 = m_scene->createEntity("Light2");
+        // m_pointLight2.addComponent<PointLightComponent>(glm::vec3{ 1.0f, 0.0f, 0.0f }, 2.0f);
+        // m_pointLight2.getComponent<TransformComponent>().setPosition({ -1.5f, 1.5f, 0.0f });
 
         // Create camera pawn and controller
         auto& window = butterfly::Application::GetInstance().getWindow();

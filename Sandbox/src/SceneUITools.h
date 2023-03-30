@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Butterfly.h>
+#include <imgui.h>
 
 namespace butterfly
 {
@@ -21,6 +22,19 @@ namespace butterfly
 
         void showSetDirectionPopup(DirectionalLightComponent& component);
         void showNewEntityPopup();
+
+        void showComponentsMenu();
+
+		template <typename Component>
+		void showComponent(std::function<void()> showFunc, const char* name = typeid(Component).name())
+		{
+			if (m_selected.hasComponent<Component>())
+            {
+                ImGui::Text(name);
+				showFunc();
+				ImGui::Separator();
+            }
+		}
 
     private:
         Ref<Scene> m_scene;
