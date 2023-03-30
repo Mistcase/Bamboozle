@@ -110,7 +110,7 @@ namespace butterfly
 
     void Scene::onEvent(Event& event)
     {
-        // m_cameraController.onEvent(event);
+        m_cameraController.onEvent(event);
     }
 
 	void Scene::updateTransforms()

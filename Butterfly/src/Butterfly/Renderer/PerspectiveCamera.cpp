@@ -17,6 +17,11 @@ namespace butterfly
 		updateViewProjection();
 	}
 
+    void PerspectiveCamera::blockInput(bool block)
+    {
+        m_blockInput = block;
+    }
+
     void PerspectiveCamera::update(float dt)
     {
         const auto delta = dt;
@@ -24,26 +29,29 @@ namespace butterfly
         auto& camera = m_entity.getComponent<CameraComponent>();
 		auto& transform = m_entity.getComponent<TransformComponent>();
 
-        if (Input::IsKeyPressed(BUTTERFLY_KEY_W))
+        if (!m_blockInput)
         {
-            transform.setPosition(transform.getPosition() + 0.25f * camera.viewDirection);
-        }
+            if (Input::IsKeyPressed(BUTTERFLY_KEY_W))
+            {
+                transform.setPosition(transform.getPosition() + 0.25f * camera.viewDirection);
+            }
 
-        if (Input::IsKeyPressed(BUTTERFLY_KEY_S))
-        {
-            transform.setPosition(transform.getPosition() - 0.25f * camera.viewDirection);
-        }
+            if (Input::IsKeyPressed(BUTTERFLY_KEY_S))
+            {
+                transform.setPosition(transform.getPosition() - 0.25f * camera.viewDirection);
+            }
 
-        if (Input::IsKeyPressed(BUTTERFLY_KEY_A))
-        {
-            const auto right = glm::cross(camera.viewDirection, glm::vec3(0.0f, 1.0f, 0.0f));
-            transform.setPosition(transform.getPosition() - 0.25f * right);
-        }
+            if (Input::IsKeyPressed(BUTTERFLY_KEY_A))
+            {
+                const auto right = glm::cross(camera.viewDirection, glm::vec3(0.0f, 1.0f, 0.0f));
+                transform.setPosition(transform.getPosition() - 0.25f * right);
+            }
 
-        if (Input::IsKeyPressed(BUTTERFLY_KEY_D))
-        {
-            const auto right = glm::cross(camera.viewDirection, glm::vec3(0.0f, 1.0f, 0.0f));
-            transform.setPosition(transform.getPosition() + 0.25f * right);
+            if (Input::IsKeyPressed(BUTTERFLY_KEY_D))
+            {
+                const auto right = glm::cross(camera.viewDirection, glm::vec3(0.0f, 1.0f, 0.0f));
+                transform.setPosition(transform.getPosition() + 0.25f * right);
+            }
         }
 
         // TODO: FIXME, subscribe to transform changed!
@@ -53,8 +61,11 @@ namespace butterfly
 
     void PerspectiveCamera::onEvent(Event& event)
     {
-        EventDispatcher dispatcher(event);
-        dispatcher.dispatch<MouseMovedEvent>([this](MouseMovedEvent& event){ return onMouseMovedEvent(event); });
+        if (!m_blockInput)
+        {
+            EventDispatcher dispatcher(event);
+            dispatcher.dispatch<MouseMovedEvent>([this](MouseMovedEvent& event){ return onMouseMovedEvent(event); });
+        }
     }
 
     Entity PerspectiveCamera::getPawn() const
@@ -65,6 +76,11 @@ namespace butterfly
     const glm::mat4& PerspectiveCamera::getViewProjection() const
     {
         return m_viewProjection;
+    }
+
+    bool PerspectiveCamera::isInputBlocked() const
+    {
+        return m_blockInput;
     }
 
     void PerspectiveCamera::updateViewProjection()

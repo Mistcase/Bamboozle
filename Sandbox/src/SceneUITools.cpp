@@ -16,6 +16,21 @@ namespace butterfly
     {
         drawHierarchyPanel();
         drawComponentsPanel();
+        drawStatusPanel();
+    }
+
+    void SceneUITools::onEvent(Event& event)
+    {
+        EventDispatcher dispatcher(event);
+        dispatcher.dispatch<KeyReleasedEvent>([this](KeyReleasedEvent& event)
+        {
+            if (event.getKeyCode() == BUTTERFLY_KEY_TAB)
+            {
+                auto& camera = m_scene->m_cameraController;
+                camera.blockInput(!camera.isInputBlocked());
+            }
+            return false;
+        });
     }
 
     void SceneUITools::drawHierarchyPanel()
@@ -146,6 +161,19 @@ namespace butterfly
                 ImGui::Separator();
             }
         }
+
+        ImGui::End();
+    }
+
+    void SceneUITools::drawStatusPanel()
+    {
+        ImGui::Begin("Status");
+
+        // Camera
+        auto blockInput = m_scene->m_cameraController.isInputBlocked();
+        ImGui::Text("ActiveCamera: %s", m_scene->m_cameraController.getPawn().getComponent<TagComponent>().tag.c_str());
+        ImGui::Checkbox("Block camera input (Tab)", &blockInput);
+        m_scene->m_cameraController.blockInput(blockInput);
 
         ImGui::End();
     }
