@@ -3,7 +3,6 @@
 #include "Butterfly/Transformable.h"
 #include <Butterfly.h>
 #include <glm/gtc/type_ptr.hpp>
-#include <imgui.h>
 
 namespace butterfly
 {
@@ -44,10 +43,16 @@ namespace butterfly
                 Entity entity { nativeHandle, &m_scene->m_registry };
                 const auto& tagComponent = entity.getComponent<TagComponent>();
 
-                bool selected;
-                if (ImGui::Selectable(tagComponent.tag.c_str(), &selected))
+                if (ImGui::Selectable(tagComponent.tag.c_str()))
                 {
-                    m_selected = entity;
+					if (Input::IsKeyPressed(BUTTERFLY_KEY_LEFT_SHIFT))
+					{
+						m_scene->m_registry.destroy(nativeHandle);
+					}
+					else
+					{
+						m_selected = entity;
+					}
                 }
             });
 
@@ -74,10 +79,9 @@ namespace butterfly
 
         if (m_selected)
         {
-            if (m_selected.hasComponent<TagComponent>())
-            {
-                ImGui::Text("Name");
-                auto& component = m_selected.getComponent<TagComponent>();
+			showComponent<TagComponent>([this]()
+			{
+				auto& component = m_selected.getComponent<TagComponent>();
                 auto& tag = component.tag;
 
                 char buf[MaxStringLength];
@@ -86,13 +90,11 @@ namespace butterfly
 
                 ImGui::InputText("Tag", buf, MaxStringLength);
                 tag = buf;
-				ImGui::Separator();
-            }
+			}, "Name");
 
-            if (m_selected.hasComponent<TransformComponent>())
-            {
-                ImGui::Text("Transform");
-                auto& component = m_selected.getComponent<TransformComponent>();
+			showComponent<TransformComponent>([this]()
+			{
+				auto& component = m_selected.getComponent<TransformComponent>();
 
                 auto position = component.getPosition();
                 auto rotation = glm::degrees(glm::eulerAngles(component.getRotation()));
@@ -105,27 +107,22 @@ namespace butterfly
                 component.setPosition(position);
                 component.setRotation(glm::radians(rotation));
                 component.setScale(scale);
-				ImGui::Separator();
-            }
+			}, "Transform");
 
-            if (m_selected.hasComponent<CameraComponent>())
-            {
-                ImGui::Text("Camera");
-                auto controlledPawn = m_scene->m_cameraController.getPawn();
+			showComponent<CameraComponent>([this]()
+			{
+				auto controlledPawn = m_scene->m_cameraController.getPawn();
                 auto& component = m_selected.getComponent<CameraComponent>();
 
                 if (ImGui::Button("Possess", { 100.0f, 25.0f }))
                 {
                     m_scene->m_cameraController.possess(m_selected);
                 }
+			});
 
-                ImGui::Separator();
-            }
-
-            if (m_selected.hasComponent<DirectionalLightComponent>())
-            {
-                ImGui::Text("Light params");
-                auto& component = m_selected.getComponent<DirectionalLightComponent>();
+			showComponent<DirectionalLightComponent>([this]()
+			{
+				auto& component = m_selected.getComponent<DirectionalLightComponent>();
 
                 ImGui::DragFloat3("Intensity", glm::value_ptr(component.intensity), 0.1f, 0.0f, 1.0f);
                 ImGui::InputFloat3("Direction", glm::value_ptr(component.direction), "%.3f", ImGuiInputTextFlags_ReadOnly);
@@ -133,25 +130,28 @@ namespace butterfly
                 if (ImGui::Button("Set"))
                 {
                     ImGui::OpenPopup("Direction");
+					m_newLightDirection = { 0.0f, 0.0f, 0.0f };
                 }
                 if (ImGui::BeginPopupModal("Direction", NULL, ImGuiWindowFlags_AlwaysAutoResize))
                 {
                     showSetDirectionPopup(component);
                 }
+			}, "Directional light");
 
-                ImGui::Separator();
-            }
-
-            if (m_selected.hasComponent<PointLightComponent>())
-            {
-                ImGui::Text("Light params");
-                auto& component = m_selected.getComponent<PointLightComponent>();
+			showComponent<PointLightComponent>([this]()
+			{
+				auto& component = m_selected.getComponent<PointLightComponent>();
 
                 ImGui::DragFloat3("Intensity", glm::value_ptr(component.intensity), 0.1f, 0.0f, 1.0f);
                 ImGui::DragFloat("Radius", &component.radius, 0.5f, 0.0f);
                 ImGui::DragFloat("Linear", &component.attenuation.linearRatio, 0.1f);
                 ImGui::DragFloat("Quadratic", &component.attenuation.quadraticRatio, 0.1f);
-                ImGui::Separator();
+			}, "Point light");
+
+            if (ImGui::BeginMenu("Add component"))
+            {
+                showComponentsMenu();
+                ImGui::EndMenu();
             }
         }
 
@@ -193,11 +193,16 @@ namespace butterfly
 
     void SceneUITools::showNewEntityPopup()
     {
+		if (ImGui::IsRootWindowOrAnyChildFocused() && !ImGui::IsAnyItemActive() && !ImGui::IsMouseClicked(0))
+		{
+			ImGui::SetKeyboardFocusHere(0);
+		}
+
         ImGui::InputText("Entity", m_newEntityName, MaxStringLength);
         if (ImGui::Button("OK", ImVec2(140, 0)))
         {
             ImGui::CloseCurrentPopup();
-            m_scene->createEntity(m_newEntityName);
+			m_selected = m_scene->createEntity(m_newEntityName);
         }
 
         ImGui::SetItemDefaultFocus();
@@ -209,6 +214,19 @@ namespace butterfly
         }
 
         ImGui::EndPopup();
+    }
+
+    void SceneUITools::showComponentsMenu()
+    {
+        if (!m_selected.hasComponent<PointLightComponent>() && ImGui::MenuItem("Point light source"))
+        {
+            m_selected.addComponent<PointLightComponent>(glm::vec3{ 1.0f, 1.0f, 1.0f }, 1.0f);
+        }
+
+		if (!m_selected.hasComponent<DirectionalLightComponent>() && ImGui::MenuItem("Directional light source"))
+		{
+			m_selected.addComponent<DirectionalLightComponent>(glm::vec3{ 1.0f, 1.0f, 1.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f });
+		}
     }
 
 } // namespace buterfly
