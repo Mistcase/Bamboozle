@@ -148,9 +148,6 @@ namespace butterfly
         Renderer::DrawLine({ origin, { 10.0f, 0.0f, 0.0f }, { 1.0f, 0.0f, 0.0f, 1.0f } });
         Renderer::DrawLine({ origin, { 0.0f, 10.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 1.0f } });
         Renderer::DrawLine({ origin, { 0.0f, 0.0f, 10.0f }, { 0.0f, 0.0f, 1.0f, 1.0f } });
-
-        RenderCommand::SetPointSize(20);
-        Renderer::DrawPoint({ 0.0, 5.0f, 0.0f }, { 1.0f, 0.0f, 0.0f, 0.7f });
     }
 
     void Scene::drawSkybox() const

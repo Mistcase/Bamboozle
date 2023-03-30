@@ -50,14 +50,25 @@ namespace butterfly
                     m_selected = entity;
                 }
             });
+
+            ImGui::Separator();
+            if (ImGui::Button("Add entity", { 120.0f, 25.0f }))
+            {
+                ImGui::OpenPopup("NewEntity");
+                memset(m_newEntityName, 0, MaxStringLength);
+            }
+
+            if (ImGui::BeginPopupModal("NewEntity", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+            {
+                showNewEntityPopup();
+            }
+
+            ImGui::End();
         }
-        ImGui::End();
     }
 
     void SceneUITools::drawComponentsPanel()
     {
-        constexpr size_t MaxStringLength = 64;
-
         ImGui::ShowDemoWindow();
         ImGui::Begin("Components");
 
@@ -113,8 +124,6 @@ namespace butterfly
 
             if (m_selected.hasComponent<DirectionalLightComponent>())
             {
-                static glm::vec3 newDirection;
-
                 ImGui::Text("Light params");
                 auto& component = m_selected.getComponent<DirectionalLightComponent>();
 
@@ -124,26 +133,10 @@ namespace butterfly
                 if (ImGui::Button("Set"))
                 {
                     ImGui::OpenPopup("Direction");
-                    newDirection = component.direction;
                 }
-
                 if (ImGui::BeginPopupModal("Direction", NULL, ImGuiWindowFlags_AlwaysAutoResize))
                 {
-                    ImGui::DragFloat3("", glm::value_ptr(newDirection));
-                    if (ImGui::Button("OK", ImVec2(140, 0)))
-                    {
-                        ImGui::CloseCurrentPopup(); component.direction = glm::normalize(newDirection);
-                    }
-
-                    ImGui::SetItemDefaultFocus();
-                    ImGui::SameLine();
-
-                    if (ImGui::Button("Cancel", ImVec2(140, 0)))
-                    {
-                        ImGui::CloseCurrentPopup();
-                    }
-
-                    ImGui::EndPopup();
+                    showSetDirectionPopup(component);
                 }
 
                 ImGui::Separator();
@@ -176,6 +169,46 @@ namespace butterfly
         m_scene->m_cameraController.blockInput(blockInput);
 
         ImGui::End();
+    }
+
+    void SceneUITools::showSetDirectionPopup(DirectionalLightComponent& component)
+    {
+        ImGui::DragFloat3("", glm::value_ptr(m_newLightDirection));
+        if (ImGui::Button("OK", ImVec2(140, 0)))
+        {
+            ImGui::CloseCurrentPopup();
+            component.direction = glm::normalize(m_newLightDirection);
+        }
+
+        ImGui::SetItemDefaultFocus();
+        ImGui::SameLine();
+
+        if (ImGui::Button("Cancel", ImVec2(140, 0)))
+        {
+            ImGui::CloseCurrentPopup();
+        }
+
+        ImGui::EndPopup();
+    }
+
+    void SceneUITools::showNewEntityPopup()
+    {
+        ImGui::InputText("Entity", m_newEntityName, MaxStringLength);
+        if (ImGui::Button("OK", ImVec2(140, 0)))
+        {
+            ImGui::CloseCurrentPopup();
+            m_scene->createEntity(m_newEntityName);
+        }
+
+        ImGui::SetItemDefaultFocus();
+        ImGui::SameLine();
+
+        if (ImGui::Button("Cancel", ImVec2(140, 0)))
+        {
+            ImGui::CloseCurrentPopup();
+        }
+
+        ImGui::EndPopup();
     }
 
 } // namespace buterfly
