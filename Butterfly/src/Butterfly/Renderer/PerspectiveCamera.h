@@ -14,6 +14,7 @@ namespace butterfly
     {
     public:
 		void possess(Entity entity);
+        void blockInput(bool block);
 
         void update(float dt);
 
@@ -22,6 +23,7 @@ namespace butterfly
         Entity getPawn() const;
         glm::vec3 getViewDirection() const;
         const glm::mat4& getViewProjection() const;
+        bool isInputBlocked() const;
 
     private:
         void updateViewProjection();
@@ -34,6 +36,7 @@ namespace butterfly
 
 	private:
 		Entity m_entity;
+        bool m_blockInput = false;
     };
 
 } // namespace butterfly

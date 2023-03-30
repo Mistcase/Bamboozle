@@ -35,12 +35,11 @@ namespace butterfly
     private:
         PerspectiveCamera m_cameraController;
 
-    private:
         Ref<UniformBuffer> m_pointLightsBuffer;
 		Ref<UniformBuffer> m_directionalLightsBuffer;
 
-	private:
 		mutable entt::registry m_registry;
+
         friend class SceneUITools;
     };
 

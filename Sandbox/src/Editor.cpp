@@ -130,25 +130,26 @@ namespace butterfly
 
     void EditorLayer::onEvent(Event& event)
     {
+        m_UITools.onEvent(event);
         m_scene->onEvent(event);
 
-            EventDispatcher dispatcher(event);
-            dispatcher.dispatch<KeyReleasedEvent>([this](KeyEvent& e)
+        EventDispatcher dispatcher(event);
+        dispatcher.dispatch<KeyReleasedEvent>([this](KeyEvent& e)
+        {
+            if (e.getKeyCode() == BUTTERFLY_KEY_ESCAPE)
             {
-                if (e.getKeyCode() == BUTTERFLY_KEY_ESCAPE)
+                if (Input::IsKeyPressed(BUTTERFLY_KEY_LEFT_SHIFT))
                 {
-                    if (Input::IsKeyPressed(BUTTERFLY_KEY_LEFT_SHIFT))
-                    {
-                        Application::GetInstance().quit();
-                    }
-                    else
-                    {
-                        m_window.setCursorVisible(!m_window.isCursorVisible());
-                    }
+                    Application::GetInstance().quit();
                 }
-                return true;
-            });
-        }
+                else
+                {
+                    m_window.setCursorVisible(!m_window.isCursorVisible());
+                }
+            }
+            return true;
+        });
+    }
 
     void EditorLayer::drawImGuiMenuBar()
     {
