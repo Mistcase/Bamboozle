@@ -10,6 +10,7 @@ namespace butterfly
 {
     class DirectionalLight;
     class UniformBuffer;
+    struct TransformComponent;
 
     class Scene final
     {
@@ -26,20 +27,22 @@ namespace butterfly
         void onEvent(Event& event);
 
     private:
+        void createSkybox();
 		void updateTransforms();
 
         void drawWorldAxes() const;
+        void drawSkybox() const;
         void submitMeshes() const;
         void submitLights() const;
 
     private:
         PerspectiveCamera m_cameraController;
 
+        Entity m_skybox;
         Ref<UniformBuffer> m_pointLightsBuffer;
 		Ref<UniformBuffer> m_directionalLightsBuffer;
 
 		mutable entt::registry m_registry;
-
         friend class SceneUITools;
     };
 

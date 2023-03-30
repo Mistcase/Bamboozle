@@ -24,8 +24,15 @@ namespace butterfly
 			return m_registry->get<T>(m_handle);
 		}
 
+        template <typename T>
+        const T& getComponent() const
+        {
+            assert(hasComponent<T>());
+			return m_registry->get<T>(m_handle);
+        }
+
 		template <typename T>
-		bool hasComponent()
+		bool hasComponent() const
 		{
 			return m_registry->any_of<T>(m_handle);
 		}

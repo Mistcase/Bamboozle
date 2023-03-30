@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Butterfly/Core.h"
+
 #include <glm/glm.hpp>
 #include <string>
 
@@ -39,6 +41,12 @@ namespace butterfly
         glm::vec3 intensity;
         Attenuation attenuation;
         float radius;
+    };
+
+    struct Texture2D;
+    struct Texture2DComponent
+    {
+        Ref<Texture2D> texture;
     };
 
 } // namespace butterfly

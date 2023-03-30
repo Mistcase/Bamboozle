@@ -1,5 +1,7 @@
+#include "Butterfly/Filesystem.h"
 #include "Butterfly/Renderer/Material.h"
 #include "Butterfly/Renderer/Mesh.h"
+#include "Butterfly/Renderer/Texture.h"
 #include "Butterfly/Scene/Components.h"
 #include "Butterfly/butterflypch.h"
 #include "Scene.h"
@@ -67,6 +69,8 @@ namespace butterfly
 
         Renderer::Shader()->bindUniformBlock("DirectionalLights", 3);
         m_directionalLightsBuffer->bind();
+
+        createSkybox();
     }
 
 	Scene::~Scene()
@@ -92,6 +96,9 @@ namespace butterfly
     {
 		updateTransforms();
         m_cameraController.update(dt);
+
+        auto& skyboxTransform = m_skybox.getComponent<TransformComponent>();
+        skyboxTransform.setPosition(m_cameraController.getPawn().getComponent<TransformComponent>().getPosition());
     }
 
     void Scene::render() const
@@ -99,6 +106,7 @@ namespace butterfly
 		butterfly::RenderCommand::Clear();
         Renderer::BeginScene(&m_cameraController);
 
+        drawSkybox();
         drawWorldAxes();
 
         // Submit lights before meshes
@@ -111,6 +119,16 @@ namespace butterfly
     void Scene::onEvent(Event& event)
     {
         m_cameraController.onEvent(event);
+    }
+
+    void Scene::createSkybox()
+    {
+        m_skybox = createEntity("Skybox");
+        m_skybox.addComponent<MeshComponent>(MeshComponent::Create(MakePath("objects/sphere.obj")));
+        m_skybox.addComponent<Texture2DComponent>(Texture2D::Create(MakePath("textures/sky.jpeg")));
+
+        auto& skyboxTransform = m_skybox.getComponent<TransformComponent>();
+        skyboxTransform.setScale({ 100.0f, 100.0f, 100.0f });
     }
 
 	void Scene::updateTransforms()
@@ -133,6 +151,24 @@ namespace butterfly
 
         RenderCommand::SetPointSize(20);
         Renderer::DrawPoint({ 0.0, 5.0f, 0.0f }, { 1.0f, 0.0f, 0.0f, 0.7f });
+    }
+
+    void Scene::drawSkybox() const
+    {
+        Renderer::SkyboxShader()->bind();
+
+        const auto& transform = m_skybox.getComponent<TransformComponent>();
+        static_cast<OpenGLShader*>(Renderer::SkyboxShader())->setUniformMat4("u_Transform", transform.getWorldTransform());
+        static_cast<OpenGLShader*>(Renderer::SkyboxShader())->setUniformMat4("u_VP", m_cameraController.getViewProjection());
+        static_cast<OpenGLShader*>(Renderer::SkyboxShader())->setUniform1i("u_SkyBox", 0);
+
+        auto& texture = m_skybox.getComponent<Texture2DComponent>();
+        texture.texture->bind(0);
+
+        auto mesh = m_skybox.getComponent<MeshComponent>();
+        mesh.draw();
+
+        Renderer::Shader()->bind();
     }
 
     void Scene::submitMeshes() const
