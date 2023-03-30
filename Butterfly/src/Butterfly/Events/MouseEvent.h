@@ -122,4 +122,25 @@ namespace butterfly
         EVENT_CLASS_TYPE(MouseButtonReleased)
     };
 
+	// TODO: Implement throw signal system.
+	class MouseCursorVisibilityChanged : public Event
+	{
+	public:
+		MouseCursorVisibilityChanged(bool isVisible)
+			: m_isVisible(isVisible)
+		{
+		}
+
+		bool isVisible() const
+		{
+			return m_isVisible;
+		}
+
+		EVENT_CLASS_CATEGORY(EventCategoryMouse | EventCategoryInput)
+		EVENT_CLASS_TYPE(MouseCursorVisibilityChanged)
+
+		private:
+		    bool m_isVisible;
+	};
+
 } // namespace butterfly

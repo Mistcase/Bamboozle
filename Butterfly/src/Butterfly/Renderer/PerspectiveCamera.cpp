@@ -20,11 +20,15 @@ namespace butterfly
     void PerspectiveCamera::blockInput(bool block)
     {
         m_blockInput = block;
+		if (m_blockInput)
+		{
+			m_oldCursorValid = false;
+		}
     }
 
     void PerspectiveCamera::update(float dt)
     {
-        const auto delta = dt;
+        const auto delta = 10.0f * dt;
 
         auto& camera = m_entity.getComponent<CameraComponent>();
 		auto& transform = m_entity.getComponent<TransformComponent>();
@@ -33,29 +37,29 @@ namespace butterfly
         {
             if (Input::IsKeyPressed(BUTTERFLY_KEY_W))
             {
-                transform.setPosition(transform.getPosition() + 0.25f * camera.viewDirection);
+                transform.setPosition(transform.getPosition() + delta * camera.viewDirection);
             }
 
             if (Input::IsKeyPressed(BUTTERFLY_KEY_S))
             {
-                transform.setPosition(transform.getPosition() - 0.25f * camera.viewDirection);
+                transform.setPosition(transform.getPosition() - delta * camera.viewDirection);
             }
 
             if (Input::IsKeyPressed(BUTTERFLY_KEY_A))
             {
                 const auto right = glm::cross(camera.viewDirection, glm::vec3(0.0f, 1.0f, 0.0f));
-                transform.setPosition(transform.getPosition() - 0.25f * right);
+                transform.setPosition(transform.getPosition() - delta * right);
             }
 
             if (Input::IsKeyPressed(BUTTERFLY_KEY_D))
             {
                 const auto right = glm::cross(camera.viewDirection, glm::vec3(0.0f, 1.0f, 0.0f));
-                transform.setPosition(transform.getPosition() + 0.25f * right);
+                transform.setPosition(transform.getPosition() + delta * right);
             }
         }
 
         // TODO: FIXME, subscribe to transform changed!
-        camera.viewDirection = glm::rotate(transform.getRotation(), { 0.0f, 0.0f, -1.0f });
+		camera.viewDirection = glm::normalize(glm::rotate(transform.getRotation(), glm::vec3{ 0.0f, 0.0f, -1.0f}));
         updateViewProjection();
     }
 
@@ -94,35 +98,36 @@ namespace butterfly
         const auto right = glm::cross(camera.viewDirection, { 0.0f, 1.0f, 0.0f });
         const auto up = glm::cross(right, camera.viewDirection);
 
-        const auto view = glm::lookAt(position, position + camera.viewDirection, up);
+		const auto view = glm::inverse(transform.getWorldTransform());
         m_viewProjection = camera.projection * view;
     }
 
     bool PerspectiveCamera::onMouseMovedEvent(MouseMovedEvent& mouseEvent)
     {
-        static bool firstTime = true;
-        static glm::vec2 oldPos;
+		glm::vec2 newCursorPos{ mouseEvent.getX(), mouseEvent.getY() };
+		if (m_oldCursorValid)
+		{
+			auto& camera = m_entity.getComponent<CameraComponent>();
+			auto& transform = m_entity.getComponent<TransformComponent>();
 
-        if (!firstTime)
-        {
-            auto& camera = m_entity.getComponent<CameraComponent>();
-            auto& transform = m_entity.getComponent<TransformComponent>();
+			const auto delta = m_oldCursorPos - newCursorPos;
+			const auto viewDirection = camera.viewDirection;
+			const auto right = glm::cross(viewDirection, { 0.0f, 1.0f, 0.0f });
 
-            const auto delta = oldPos - glm::vec2{ mouseEvent.getX(), mouseEvent.getY() };
-            const auto viewDirection = camera.viewDirection;
-            const auto right = glm::cross(viewDirection, { 0.0f, 1.0f, 0.0f });
+			auto quat1 = glm::angleAxis(delta.y / 200.0f, right);
+			auto quat2 = glm::angleAxis(delta.x / 200.0f, glm::vec3{ 0.0, 1.0f, 0.0f });
 
-            auto quat1 = glm::angleAxis(delta.y / 200.0f, right);
-            auto quat2 = glm::angleAxis(delta.x / 200.0f, glm::vec3{ 0.0, 1.0f, 0.0f });
+			auto newRotation = quat1 * quat2 * transform.getRotation();
+			transform.setRotation(newRotation);
+		}
+		else if (!m_blockInput)
+		{
+			m_oldCursorValid = true;
+		}
 
-            auto newRotation = quat1 * quat2 * transform.getRotation();
-            transform.setRotation(newRotation);
-        }
-
-        firstTime = false;
-        oldPos = { mouseEvent.getX(), mouseEvent.getY() };
-
+        m_oldCursorPos = newCursorPos;
         updateViewProjection();
+
         return true;
     }
 

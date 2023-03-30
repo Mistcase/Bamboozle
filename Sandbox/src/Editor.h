@@ -35,9 +35,6 @@ namespace butterfly
         Entity m_wall;
         Entity m_directionalLight;
 
-        Entity m_pointLight1;
-        Entity m_pointLight2;
-
     private:
         SceneUITools m_UITools;
     };

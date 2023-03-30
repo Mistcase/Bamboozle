@@ -27,7 +27,8 @@ namespace butterfly
         MouseButtonPressed,
         MouseButtonReleased,
         MouseMoved,
-        MouseScrolled
+        MouseScrolled,
+		MouseCursorVisibilityChanged,
     };
 
     enum EventCategory
