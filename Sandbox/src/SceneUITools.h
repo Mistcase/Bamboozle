@@ -20,7 +20,10 @@ namespace butterfly
         void drawComponentsPanel();
         void drawStatusPanel();
 
-        void showSetDirectionPopup(DirectionalLightComponent& component);
+		void openSetVec3Popup();
+        void showSetVec3Popup(glm::vec3& value);
+
+		void openNewEntityPopup();
         void showNewEntityPopup();
 
         void showComponentsMenu();
@@ -42,7 +45,9 @@ namespace butterfly
 
     private:
         static const size_t MaxStringLength = 64;
-        glm::vec3 m_newLightDirection;
+        glm::vec3 m_newVec3;
         char m_newEntityName[MaxStringLength];
+
+		bool m_isNewEntityRequired = false;
     };
 } // namespace butterfly

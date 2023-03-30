@@ -28,7 +28,7 @@ namespace butterfly
         // Add objects to scene for test purposes.
         m_wall = m_scene->createEntity("Wall");
         m_wall.addComponent<MeshComponent>(MeshComponent::Create(helpers::MakePath("objects/scene.obj")));
-        m_wall.addComponent<MaterialComponent>(Renderer::Shader(), MaterialComponent::LightingParams{ 0.2f, 0.3f, 1.0f, 20.0f }, std::move(textures));
+        m_wall.addComponent<MaterialComponent>(Renderer::Shader(), MaterialComponent::LightingParams{ 0.0f, 0.3f, 1.0f, 20.0f }, std::move(textures));
 
         // m_directionalLight = m_scene->createEntity("GlobalLight");
         // m_directionalLight.addComponent<DirectionalLightComponent>(glm::vec3{ 1.0f, 1.0f, 1.0f }, glm::vec3{ 0.0f, -1.0f, 0.0f });
