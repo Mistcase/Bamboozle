@@ -18,19 +18,12 @@ namespace
 namespace butterfly
 {
     SkyBox::SkyBox(const std::filesystem::path& sphere, const std::filesystem::path& texture, const PerspectiveCamera* camera)
-    //        : Object3D(sphere)
         : m_texture(Texture2D::Create(texture.generic_string()))
         , m_camera(camera)
     {
         assert(m_camera != nullptr);
         assert(m_texture != nullptr);
     }
-
-    // void SkyBox::update(float dt)
-    // {
-    //     setPosition(m_camera->getPosition());
-    //     Object3D::update(dt);
-    // }
 
     // void SkyBox::render() const
     // {
