@@ -128,7 +128,7 @@ namespace butterfly
         m_skybox.addComponent<Texture2DComponent>(Texture2D::Create(MakePath("textures/sky.jpeg")));
 
         auto& skyboxTransform = m_skybox.getComponent<TransformComponent>();
-        skyboxTransform.setScale({ 100.0f, 100.0f, 100.0f });
+        skyboxTransform.setScale({ 50.0f, 50.0f, 50.0f });
     }
 
 	void Scene::updateTransforms()
