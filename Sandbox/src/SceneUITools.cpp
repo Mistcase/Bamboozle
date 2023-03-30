@@ -29,10 +29,10 @@ namespace butterfly
                 Entity entity { nativeHandle, &m_scene->m_registry };
                 const auto& tagComponent = entity.getComponent<TagComponent>();
 
-                if (ImGui::TreeNodeEx(&tagComponent.tag, ImGuiTreeNodeFlags_Selected | ImGuiTreeNodeFlags_OpenOnArrow, tagComponent.tag.c_str()))
+                bool selected;
+                if (ImGui::Selectable(tagComponent.tag.c_str(), &selected))
                 {
                     m_selected = entity;
-                    ImGui::TreePop();
                 }
             });
         }
@@ -93,6 +93,56 @@ namespace butterfly
                     m_scene->m_cameraController.possess(m_selected);
                 }
 
+                ImGui::Separator();
+            }
+
+            if (m_selected.hasComponent<DirectionalLightComponent>())
+            {
+                static glm::vec3 newDirection;
+
+                ImGui::Text("Light params");
+                auto& component = m_selected.getComponent<DirectionalLightComponent>();
+
+                ImGui::DragFloat3("Intensity", glm::value_ptr(component.intensity), 0.1f, 0.0f, 1.0f);
+                ImGui::InputFloat3("Direction", glm::value_ptr(component.direction), "%.3f", ImGuiInputTextFlags_ReadOnly);
+                ImGui::SameLine();
+                if (ImGui::Button("Set"))
+                {
+                    ImGui::OpenPopup("Direction");
+                    newDirection = component.direction;
+                }
+
+                if (ImGui::BeginPopupModal("Direction", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+                {
+                    ImGui::DragFloat3("", glm::value_ptr(newDirection));
+                    if (ImGui::Button("OK", ImVec2(140, 0)))
+                    {
+                        ImGui::CloseCurrentPopup(); component.direction = glm::normalize(newDirection);
+                    }
+
+                    ImGui::SetItemDefaultFocus();
+                    ImGui::SameLine();
+
+                    if (ImGui::Button("Cancel", ImVec2(140, 0)))
+                    {
+                        ImGui::CloseCurrentPopup();
+                    }
+
+                    ImGui::EndPopup();
+                }
+
+                ImGui::Separator();
+            }
+
+            if (m_selected.hasComponent<PointLightComponent>())
+            {
+                ImGui::Text("Light params");
+                auto& component = m_selected.getComponent<PointLightComponent>();
+
+                ImGui::DragFloat3("Intensity", glm::value_ptr(component.intensity), 0.1f, 0.0f, 1.0f);
+                ImGui::DragFloat("Radius", &component.radius, 0.5f, 0.0f);
+                ImGui::DragFloat("Linear", &component.attenuation.linearRatio, 0.1f);
+                ImGui::DragFloat("Quadratic", &component.attenuation.quadraticRatio, 0.1f);
                 ImGui::Separator();
             }
         }
