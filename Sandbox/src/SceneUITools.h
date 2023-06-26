@@ -1,9 +1,9 @@
 #pragma once
 
-#include <Butterfly.h>
+#include <Bamboozle/bbzl.h>
 #include <imgui.h>
 
-namespace butterfly
+namespace bbzl
 {
     class Scene;
 
@@ -52,4 +52,5 @@ namespace butterfly
 
 		bool m_isNewEntityRequired = false;
     };
-} // namespace butterfly
+
+} // namespace bbzl

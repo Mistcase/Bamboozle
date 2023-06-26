@@ -1,10 +1,10 @@
 #include "SceneUITools.h"
 
-#include "Butterfly/Transformable.h"
-#include <Butterfly.h>
+#include "Bamboozle/Transformable.h"
+#include <Bamboozle/bbzl.h>
 #include <glm/gtc/type_ptr.hpp>
 
-namespace butterfly
+namespace bbzl
 {
     void SceneUITools::setScene(const Ref<Scene>& scene)
     {
@@ -30,9 +30,9 @@ namespace butterfly
         {
 			switch (event.getKeyCode())
 			{
-			case BUTTERFLY_KEY_N:
+			case BBZL_KEY_N:
 			{
-				if (Input::IsKeyPressed(BUTTERFLY_KEY_LEFT_SHIFT))
+				if (Input::IsKeyPressed(BBZL_KEY_LEFT_SHIFT))
 				{
 					m_isNewEntityRequired = true;
 				}
@@ -64,7 +64,7 @@ namespace butterfly
 
                 if (ImGui::Selectable(tagComponent.tag.c_str()))
                 {
-					if (Input::IsKeyPressed(BUTTERFLY_KEY_LEFT_SHIFT))
+					if (Input::IsKeyPressed(BBZL_KEY_LEFT_SHIFT))
 					{
 						m_scene->m_registry.destroy(nativeHandle);
 					}
@@ -226,7 +226,7 @@ namespace butterfly
 		}
 
         ImGui::InputText("Entity", m_newEntityName, MaxStringLength);
-        if (ImGui::Button("OK", ImVec2(140, 0)) || Input::IsKeyPressed(BUTTERFLY_KEY_ENTER))
+        if (ImGui::Button("OK", ImVec2(140, 0)) || Input::IsKeyPressed(BBZL_KEY_ENTER))
         {
             ImGui::CloseCurrentPopup();
 			m_selected = m_scene->createEntity(m_newEntityName);
@@ -235,7 +235,7 @@ namespace butterfly
         ImGui::SetItemDefaultFocus();
         ImGui::SameLine();
 
-        if (ImGui::Button("Cancel", ImVec2(140, 0)) || Input::IsKeyPressed(BUTTERFLY_KEY_ESCAPE))
+        if (ImGui::Button("Cancel", ImVec2(140, 0)) || Input::IsKeyPressed(BBZL_KEY_ESCAPE))
         {
             ImGui::CloseCurrentPopup();
         }
@@ -256,4 +256,4 @@ namespace butterfly
 		}
     }
 
-} // namespace butterfly
+} // namespace bbzl

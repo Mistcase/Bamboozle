@@ -1,14 +1,14 @@
 #include "Editor.h"
 
-#include "Butterfly/Renderer/Mesh.h"
-#include "Butterfly/Renderer/Skybox.h"
-#include "Butterfly/Transformable.h"
+#include "Bamboozle/Renderer/Mesh.h"
+#include "Bamboozle/Renderer/Skybox.h"
+#include "Bamboozle/Transformable.h"
 #include "Helpers.h"
 
 #include <glm/ext/matrix_clip_space.hpp>
 #include <imgui.h>
 
-namespace butterfly
+namespace bbzl
 {
     EditorLayer::EditorLayer()
         : Layer("EditorLayerLayer")
@@ -23,7 +23,7 @@ namespace butterfly
     {
         m_UITools.setScene(m_scene);
 
-        std::vector<butterfly::Ref<butterfly::Texture>> textures{ butterfly::Texture2D::Create(helpers::MakePath("textures/wall.jpeg").generic_string()) };
+        std::vector<bbzl::Ref<bbzl::Texture>> textures{ bbzl::Texture2D::Create(helpers::MakePath("textures/wall.jpeg").generic_string()) };
 
         // Add objects to scene for test purposes.
         m_wall = m_scene->createEntity("Wall");
@@ -35,7 +35,7 @@ namespace butterfly
         pointLight.getComponent<TransformComponent>().setPosition({ 0.0f, 0.5f, 0.0f });
 
         // Create camera pawn and controller
-        auto& window = butterfly::Application::GetInstance().getWindow();
+        auto& window = bbzl::Application::GetInstance().getWindow();
         {
             // Create entity with camera component
             auto defaultCameraPawn = m_scene->createEntity("Default camera");
@@ -133,9 +133,9 @@ namespace butterfly
         EventDispatcher dispatcher(event);
         dispatcher.dispatch<KeyReleasedEvent>([this](KeyEvent& e)
         {
-            if (e.getKeyCode() == BUTTERFLY_KEY_ESCAPE)
+            if (e.getKeyCode() == BBZL_KEY_ESCAPE)
             {
-                if (Input::IsKeyPressed(BUTTERFLY_KEY_LEFT_SHIFT))
+                if (Input::IsKeyPressed(BBZL_KEY_LEFT_SHIFT))
                 {
                     Application::GetInstance().quit();
                 }
@@ -172,10 +172,10 @@ namespace butterfly
         m_isViewportFocused = ImGui::IsWindowFocused() && ImGui::IsWindowHovered();
 
         const auto available = ImGui::GetContentRegionAvail();
-        const glm::vec2 viewportSize{ available.x, available.y };
+        const glm::vec2 viewportSize{ std::max(available.x, 1.0f), std::max(available.y, 1.0f) };
         if (m_oldViewportSize != viewportSize)
         {
-            BUTTERFLY_CORE_INFO("Resize viewport: {}x{}", viewportSize.x, viewportSize.y);
+            BBZL_CORE_INFO("Resize viewport: {}x{}", viewportSize.x, viewportSize.y);
             m_framebuffer->resize(viewportSize.x, viewportSize.y);
             m_oldViewportSize = viewportSize;
 
@@ -187,4 +187,4 @@ namespace butterfly
         ImGui::End();
     }
 
-} // namespace butterfly
+} // namespace bbzl

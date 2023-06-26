@@ -57,13 +57,13 @@ elseif(UNIX)
 
 endif()
 
-target_include_directories(${EXECUTABLE_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/../Butterfly/src/
-    ${CMAKE_SOURCE_DIR}/../Butterfly/src
-    ${CMAKE_SOURCE_DIR}/../Butterfly/third-party/spdlog/include
-    ${CMAKE_SOURCE_DIR}/../Butterfly/third-party/glm
-    ${CMAKE_SOURCE_DIR}/../Butterfly/third-party/ImGui
-    ${CMAKE_SOURCE_DIR}/../Butterfly/third-party/entt/src)
+target_include_directories(${EXECUTABLE_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/../Bamboozle/src/
+    ${CMAKE_SOURCE_DIR}/../Bamboozle/src
+    ${CMAKE_SOURCE_DIR}/../Bamboozle/third-party/spdlog/include
+    ${CMAKE_SOURCE_DIR}/../Bamboozle/third-party/glm
+    ${CMAKE_SOURCE_DIR}/../Bamboozle/third-party/ImGui
+    ${CMAKE_SOURCE_DIR}/../Bamboozle/third-party/entt/src)
 
-add_subdirectory(../Butterfly/ ../../Butterfly/build/)
+add_subdirectory(../Bamboozle/ ../../Bamboozle/build/)
 
-target_link_libraries(${EXECUTABLE_NAME} butterfly glad glfw spdlog glm imgui)
+target_link_libraries(${EXECUTABLE_NAME} bamboozle glad glfw spdlog glm imgui)

@@ -1,10 +1,10 @@
 #pragma once
 
-#include <Butterfly.h>
+#include <Bamboozle/bbzl.h>
 
 #include "SceneUITools.h"
 
-namespace butterfly
+namespace bbzl
 {
     class EditorLayer : public Layer
     {
@@ -39,4 +39,4 @@ namespace butterfly
         SceneUITools m_UITools;
     };
 
-} // namespace butterfly
+} // namespace bbzl

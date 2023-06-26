@@ -1,8 +1,8 @@
 #pragma once
 
-#include <Butterfly.h>
+#include <Bamboozle/bbzl.h>
 
-class Sandbox3DLayer : public butterfly::Layer
+class Sandbox3DLayer : public bbzl::Layer
 {
 public:
     Sandbox3DLayer();
@@ -13,17 +13,17 @@ public:
     void onUpdate(float dt) override;
     void onImGuiRender() override;
 
-    void onEvent(butterfly::Event& event) override;
+    void onEvent(bbzl::Event& event) override;
 
 private:
-    bool onKeyEvent(const butterfly::KeyEvent& e);
+    bool onKeyEvent(const bbzl::KeyEvent& e);
 
-    butterfly::Ref<butterfly::Texture2D> m_texture;
-    butterfly::Object3D* m_teapot;
-    butterfly::Object3D* m_skybox;
-    butterfly::Object3D* m_barrel;
+    bbzl::Ref<bbzl::Texture2D> m_texture;
+    bbzl::Object3D* m_teapot;
+    bbzl::Object3D* m_skybox;
+    bbzl::Object3D* m_barrel;
 
 private:
 	bool m_oldCursorVisible = true;
-	butterfly::Window& m_window;
+	bbzl::Window& m_window;
 };

@@ -1,15 +1,15 @@
-[submodule "Butterfly/third-party/spdlog"]
-	path = Butterfly/third-party/spdlog
+[submodule "Bamboozle/third-party/spdlog"]
+	path = Bamboozle/third-party/spdlog
 	url = https://github.com/gabime/spdlog.git
-[submodule "Butterfly/third-party/GLFW"]
-	path = Butterfly/third-party/GLFW
+[submodule "Bamboozle/third-party/GLFW"]
+	path = Bamboozle/third-party/GLFW
 	url = https://github.com/Mistcase/glfw
-[submodule "Butterfly/third-party/ImGui"]
-	path = Butterfly/third-party/ImGui
+[submodule "Bamboozle/third-party/ImGui"]
+	path = Bamboozle/third-party/ImGui
 	url = https://github.com/Mistcase/imgui.git
-[submodule "Butterfly/third-party/glm"]
-	path = Butterfly/third-party/glm
+[submodule "Bamboozle/third-party/glm"]
+	path = Bamboozle/third-party/glm
 	url = https://github.com/g-truc/glm.git
-[submodule "Butterfly/third-party/entt"]
-	path = Butterfly/third-party/entt
+[submodule "Bamboozle/third-party/entt"]
+	path = Bamboozle/third-party/entt
 	url = https://github.com/skypjack/entt.git

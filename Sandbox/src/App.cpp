@@ -2,15 +2,15 @@
 #include "Sandbox2D.h"
 #include "Sandbox3D.h"
 #include "Editor.h"
-#include <Butterfly/EntryPoint.h>
+#include <Bamboozle/EntryPoint.h>
 
-class Sandbox : public butterfly::Application
+class Sandbox : public bbzl::Application
 {
 public:
     Sandbox()
-        : butterfly::Application("Sandbox", helpers::MakePath(""))
+        : bbzl::Application("Sandbox", helpers::MakePath(""))
     {
-        pushLayer(new butterfly::EditorLayer());
+        pushLayer(new bbzl::EditorLayer());
     }
 
     ~Sandbox()
@@ -18,7 +18,7 @@ public:
     }
 };
 
-butterfly::Application* butterfly::CreateApplication()
+bbzl::Application* bbzl::CreateApplication()
 {
     return new Sandbox();
 }
