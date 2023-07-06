@@ -3,6 +3,7 @@
 #include "Bamboozle/Renderer/OrthographicCamera.h"
 #include "Bamboozle/Renderer/Renderer.h"
 #include "Bamboozle/bbzl.h"
+#include "Bamboozle/DebugPanel.h"
 #include "Input.h"
 #include "Log.h"
 #include "Renderer/Buffer.h"
@@ -53,13 +54,21 @@ namespace bbzl
             m_time = t;
 
             for (auto layer : m_layerStack)
-                layer->onUpdate(dt);
+			{
+				layer->onUpdate(dt);
+				layer->onRender();
+			}
 
             m_imGuiLayer->begin();
+
+			DebugPanel::Instance().render();
             for (auto layer : m_layerStack)
-                layer->onImGuiRender();
+			{
+				layer->onImGuiRender();
+			}
 
             m_imGuiLayer->end();
+
             m_window->onUpdate();
         }
     }

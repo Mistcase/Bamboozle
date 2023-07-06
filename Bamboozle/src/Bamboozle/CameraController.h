@@ -11,7 +11,7 @@ namespace bbzl
     class CameraController
     {
     public:
-        CameraController(Camera* camera);
+        CameraController();
 
         void onUpdate(float dt);
         void onEvent(Event& event);

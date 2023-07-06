@@ -2,6 +2,8 @@
 
 #include "Event.h"
 
+#include <sstream>
+
 namespace bbzl
 {
     class WindowResizeEvent : public Event

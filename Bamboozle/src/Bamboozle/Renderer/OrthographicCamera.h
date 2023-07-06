@@ -4,10 +4,10 @@
 
 namespace bbzl
 {
-    class Camera
+    class OrthographicCamera
     {
     public:
-        Camera(float width, float height);
+        OrthographicCamera(float width, float height);
         void setSize(float width, float height);
 
         const glm::vec3& getPosition() const;

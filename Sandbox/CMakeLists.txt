@@ -55,7 +55,11 @@ elseif(UNIX)
    message("Identified platform: Linux")
    file(COPY "${CMAKE_SOURCE_DIR}/res" DESTINATION "${CMAKE_BINARY_DIR}/")
 
-endif()
+ endif()
+
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+  add_definitions(-DDEBUG)
+endif ()
 
 target_include_directories(${EXECUTABLE_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/../Bamboozle/src/
     ${CMAKE_SOURCE_DIR}/../Bamboozle/src

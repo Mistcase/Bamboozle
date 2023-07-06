@@ -52,6 +52,10 @@ set(LIB_NAME bamboozle)
 
 add_definitions(-DGLFW_INCLUDE_NONE)
 
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+  add_definitions(-DDEBUG)
+endif ()
+
 add_library(${LIB_NAME} STATIC ${SRC})
 set_target_properties(${LIB_NAME} PROPERTIES LINKER_LANGUAGE CXX)
 target_link_libraries(${LIB_NAME} glad glfw spdlog glm imgui)

@@ -29,6 +29,9 @@ void main()
     v_PositionWorldSpace = position.xyz;
 
     gl_Position = u_VP * position;
+
+	// Render2D
+	gl_Position = a_Position;
 }
 
 @FragmentShader
@@ -139,5 +142,7 @@ void main()
 	}
 
     color = vec4((lightColor + specularLight) * textureColor, 1.0f);
-    // color = vec4(textureColor, 1.0f);
+
+	// Render2D
+    color = v_Color;
 }

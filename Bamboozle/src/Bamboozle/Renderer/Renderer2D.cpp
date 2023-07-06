@@ -1,6 +1,7 @@
 #include "Renderer2D.h"
 
 #include "Bamboozle/Application.h"
+#include "Bamboozle/bbzl.h"
 #include "Bamboozle/Hash.h"
 #include "Bamboozle/Renderer/OrthographicCamera.h"
 #include "Bamboozle/Renderer/RenderCommand.h"
@@ -8,8 +9,10 @@
 #include "Bamboozle/Renderer/Shaders.h"
 #include "Bamboozle/Renderer/Texture.h"
 #include "Bamboozle/Renderer/VertexArray.h"
-#include "Bamboozle/bbzl.h"
+#include "Bamboozle/DebugPanel.h"
 #include "Platform/OpenGL/OpenGLShader.h"
+
+#include <imgui.h>
 #include <glm/ext/matrix_transform.hpp>
 
 namespace bbzl
@@ -46,11 +49,12 @@ namespace bbzl
             uint8_t* quadVertexBufferPtr = quadVertexBufferBase;
             size_t quadCount = 0;
 
-            bbzl::Camera* camera = nullptr;
+            bbzl::OrthographicCamera* camera = nullptr;
             bbzl::Ref<bbzl::VertexArray> vertexArray;
             std::unique_ptr<bbzl::Shader> shader = nullptr;
 
             [[maybe_unused]] uint32_t debugDrawCalls = 0;
+			[[maybe_unused]] uint32_t debugDrawCallsLastFrame = 0;
         };
 
         unsigned char SceneDataStorage[sizeof(_SceneData)];
@@ -58,6 +62,37 @@ namespace bbzl
         {
             return reinterpret_cast<_SceneData*>(SceneDataStorage);
         }
+
+
+		inline void DebugDraw_Stats()
+		{
+			ImGui::Text("Draw calls: %d", SceneData()->debugDrawCallsLastFrame);
+			SceneData()->debugDrawCallsLastFrame = 0;
+		}
+
+		inline void DebugDraw_ShaderOptions()
+		{
+			auto shader = SceneData()->shader.get();
+
+			ImGui::Text("Current shader: %s", shader->getName());
+			ImGui::SameLine();
+			if (ImGui::Button("Reload"))
+			{
+				auto res = Application::GetInstance().getResourcesDirectory();
+				const auto path = res.concat("default_shader.glsl");
+
+				BBZL_CORE_INFO("Try to load and bind shader: {0}", path);
+
+				auto shaders = Shaders::Create();
+                shaders->createFromFile(path);
+
+                auto extracted = shaders->extract("default_shader"_hash);
+				if (extracted != nullptr)
+				{
+                    SceneData()->shader = std::move(extracted);
+				}
+			}
+		}
 
     } // namespace
 
@@ -112,14 +147,22 @@ namespace bbzl
 
             SceneData()->shader->bind();
             static_cast<OpenGLShader*>(SceneData()->shader.get())->setUniformIntArray("u_Textures", samplers, size);
+
+			// Init debug panel section
+			DebugPanel::Instance().registerSection("Renderer2D", []()
+			{
+				DebugDraw_Stats();
+				DebugDraw_ShaderOptions();
+			});
         }
 
         void Destroy()
         {
             SceneData()->~_SceneData();
+			DebugPanel::Instance().unregisterSection("Renderer2D");
         }
 
-        void BeginScene(Camera* camera)
+        void BeginScene(OrthographicCamera* camera)
         {
             SceneData()->camera = camera;
             SceneData()->shader->bind();
@@ -131,19 +174,15 @@ namespace bbzl
         void EndScene()
         {
             Flush();
-
-            // BBZL_CORE_INFO("Draw calls: {0}", SceneData()->debugDrawCalls);
-
-#if defined(BBZL_DEBUG)
+			SceneData()->debugDrawCallsLastFrame = SceneData()->debugDrawCalls;
             SceneData()->debugDrawCalls = 0;
-#endif
         }
 
         void Flush()
         {
+            SceneData()->shader->bind();
             SceneData()->vertexArray->bind();
 
-            // Does shader always stay bound?
             for (uint32_t i = 1, idxEnd = SceneData()->textureIndex; i < idxEnd; i++)
                 SceneData()->textureSlots[i]->bind(i);
 
@@ -156,10 +195,7 @@ namespace bbzl
             SceneData()->quadVertexBufferPtr = SceneData()->quadVertexBufferBase;
             SceneData()->quadCount = 0;
             SceneData()->textureIndex = 2;
-
-#if defined(BBZL_DEBUG)
             SceneData()->debugDrawCalls++;
-#endif
         }
 
         void DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color)
@@ -194,7 +230,7 @@ namespace bbzl
             if (SceneData()->quadCount >= SceneData()->MaxQuadCount)
                 Flush();
 
-            float textureSlot = 1.0f; // Because ints cannot be interpolated (compile error)
+            float textureSlot = 1.0f; // Because ints cannot be interpolated (compile error), TODO: use flat variable
             if (texture != SceneData()->WhiteTexture)
             {
                 for (uint32_t i = 1, idxEnd = SceneData()->textureIndex; i < idxEnd; i++)

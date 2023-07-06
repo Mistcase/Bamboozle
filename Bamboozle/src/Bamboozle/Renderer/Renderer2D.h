@@ -5,7 +5,7 @@
 
 namespace bbzl
 {
-    class Camera;
+    class OrthographicCamera;
     class Texture2D;
 
     class Shader;
@@ -16,7 +16,7 @@ namespace bbzl
         void Init();
         void Destroy();
 
-        void BeginScene(Camera* camera);
+        void BeginScene(OrthographicCamera* camera);
         void EndScene();
         void Flush();
 

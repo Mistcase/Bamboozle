@@ -4,21 +4,21 @@
 #include "Editor.h"
 #include <Bamboozle/EntryPoint.h>
 
-class Sandbox : public bbzl::Application
+class App : public bbzl::Application
 {
 public:
-    Sandbox()
+    App()
         : bbzl::Application("Sandbox", helpers::MakePath(""))
     {
-        pushLayer(new bbzl::EditorLayer());
+        pushLayer(new Sandbox2DLayer());
     }
 
-    ~Sandbox()
+    ~App()
     {
     }
 };
 
 bbzl::Application* bbzl::CreateApplication()
 {
-    return new Sandbox();
+    return new App();
 }

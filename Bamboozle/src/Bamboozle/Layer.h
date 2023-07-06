@@ -14,15 +14,23 @@ namespace bbzl
         virtual void onAttach()
         {
         }
+
         virtual void onDetach()
         {
         }
+
         virtual void onUpdate(float dt)
         {
         }
+
+		virtual void onRender()
+		{
+		}
+
         virtual void onImGuiRender()
         {
         }
+
         virtual void onEvent(Event& event)
         {
         }

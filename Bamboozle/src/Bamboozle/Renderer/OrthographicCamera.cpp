@@ -8,7 +8,7 @@
 
 namespace bbzl
 {
-    Camera::Camera(float width, float height)
+    OrthographicCamera::OrthographicCamera(float width, float height)
         : m_projection(glm::ortho(-0.5f * width, 0.5f * width, -0.5f * height, 0.5f * height, 0.0f, 1.0f))
         , m_width(width)
         , m_height(height)
@@ -17,7 +17,7 @@ namespace bbzl
         setRotation(0.0f);
     }
 
-    void Camera::setSize(float width, float height)
+    void OrthographicCamera::setSize(float width, float height)
     {
         m_width = width;
         m_height = height;
@@ -27,29 +27,29 @@ namespace bbzl
         updateViewProjection();
     }
 
-    void Camera::setPosition(const glm::vec3& position)
+    void OrthographicCamera::setPosition(const glm::vec3& position)
     {
         m_position = position;
         updateViewProjection();
     }
 
-    float Camera::getRotation() const
+    float OrthographicCamera::getRotation() const
     {
         return m_rotation;
     }
 
-    void Camera::setRotation(float rotation)
+    void OrthographicCamera::setRotation(float rotation)
     {
         m_rotation = rotation;
         updateViewProjection();
     }
 
-    float Camera::getZoom() const
+    float OrthographicCamera::getZoom() const
     {
         return m_zoom;
     }
 
-    void Camera::setZoom(float zoom)
+    void OrthographicCamera::setZoom(float zoom)
     {
         const auto dw = 0.5f * m_width;
         const auto dh = 0.5f * m_height;
@@ -59,17 +59,17 @@ namespace bbzl
         updateViewProjection();
     }
 
-    const glm::vec3& Camera::getPosition() const
+    const glm::vec3& OrthographicCamera::getPosition() const
     {
         return m_position;
     }
 
-    glm::mat4 Camera::getViewProjection() const
+    glm::mat4 OrthographicCamera::getViewProjection() const
     {
         return m_viewProjection;
     }
 
-    void Camera::updateViewProjection()
+    void OrthographicCamera::updateViewProjection()
     {
         const auto transform = glm::translate(glm::mat4(1.0f), m_position) * glm::rotate(glm::mat4(1.0f), m_rotation, glm::vec3(0.0f, 0.0f, 1.0f));
 

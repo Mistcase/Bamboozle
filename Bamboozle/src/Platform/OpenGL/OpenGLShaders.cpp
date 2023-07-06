@@ -24,6 +24,10 @@ namespace bbzl
 
             BBZL_CORE_TRACE("Shader {0} loaded ({1})", name, filepath.string());
         }
+		else
+		{
+			BBZL_CORE_WARN("Shader {0} loading failed ({1})", name, filepath.string());
+		}
 
         return instance;
     }
