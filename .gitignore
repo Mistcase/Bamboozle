@@ -4,6 +4,7 @@ bin-int
 .cache
 *.vs
 *compile*commands*
+*build
 
 #files
 *.user
