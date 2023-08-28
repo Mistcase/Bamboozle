@@ -34,6 +34,9 @@ namespace bbzl
 
         virtual void setData(const void* data, size_t size) = 0;
         virtual bool operator==(const Texture& other) = 0;
+
+		virtual int getWidth() const = 0;
+		virtual int getHeight() const = 0;
     };
 
 } // namespace bbzl

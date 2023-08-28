@@ -31,11 +31,14 @@ namespace bbzl
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-        stbi_set_flip_vertically_on_load(1);
+        // stbi_set_flip_vertically_on_load(1);
 
         int width, height, channels;
         auto data = stbi_load(path.c_str(), &width, &height, &channels, 0);
         assert(data != nullptr);
+        assert((channels == 3 && format == Format::RGB) ||
+               (channels == 4 && format == Format::RGBA) ||
+               (channels == 1 && format == Format::RED));
 
         m_width = static_cast<uint32_t>(width);
         m_height = static_cast<uint32_t>(height);
@@ -92,6 +95,16 @@ namespace bbzl
     {
         return m_rendererId;
     }
+
+	int OpenGLTexture2D::getWidth() const
+	{
+		return m_width;
+	}
+
+	int OpenGLTexture2D::getHeight() const
+	{
+		return m_height;
+	}
 
     bool OpenGLTexture2D::operator==(const Texture& other)
     {

@@ -1,6 +1,6 @@
 #pragma once
 
-#if defined(BBZL_DEBUG)
+#if 0
 
 #    if defined(BBZL_PLATFORM_WINDOWS)
 #        define DEBUG_BREAK __debugbreak

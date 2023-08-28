@@ -2,21 +2,21 @@
 	"path_to_texture": "atlases/common/atlas.png",
 	"sprites": [
 		{
-			"id": 1,
+			"id": "path_to_sprite_1",
 			"x": 0,
 			"y": 0,
 			"w": 740,
 			"h": 740
 		},
 		{
-			"id": 2,
+			"id": "path_to_sprite_2",
 			"x": 0,
 			"y": 740,
 			"w": 193,
 			"h": 261
 		},
 		{
-			"id" : 3,
+			"id" : "path_to_sprite_3",
 			"x": 740,
 			"y": 0,
 			"w": 116,

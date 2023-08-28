@@ -1,5 +1,9 @@
 #pragma once
 
+#if defined(DEBUG)
+#include <set>
+#endif
+
 namespace bbzl
 {
 	class Resource;

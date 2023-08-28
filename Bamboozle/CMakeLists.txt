@@ -64,3 +64,5 @@ add_library(${LIB_NAME} STATIC ${SRC})
 set_target_properties(${LIB_NAME} PROPERTIES LINKER_LANGUAGE CXX)
 target_link_libraries(${LIB_NAME} glad glfw spdlog glm imgui nlohmann_json::nlohmann_json)
 target_include_directories(${LIB_NAME} PRIVATE src third-party/ImGui third-party/stb third-party/tinyobj third-party/entt/src third-party/nlohmann_json/include)
+
+target_compile_definitions(${LIB_NAME} PUBLIC "$<$<CONFIG:DEBUG>:DEBUG>")

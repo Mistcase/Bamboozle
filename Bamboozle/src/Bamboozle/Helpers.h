@@ -1,4 +1,6 @@
 #include <cstddef>
+#include <fstream>
+#include <sstream>
 
 #include "Core.h"
 
@@ -6,29 +8,19 @@ namespace bbzl
 {
 	namespace helpers
 	{
-		inline char* ReadEntireFile(const char* path, size_t* size = nullptr)
+		inline std::string ReadEntireFile(const char* path, size_t* size = nullptr)
 		{
-			auto* stream = fopen(path, "r");
-			if (!stream)
+			std::ifstream in(path);
+			if (!in.is_open())
 			{
-				return nullptr;
+				return "";
 			}
 
-			fseek(stream, 0, SEEK_END);
-			auto _size = ftell(stream);
-			fseek(stream, 0, SEEK_SET);
+			std::stringstream buffer;
+			buffer << in.rdbuf();
+			std::string contents(buffer.str());
 
-			auto* data = new char[_size];
-
-			fread(data, 1, _size, stream);
-			fclose(stream);
-            
-            if (size != nullptr)
-            {
-                *size = _size;
-            }
-
-			return data;
+			return contents;
 		}
 
 	} // namespace helpers

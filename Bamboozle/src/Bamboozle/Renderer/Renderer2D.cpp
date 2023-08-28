@@ -30,7 +30,7 @@ namespace bbzl
             { ShaderDataType::Float4, "a_Position" },
             { ShaderDataType::Float4, "a_Color" },
             { ShaderDataType::Float2, "a_TexCoords" },
-            { ShaderDataType::Float, "a_TexIndex" },
+            { ShaderDataType::Int, "a_TexIndex" },
         };
 
         struct _SceneData
@@ -81,7 +81,7 @@ namespace bbzl
 				auto res = Application::GetInstance().getResourceDirectory();
 				const auto path = res.concat("default_shader.glsl");
 
-				BBZL_CORE_INFO("Try to load and bind shader: {0}", path);
+				BBZL_CORE_TRACE("Try to load and bind shader: {0}", path);
 
 				auto shaders = Shaders::Create();
                 shaders->createFromFile(path);
@@ -184,7 +184,10 @@ namespace bbzl
             SceneData()->vertexArray->bind();
 
             for (uint32_t i = 1, idxEnd = SceneData()->textureIndex; i < idxEnd; i++)
+			{
+				Shader()->setSampler(("u_Textures[" + std::to_string(i) + "]").c_str(), i); // TODO: FIXME PLEASE
                 SceneData()->textureSlots[i]->bind(i);
+			}
 
             auto& vertexBuffer = SceneData()->vertexArray->getVertexBuffers().front();
             const auto dataSize = SceneData()->quadVertexBufferPtr - SceneData()->quadVertexBufferBase;
@@ -200,7 +203,7 @@ namespace bbzl
 
         void DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color)
         {
-            DrawQuad({ position.x, position.y, 0.0f }, size, 0.0f, color, SceneData()->WhiteTexture);
+            DrawQuad({ position.x, position.y, 0.0f }, size, 0.0f, color, SceneData()->WhiteTexture, glm::vec4{ 0 });
         }
 
         void DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color)
@@ -210,7 +213,7 @@ namespace bbzl
 
         void DrawQuad(const glm::vec2& position, const glm::vec2& size, const Texture2D* texture)
         {
-            DrawQuad({ position.x, position.y, 0.0f }, size, 0.0f, { 1.0f, 1.0f, 1.0f, 1.0f }, texture);
+            DrawQuad({ position.x, position.y, 0.0f }, size, 0.0f, { 1.0f, 1.0f, 1.0f, 1.0f }, texture, glm::vec4{ 0 });
         }
 
         void DrawQuad(const glm::vec3& position, const glm::vec2& size, const Texture2D* texture)
@@ -220,42 +223,42 @@ namespace bbzl
 
         void DrawQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const glm::vec4& color, const Texture2D* texture)
         {
-            DrawQuad({ position.x, position.y, 0.0f }, size, rotation, color, texture);
+            DrawQuad({ position.x, position.y, 0.0f }, size, rotation, color, texture, glm::vec4{ 0 });
         }
 
-        void DrawQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const glm::vec4& color, const Texture2D* texture)
+        void DrawQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const glm::vec4& color, const Texture2D* texture, const glm::vec4& uv)
         {
             BBZL_CORE_ASSERT(texture != nullptr, "Texture is nullptr");
 
             if (SceneData()->quadCount >= SceneData()->MaxQuadCount)
                 Flush();
 
-            float textureSlot = 1.0f; // Because ints cannot be interpolated (compile error), TODO: use flat variable
+            int textureSlot = 1;
             if (texture != SceneData()->WhiteTexture)
             {
                 for (uint32_t i = 1, idxEnd = SceneData()->textureIndex; i < idxEnd; i++)
                 {
                     if (SceneData()->textureSlots[i] == texture)
                     {
-                        textureSlot = static_cast<float>(i);
+                        textureSlot = i;
                         break;
                     }
                 }
 
-                if (textureSlot == 1.0f)
+                if (textureSlot == 1)
                 {
                     if (SceneData()->textureIndex >= SceneData()->textureSlots.size())
                         Flush();
 
                     SceneData()->textureSlots[SceneData()->textureIndex] = texture;
-                    textureSlot = static_cast<float>(SceneData()->textureIndex);
+                    textureSlot = SceneData()->textureIndex;
 
                     SceneData()->textureIndex++;
                 }
             }
 
             // Does not support texture atlases yet
-            const glm::vec2 texCoords[] = { { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f } };
+            const glm::vec2 texCoords[] = { { uv.x,  uv.y }, { uv.x + uv.z, uv.y }, { uv.x + uv.z, uv.y + uv.w }, { uv.x, uv.y + uv.w } };
             const auto transform = glm::translate(glm::mat4(1.0f), position)
                 * glm::rotate(glm::mat4(1.0f), rotation, { 0.0f, 0.0f, 1.0f })
                 * glm::scale(glm::mat4(1.0f), { size.x, size.y, 0.0f });
