@@ -10,8 +10,8 @@ namespace bbzl
     public:
         virtual ~Texture() = default;
 
-        virtual void bind(uint32_t slot) = 0;
-        virtual void unbind() = 0;
+        virtual void bind(uint32_t slot) const = 0;
+        virtual void unbind() const = 0;
 
         virtual uint32_t getRendererId() const = 0;
     };
@@ -29,8 +29,8 @@ namespace bbzl
 		};
 
     public:
-        static Ref<Texture2D> Create(const std::string& path, Format format = Format::RGB);
-        static Ref<Texture2D> Create(uint32_t width, uint32_t height);
+        static Texture2D* Create(const std::string& path, Format format = Format::RGB);
+        static Texture2D* Create(uint32_t width, uint32_t height);
 
         virtual void setData(const void* data, size_t size) = 0;
         virtual bool operator==(const Texture& other) = 0;

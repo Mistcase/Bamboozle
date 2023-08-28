@@ -40,7 +40,7 @@ namespace bbzl
         {
             return *m_window;
         }
-        inline const std::filesystem::path& getResourcesDirectory() const
+        inline const std::filesystem::path& getResourceDirectory() const
         {
             return m_resourcesPath;
         }

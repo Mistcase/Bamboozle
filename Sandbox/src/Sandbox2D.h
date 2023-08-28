@@ -2,6 +2,11 @@
 
 #include <Bamboozle/bbzl.h>
 
+namespace bbzl
+{
+	class Sprite;
+}
+
 class Sandbox2DLayer : public bbzl::Layer
 {
 public:
@@ -21,5 +26,9 @@ private:
     bool onKeyEvent(const bbzl::KeyEvent& e);
 
 private:
+	const bbzl::Sprite* m_sprite1;
+	const bbzl::Sprite* m_sprite2;
+	const bbzl::Sprite* m_sprite3;
+
     std::unique_ptr<bbzl::OrthographicCamera> m_camera;
 };

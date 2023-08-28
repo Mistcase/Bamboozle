@@ -40,8 +40,8 @@ namespace bbzl
         Renderer2D::Init();
 
         auto shaders = Shaders::Create();
-        shaders->createFromFile(Application::GetInstance().getResourcesDirectory().string() + "skybox_shader.glsl");
-        shaders->createFromFile(Application::GetInstance().getResourcesDirectory().string() + "lines_shader.glsl");
+        shaders->createFromFile(Application::GetInstance().getResourceDirectory().string() + "skybox_shader.glsl");
+        shaders->createFromFile(Application::GetInstance().getResourceDirectory().string() + "lines_shader.glsl");
         skyboxShader = shaders->extract("skybox_shader"_hash);
 
         BufferLayout primitiveVertexLayout{ { ShaderDataType::Float4, "a_Position" },

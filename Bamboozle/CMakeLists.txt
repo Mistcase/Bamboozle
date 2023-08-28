@@ -28,6 +28,10 @@ add_subdirectory(third-party/glm/)
 #include entt
 add_subdirectory(third-party/entt/)
 
+#include nlohmann_json
+set(JSON_BuildTests OFF CACHE INTERNAL "")
+add_subdirectory(third-party/nlohmann_json/)
+
 file(GLOB SRC
  "src/*.h"
  "src/*.cpp"
@@ -58,5 +62,5 @@ endif ()
 
 add_library(${LIB_NAME} STATIC ${SRC})
 set_target_properties(${LIB_NAME} PROPERTIES LINKER_LANGUAGE CXX)
-target_link_libraries(${LIB_NAME} glad glfw spdlog glm imgui)
-target_include_directories(${LIB_NAME} PRIVATE src third-party/ImGui third-party/stb third-party/tinyobj third-party/entt/src)
+target_link_libraries(${LIB_NAME} glad glfw spdlog glm imgui nlohmann_json::nlohmann_json)
+target_include_directories(${LIB_NAME} PRIVATE src third-party/ImGui third-party/stb third-party/tinyobj third-party/entt/src third-party/nlohmann_json/include)

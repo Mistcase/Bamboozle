@@ -25,3 +25,6 @@
 #include "Bamboozle/Renderer/VertexArray.h"
 #include "Bamboozle/Scene/Components.h"
 #include "Bamboozle/Scene/Scene.h"
+
+// Resource system
+#include "Bamboozle/ResourceSystem.h"

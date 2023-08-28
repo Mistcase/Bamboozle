@@ -1,6 +1,8 @@
 #include "Sandbox2D.h"
 
+#include "Bamboozle/Hash.h"
 #include "Helpers.h"
+
 #include <imgui.h>
 
 Sandbox2DLayer::Sandbox2DLayer()
@@ -13,7 +15,13 @@ void Sandbox2DLayer::onAttach()
     auto& window = bbzl::Application::GetInstance().getWindow();
 
     m_camera = std::make_unique<bbzl::OrthographicCamera>(window.getWidth(), window.getHeight());
-    // m_cameraController = std::make_unique<bbzl::CameraController>(m_camera.get());
+
+	bbzl::ResourceSystem rs;
+    rs.loadBundle(bbzl::Application::GetInstance().getResourceDirectory() / "common/desc.json");
+
+	m_sprite1 = rs.getSprite(1);
+	m_sprite2 = rs.getSprite(2);
+	m_sprite3 = rs.getSprite(3);
 }
 
 void Sandbox2DLayer::onDetach()
@@ -22,7 +30,6 @@ void Sandbox2DLayer::onDetach()
 
 void Sandbox2DLayer::onUpdate(float dt)
 {
-    // m_cameraController->onUpdate(dt);
 }
 
 void Sandbox2DLayer::onRender()
@@ -31,7 +38,8 @@ void Sandbox2DLayer::onRender()
     bbzl::RenderCommand::Clear();
 
     bbzl::Renderer2D::BeginScene(m_camera.get());
-    bbzl::Renderer2D::DrawQuad({ 0.5f, 0.5f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f, 1.0f, 0.5f });
+
+	// m_sprite1->draw();
 
     bbzl::Renderer2D::EndScene();
 }
