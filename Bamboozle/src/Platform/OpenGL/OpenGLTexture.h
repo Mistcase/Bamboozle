@@ -18,7 +18,10 @@ namespace bbzl
 
         uint32_t getRendererId() const override;
 
-        bool operator==(const Texture& other) override;
+		int getWidth() const override;
+		int getHeight() const override;
+
+		bool operator==(const Texture& other) override;
 
     private:
         uint32_t m_width, m_height, m_channels = 4;

@@ -5,19 +5,11 @@
 #include <glm/glm.hpp>
 #include <vector>
 
+#include <Bamboozle/Sprite.h>
+
 namespace bbzl
 {
 	class Texture2D;
-
-	// Must be default constructible type
-	struct Sprite
-	{
-		Texture2D* texture;
-		glm::vec2 pos;
-		glm::vec2 size;
-
-		uint32_t hashId;
-	};
 
 	class Atlas final : public Resource
 	{

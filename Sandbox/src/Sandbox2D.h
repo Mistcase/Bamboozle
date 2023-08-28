@@ -26,6 +26,8 @@ private:
     bool onKeyEvent(const bbzl::KeyEvent& e);
 
 private:
+	bbzl::ResourceSystem rs;
+
 	const bbzl::Sprite* m_sprite1;
 	const bbzl::Sprite* m_sprite2;
 	const bbzl::Sprite* m_sprite3;

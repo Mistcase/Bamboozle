@@ -50,15 +50,15 @@ namespace bbzl
 	{
 		// For now read it from drive
 	    auto data = helpers::ReadEntireFile(path.c_str());
-		if (data == nullptr)
+		if (data.empty())
 		{
+            BBZL_ASSERT(!"Fail to load bundle");
 			return 0;
 		}
 
 		// Parse
 		const auto bundleHash = hash(data);
 		const auto json = nlohmann::json::parse(data);
-		delete data;
 
 		const auto& jsonAssets = json["assets"];
 		BBZL_ASSERT(jsonAssets.is_array());
@@ -113,9 +113,9 @@ namespace bbzl
 		m_bundles.erase(itBundle);
 
 #if defined(DEBUG)
-		for (const auto& path : m_dbgBundlePaths)
+        for (auto it = m_dbgBundlePaths.begin(); it != m_dbgBundlePaths.end(); ++it)
 		{
-			if (hash_impl::hash(path) == hashId)
+            if (hash(*it) == hashId)
 			{
 				m_dbgBundlePaths.erase(it);
 				break;
@@ -138,8 +138,9 @@ namespace bbzl
 
 		for (const auto& sprite : *atlas)
 		{
-			BBZL_ASSERT(m_sprites.find(sprite.hashId) == m_sprites.cend());
-			m_sprites[sprite.hashId] = &sprite;
+            const auto hash = sprite.getHashId();
+			BBZL_ASSERT(m_sprites.find(hash) == m_sprites.cend());
+			m_sprites[hash] = &sprite;
 		}
 
 		m_resources[atlas->getHashId()] = atlas;
