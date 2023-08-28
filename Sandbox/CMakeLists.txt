@@ -66,8 +66,9 @@ target_include_directories(${EXECUTABLE_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/../Bamb
     ${CMAKE_SOURCE_DIR}/../Bamboozle/third-party/spdlog/include
     ${CMAKE_SOURCE_DIR}/../Bamboozle/third-party/glm
     ${CMAKE_SOURCE_DIR}/../Bamboozle/third-party/ImGui
-    ${CMAKE_SOURCE_DIR}/../Bamboozle/third-party/entt/src)
+    ${CMAKE_SOURCE_DIR}/../Bamboozle/third-party/entt/src
+    ${CMAKE_SOURCE_DIR}/../Bamboozle/third-party/nlohmann_json/include)
 
 add_subdirectory(../Bamboozle/ ../../Bamboozle/build/)
 
-target_link_libraries(${EXECUTABLE_NAME} bamboozle glad glfw spdlog glm imgui)
+target_link_libraries(${EXECUTABLE_NAME} bamboozle glad glfw spdlog glm imgui nlohmann_json::nlohmann_json)

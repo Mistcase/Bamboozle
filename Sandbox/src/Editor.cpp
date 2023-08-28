@@ -21,43 +21,7 @@ namespace bbzl
 
     void EditorLayer::onAttach()
     {
-        m_UITools.setScene(m_scene);
-
-        std::vector<bbzl::Ref<bbzl::Texture>> textures{ bbzl::Texture2D::Create(helpers::MakePath("textures/wall.jpeg").generic_string()) };
-
-        // Add objects to scene for test purposes.
-        m_wall = m_scene->createEntity("Wall");
-        m_wall.addComponent<MeshComponent>(MeshComponent::Create(helpers::MakePath("objects/scene.obj")));
-        m_wall.addComponent<MaterialComponent>(Renderer::Shader(), MaterialComponent::LightingParams{ 0.0f, 0.3f, 1.0f, 20.0f }, std::move(textures));
-
-        auto pointLight = m_scene->createEntity("Light1");
-        pointLight.addComponent<PointLightComponent>(glm::vec3{ 0.0f, 1.0f, 0.0f }, 2.5f);
-        pointLight.getComponent<TransformComponent>().setPosition({ 0.0f, 0.5f, 0.0f });
-
-        // Create camera pawn and controller
-        auto& window = bbzl::Application::GetInstance().getWindow();
-        {
-            // Create entity with camera component
-            auto defaultCameraPawn = m_scene->createEntity("Default camera");
-            auto& cameraComponent = defaultCameraPawn.addComponent<CameraComponent>();
-            auto& transformComponent = defaultCameraPawn.getComponent<TransformComponent>();
-
-            cameraComponent.viewDirection = glm::normalize(glm::vec3{-1.0f, -1.0f, -1.0f});
-            transformComponent.setPosition({ 3.0f, 4.0f, 15.0f });
-
-            m_scene->setCameraPawn(defaultCameraPawn);
-        }
-
-        {
-            auto camera2 = m_scene->createEntity("Camera2");
-            auto& cameraComponent = camera2.addComponent<CameraComponent>();
-            auto& transformComponent = camera2.getComponent<TransformComponent>();
-
-            cameraComponent.viewDirection = glm::normalize(glm::vec3{1.0f, 1.0f, 1.0f});
-            transformComponent.setPosition({ 10.0f, 4.0f, 10.0f });
-        }
-
-		window.setCursorVisible(false);
+        // m_UITools.setScene(m_scene);
     }
 
     void EditorLayer::onDetach()

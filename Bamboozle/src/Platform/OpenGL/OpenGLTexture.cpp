@@ -75,14 +75,14 @@ namespace bbzl
         glDeleteTextures(1, &m_rendererId);
     }
 
-    void OpenGLTexture2D::bind(uint32_t slot)
+    void OpenGLTexture2D::bind(uint32_t slot) const
     {
         m_slot = slot;
         glActiveTexture(GL_TEXTURE0 + m_slot);
         glBindTexture(GL_TEXTURE_2D, m_rendererId);
     }
 
-    void OpenGLTexture2D::unbind()
+    void OpenGLTexture2D::unbind() const
     {
         glActiveTexture(GL_TEXTURE0 + m_slot);
         glBindTexture(GL_TEXTURE_2D, 0);

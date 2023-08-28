@@ -35,13 +35,13 @@ namespace bbzl
 
         struct _SceneData
         {
-            bbzl::Ref<bbzl::Texture2D> WhiteTexture;
+            bbzl::Texture2D* WhiteTexture = nullptr;
             static const uint32_t WhiteRGBA8 = 0xffffffff;
             static const size_t MaxQuadCount = 10'000;
             static const size_t MaxVertexCount = MaxQuadCount * 4;
             static const size_t MaxIndexCount = MaxQuadCount * 6;
 
-            std::array<Ref<Texture2D>, 16> textureSlots;
+            std::array<const Texture2D*, 16> textureSlots;
             uint32_t textureIndex = 2; // 0 - used for Texture creation; 1 - default white texture.
 
             uint8_t storage[MaxVertexCount * sizeof(VertexDesc)];
@@ -78,7 +78,7 @@ namespace bbzl
 			ImGui::SameLine();
 			if (ImGui::Button("Reload"))
 			{
-				auto res = Application::GetInstance().getResourcesDirectory();
+				auto res = Application::GetInstance().getResourceDirectory();
 				const auto path = res.concat("default_shader.glsl");
 
 				BBZL_CORE_INFO("Try to load and bind shader: {0}", path);
@@ -105,7 +105,7 @@ namespace bbzl
             BBZL_CORE_ASSERT(SceneData()->textureSlots.size() > 2, "Cannot render user provided textures");
 
             // Temprorary object. Need it because of preprocessing and loading.
-            auto res = Application::GetInstance().getResourcesDirectory();
+            auto res = Application::GetInstance().getResourceDirectory();
             auto shaders = Shaders::Create();
             shaders->createFromFile(res.concat("default_shader.glsl"));
 
@@ -208,22 +208,22 @@ namespace bbzl
             DrawQuad(position, size, 0.0f, color, SceneData()->WhiteTexture);
         }
 
-        void DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<Texture2D>& texture)
+        void DrawQuad(const glm::vec2& position, const glm::vec2& size, const Texture2D* texture)
         {
             DrawQuad({ position.x, position.y, 0.0f }, size, 0.0f, { 1.0f, 1.0f, 1.0f, 1.0f }, texture);
         }
 
-        void DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture)
+        void DrawQuad(const glm::vec3& position, const glm::vec2& size, const Texture2D* texture)
         {
             DrawQuad(position, size, 0.0f, { 1.0f, 1.0f, 1.0f, 1.0f }, texture);
         }
 
-        void DrawQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const glm::vec4& color, const Ref<Texture2D>& texture)
+        void DrawQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const glm::vec4& color, const Texture2D* texture)
         {
             DrawQuad({ position.x, position.y, 0.0f }, size, rotation, color, texture);
         }
 
-        void DrawQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const glm::vec4& color, const Ref<Texture2D>& texture)
+        void DrawQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const glm::vec4& color, const Texture2D* texture)
         {
             BBZL_CORE_ASSERT(texture != nullptr, "Texture is nullptr");
 
@@ -235,7 +235,7 @@ namespace bbzl
             {
                 for (uint32_t i = 1, idxEnd = SceneData()->textureIndex; i < idxEnd; i++)
                 {
-                    if (*SceneData()->textureSlots[i] == *texture)
+                    if (SceneData()->textureSlots[i] == texture)
                     {
                         textureSlot = static_cast<float>(i);
                         break;

@@ -123,12 +123,12 @@ namespace bbzl
 
     void Scene::createSkybox()
     {
-        m_skybox = createEntity("Skybox");
-        m_skybox.addComponent<MeshComponent>(MeshComponent::Create(MakePath("objects/sphere.obj")));
-        m_skybox.addComponent<Texture2DComponent>(Texture2D::Create(MakePath("textures/sky.jpeg")));
-
-        auto& skyboxTransform = m_skybox.getComponent<TransformComponent>();
-        skyboxTransform.setScale({ 50.0f, 50.0f, 50.0f });
+//        m_skybox = createEntity("Skybox");
+//        m_skybox.addComponent<MeshComponent>(MeshComponent::Create(MakePath("objects/sphere.obj")));
+//        m_skybox.addComponent<Texture2DComponent>(Texture2D::Create(MakePath("textures/sky.jpeg")));
+//
+//        auto& skyboxTransform = m_skybox.getComponent<TransformComponent>();
+//        skyboxTransform.setScale({ 50.0f, 50.0f, 50.0f });
     }
 
 	void Scene::updateTransforms()

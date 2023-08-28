@@ -36,7 +36,7 @@ namespace bbzl
         // io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoTaskBarIcons;
         // io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoMerge;
 
-		const auto fontPath = Application::GetInstance().getResourcesDirectory().generic_string() + "fonts/open_sans/OpenSans-Regular.ttf";
+		const auto fontPath = Application::GetInstance().getResourceDirectory().generic_string() + "fonts/open_sans/OpenSans-Regular.ttf";
 		io.FontDefault = io.Fonts->AddFontFromFileTTF(fontPath.c_str(), 18.0f);
 
         // Setup Dear ImGui style
