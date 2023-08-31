@@ -1,7 +1,6 @@
 #pragma once
 
-// Only for Ref
-#include "Bamboozle/Core.h"
+#include "Bamboozle/Ref.h"
 
 #include <cstdint>
 #include <string>

@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Bamboozle/Core.h"
-// #include "Bamboozle/bbzl.h"
 #include <string>
 #include <functional>
 
