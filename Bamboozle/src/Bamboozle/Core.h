@@ -25,12 +25,4 @@
     #error "Unknown compiler"
 #endif
 
-
-// TODO: Remove it later
-#include <memory>
-namespace bbzl
-{
-    template <typename T>
-    using Ref = std::shared_ptr<T>;
-
-} // namespace bbzl
+#include "Bamboozle/Ref.h"

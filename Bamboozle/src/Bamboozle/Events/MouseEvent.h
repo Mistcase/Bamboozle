@@ -124,7 +124,6 @@ namespace bbzl
         EVENT_CLASS_TYPE(MouseButtonReleased)
     };
 
-	// TODO: Implement throw signal system.
 	class MouseCursorVisibilityChanged : public Event
 	{
 	public:
