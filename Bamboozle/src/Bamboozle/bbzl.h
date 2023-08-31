@@ -10,7 +10,6 @@
 #include "Bamboozle/Layer.h"
 #include "Bamboozle/Log.h"
 #include "Bamboozle/MouseButtonCodes.h"
-#include <stdio.h>
 
 // Rendering
 #include "Bamboozle/Renderer/Buffer.h"

@@ -1,36 +1,33 @@
 #pragma once
 
-#if 0
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
+    #define BBZL_PLATFORM_WINDOWS
+#elif __APPLE__
+    #define BBZL_PLATFORM_APPLE
+    #include <TargetConditionals.h>
 
-#    if defined(BBZL_PLATFORM_WINDOWS)
-#        define DEBUG_BREAK __debugbreak
-#    else
-#        define DEBUG_BREAK __builtin_debugtrap
-#    endif
-
-#    define BBZL_ASSERT(x, ...)                                   \
-        {                                                              \
-            if (!(x))                                                  \
-            {                                                          \
-                BBZL_ERROR("Assertion Failed: {0}", __VA_ARGS__); \
-                DEBUG_BREAK();                                         \
-            }                                                          \
-        }
-#    define BBZL_CORE_ASSERT(x, ...)                                   \
-        {                                                                   \
-            if (!(x))                                                       \
-            {                                                               \
-                BBZL_CORE_ERROR("Assertion Failed: {0}", __VA_ARGS__); \
-                DEBUG_BREAK();                                              \
-            }                                                               \
-        }
+    #if TARGET_IPHONE_SIMULATOR
+         #define BBZL_PLATFORM_MOBILE_SIMULATOR
+    #elif TARGET_OS_MACCATALYST
+         #define PLATFORM_UNKNOWN
+    #elif TARGET_OS_IPHONE
+        #define BBZL_PLATFORM_IOS
+    #elif TARGET_OS_MAC
+        #define BBZL_PLATFORM_MACOS
+    #else
+        #error "Unknown Apple platform"
+    #endif
+#elif __ANDROID__
+    #define BBZL_PLATFORM_ANDROID
+#elif __linux__
+    #define BBZL_PLATFORM_LINUX
 #else
-#    define BBZL_ASSERT(x, ...)
-#    define BBZL_CORE_ASSERT(x, ...)
+    #error "Unknown compiler"
 #endif
 
-#include <memory>
 
+// TODO: Remove it later
+#include <memory>
 namespace bbzl
 {
     template <typename T>

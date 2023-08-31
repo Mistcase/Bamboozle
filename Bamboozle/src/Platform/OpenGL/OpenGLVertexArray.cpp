@@ -1,7 +1,7 @@
 #include "OpenGLVertexArray.h"
 
+#include "Bamboozle/Assert.h"
 #include "Bamboozle/Log.h"
-#include "Bamboozle/bbzl.h"
 #include "GlCall.h"
 
 namespace bbzl
@@ -31,7 +31,7 @@ namespace bbzl
             break;
         }
 
-        BBZL_CORE_ASSERT(false, "Unknown shader data type");
+        ASSERT(false, "Unknown shader data type");
         return 0;
     };
 
@@ -50,7 +50,7 @@ namespace bbzl
         GL_CALL(glBindVertexArray(m_rendererId));
         vertexBuffer->bind();
 
-        BBZL_CORE_ASSERT(!vertexBuffer->getLayout().getElements().empty(), "Vertex buffer layout is undefined");
+        ASSERT(!vertexBuffer->getLayout().getElements().empty(), "Vertex buffer layout is undefined");
 
         int index = 0;
         const auto& layout = vertexBuffer->getLayout();

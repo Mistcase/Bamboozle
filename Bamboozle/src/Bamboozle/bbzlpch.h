@@ -15,6 +15,8 @@
 #include <utility>
 #include <vector>
 
+#include "Bamboozle/Assert.h"
+
 #if defined BBZL_PLATFORM_WINDOWS
-#    include <Windows.h>
+    #include <Windows.h>
 #endif

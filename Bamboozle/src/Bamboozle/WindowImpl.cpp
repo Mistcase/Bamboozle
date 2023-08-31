@@ -1,10 +1,8 @@
 #include "WindowImpl.h"
 
-#include "Bamboozle/Events/ApplicationEvent.h"
-#include "Bamboozle/Events/KeyEvent.h"
-#include "Bamboozle/Events/MouseEvent.h"
-#include "Bamboozle/Log.h"
+#include "Bamboozle/Assert.h"
 #include "Bamboozle/bbzl.h"
+
 #include "Platform/OpenGL/OpenGLContext.h"
 
 namespace
@@ -47,7 +45,7 @@ namespace bbzl
         {
             // TODO: glfwTerminate on system shutdown
             int success = glfwInit();
-            BBZL_CORE_ASSERT(success, "Could not intialize GLFW!");
+            ASSERT(success, "Could not intialize GLFW!");
 
             glfwSetErrorCallback(GLFWErrorCallback);
             GLFWInitialized = true;

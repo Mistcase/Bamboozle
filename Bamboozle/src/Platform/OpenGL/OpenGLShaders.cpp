@@ -4,6 +4,7 @@
 #include "Bamboozle/Log.h"
 #include "Bamboozle/Renderer/Shader.h"
 #include "Bamboozle/bbzl.h"
+
 #include <fstream>
 
 namespace bbzl

@@ -9,7 +9,7 @@ namespace bbzl
 	void DebugPanel::registerSection(const std::string& str, const FnSectionFunc& section)
 	{
 		[[maybe_unused]] auto it = std::find_if(m_sections.begin(), m_sections.end(), [&str](const auto& section){ return section.name == str; });
-		BBZL_ASSERT(it == m_sections.cend());
+		ASSERT(it == m_sections.cend());
 
 		m_sections.emplace_back(str, section);
 	}

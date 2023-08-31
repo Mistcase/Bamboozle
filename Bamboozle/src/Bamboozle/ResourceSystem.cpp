@@ -52,7 +52,7 @@ namespace bbzl
 	    auto data = helpers::ReadEntireFile(path.c_str());
 		if (data.empty())
 		{
-            BBZL_ASSERT(!"Fail to load bundle");
+            ASSERT(!"Fail to load bundle");
 			return 0;
 		}
 
@@ -61,7 +61,7 @@ namespace bbzl
 		const auto json = nlohmann::json::parse(data);
 
 		const auto& jsonAssets = json["assets"];
-		BBZL_ASSERT(jsonAssets.is_array());
+		ASSERT(jsonAssets.is_array());
 
         // Create resource instances
 		for (auto asset : jsonAssets)
@@ -76,7 +76,7 @@ namespace bbzl
 				break;
 
 			default:
-                BBZL_ASSERT(!"Unknown type");
+                ASSERT(!"Unknown type");
 				break;
 			}
 		}
@@ -132,14 +132,14 @@ namespace bbzl
 
 	void ResourceSystem::LoadAtlas(const char* path)
 	{
-		BBZL_ASSERT(GetAssetTypeFromPath(path) == AssetType::Atlas);
+		ASSERT(GetAssetTypeFromPath(path) == AssetType::Atlas);
 
 		auto atlas = new Atlas((Application::GetInstance().getResourceDirectory() / path).c_str() );
 
 		for (const auto& sprite : *atlas)
 		{
             const auto hash = sprite.getHashId();
-			BBZL_ASSERT(m_sprites.find(hash) == m_sprites.cend());
+			ASSERT(m_sprites.find(hash) == m_sprites.cend());
 			m_sprites[hash] = &sprite;
 		}
 

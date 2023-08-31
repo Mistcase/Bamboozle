@@ -1,7 +1,9 @@
 #include "OpenGLShader.h"
 
+#include "Bamboozle/Assert.h"
 #include "Bamboozle/Log.h"
 #include "Bamboozle/bbzl.h"
+
 #include "GlCall.h"
 
 #include <glm/gtc/type_ptr.hpp>
@@ -124,7 +126,7 @@ namespace bbzl
         // TODO: make uniform location cache
 		GLint location;
 		GL_CALL(location = glGetUniformLocation(m_rendererId, name.c_str()));
-        BBZL_CORE_ASSERT(location != -1, "Uniform is not found");
+        ASSERT(location != -1, "Uniform is not found");
 
         GL_CALL(glUniform1i(location, i));
     }
@@ -134,7 +136,7 @@ namespace bbzl
         // TODO: make uniform location cache
 		GLint location;
         GL_CALL(location = glGetUniformLocation(m_rendererId, name.c_str()));
-        BBZL_CORE_ASSERT(location != -1, "Uniform is not found");
+        ASSERT(location != -1, "Uniform is not found");
 
         GL_CALL(glUniform1f(location, value));
     }
@@ -144,7 +146,7 @@ namespace bbzl
         // TODO: make uniform location cache
 		GLint location;
         GL_CALL(location = glGetUniformLocation(m_rendererId, name.c_str()));
-        BBZL_CORE_ASSERT(location != -1, "Uniform is not found");
+        ASSERT(location != -1, "Uniform is not found");
 
         GL_CALL(glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(data)));
     }
@@ -154,7 +156,7 @@ namespace bbzl
         // TODO: make uniform location cache
 		GLint location;
         GL_CALL(location = glGetUniformLocation(m_rendererId, name.c_str()));
-        BBZL_CORE_ASSERT(location != -1, "Uniform is not found");
+        ASSERT(location != -1, "Uniform is not found");
 
         GL_CALL(glUniform3f(location, data.r, data.g, data.b));
     }
@@ -165,7 +167,7 @@ namespace bbzl
 
 		GLint location;
         GL_CALL(location = glGetUniformLocation(m_rendererId, name.c_str()));
-        BBZL_CORE_ASSERT(location != -1, "Uniform is not found");
+        ASSERT(location != -1, "Uniform is not found");
 
         GL_CALL(glUniform4f(location, data.r, data.g, data.b, data.a));
     }
@@ -175,7 +177,7 @@ namespace bbzl
         // TODO: make uniform location cache
         GLint location;
 		GL_CALL(location = glGetUniformLocation(m_rendererId, name.c_str()));
-        BBZL_CORE_ASSERT(location != -1, "Uniform is not found");
+        ASSERT(location != -1, "Uniform is not found");
 
         GL_CALL(glUniform1iv(location, count, data));
     }

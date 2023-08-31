@@ -1,8 +1,9 @@
 #include "Shaders.h"
 
+#include "Bamboozle/Assert.h"
 #include "Bamboozle/Log.h"
 #include "Bamboozle/Renderer/Renderer.h"
-#include "Bamboozle/bbzl.h"
+
 #include "Platform/OpenGL/OpenGLShaders.h"
 
 namespace bbzl
@@ -15,7 +16,7 @@ namespace bbzl
             return std::make_unique<OpenGLShaders>();
 
         default:
-            BBZL_CORE_ASSERT(false, "Unknown API");
+            ASSERT_FAIL("Unknown API");
             return nullptr;
         }
     }

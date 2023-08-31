@@ -1,8 +1,9 @@
 #include "Texture.h"
 
+#include "Bamboozle/Assert.h"
 #include "Bamboozle/Log.h"
 #include "Bamboozle/Renderer/Renderer.h"
-#include "Bamboozle/bbzl.h"
+
 #include "Platform/OpenGL/OpenGLTexture.h"
 
 namespace bbzl
@@ -17,7 +18,7 @@ namespace bbzl
             return new OpenGLTexture2D(path, format);
 
         default:
-            BBZL_CORE_ASSERT(false, "Unknown RednerAPI provided");
+            ASSERT_FAIL("Unknown RednerAPI provided");
             return nullptr;
         }
     }
@@ -30,7 +31,7 @@ namespace bbzl
             return new OpenGLTexture2D(width, height);
 
         default:
-            BBZL_CORE_ASSERT(false, "Unknown RednerAPI provided");
+            ASSERT_FAIL("Unknown RednerAPI provided");
             return nullptr;
         }
     }
