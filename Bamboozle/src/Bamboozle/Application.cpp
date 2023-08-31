@@ -1,13 +1,9 @@
 #include "Application.h"
 
-#include "Bamboozle/Renderer/OrthographicCamera.h"
-#include "Bamboozle/Renderer/Renderer.h"
+#include "Bamboozle/Assert.h"
 #include "Bamboozle/bbzl.h"
 #include "Bamboozle/DebugPanel.h"
-#include "Input.h"
-#include "Log.h"
-#include "Renderer/Buffer.h"
-#include "Renderer/VertexArray.h"
+
 #include <GLFW/glfw3.h>
 #include <imgui.h>
 
@@ -20,7 +16,7 @@ namespace bbzl
         , m_imGuiLayer(new ImGuiLayer())
         , m_resourcesPath(resourcesPath)
     {
-        BBZL_CORE_ASSERT(!m_instance, "Application already exists");
+        ASSERT(!m_instance, "Application already exists");
         m_instance = this;
 
         m_window->setEventCallback([this](Event& event) { onEvent(event); });

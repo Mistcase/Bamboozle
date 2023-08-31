@@ -49,12 +49,12 @@ namespace bbzl
 		if (m_texture == nullptr)
 		{
 			BBZL_CORE_ERROR("Atlas {} not loaded", path);
-            BBZL_ASSERT(!"Loading failed");
+            ASSERT(!"Loading failed");
 			return;
 		}
 
 		const auto& jsonSprites = root["sprites"];
-		BBZL_ASSERT(jsonSprites.is_array());
+		ASSERT(jsonSprites.is_array());
 
 		for (const auto& jsonSprite : jsonSprites)
 		{

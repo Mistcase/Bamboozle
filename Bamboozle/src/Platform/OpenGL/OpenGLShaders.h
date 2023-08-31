@@ -1,8 +1,9 @@
 #pragma once
 
-#include "Bamboozle/Core.h"
 #include "Bamboozle/Renderer/Shaders.h"
+
 #include "Platform/OpenGL/OpenGLShader.h"
+
 #include <unordered_map>
 
 namespace bbzl

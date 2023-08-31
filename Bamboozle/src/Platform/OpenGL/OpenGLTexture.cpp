@@ -1,5 +1,6 @@
 #include "OpenGLTexture.h"
 
+#include "Bamboozle/Assert.h"
 #include "Bamboozle/Log.h"
 #include "Bamboozle/bbzl.h"
 #include "GlCall.h"
@@ -61,7 +62,7 @@ namespace bbzl
 
         const auto internalFormat = m_channels == 3 ? GL_RGB8 : GL_RGBA8;
         const auto format = internalFormat == GL_RGB8 ? GL_RGB : GL_RGBA;
-        
+
         GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_width, m_height, 0, format, GL_UNSIGNED_BYTE, nullptr));
 
         GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
@@ -70,7 +71,7 @@ namespace bbzl
 
     void OpenGLTexture2D::setData(const void* data, size_t size)
     {
-        BBZL_CORE_ASSERT(static_cast<uint32_t>(size) == m_width * m_height * sizeof(uint32_t), "Different sizes");
+        ASSERT(static_cast<uint32_t>(size) == m_width * m_height * sizeof(uint32_t), "Different sizes");
 
         const auto format = m_channels == 3 ? GL_RGB : GL_RGBA;
         GL_CALL(glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_width, m_height, format, GL_UNSIGNED_BYTE, data));

@@ -1,7 +1,8 @@
 #include "VertexArray.h"
 
-#include "Bamboozle/Renderer/Renderer.h"
+#include "Bamboozle/Assert.h"
 #include "Bamboozle/bbzl.h"
+
 #include "Platform/OpenGL/OpenGLVertexArray.h"
 
 namespace bbzl
@@ -11,7 +12,7 @@ namespace bbzl
         switch (Renderer::GetAPI())
         {
         case RenderAPI::API::None:
-            BBZL_CORE_ASSERT(false, "Current API is None");
+            ASSERT(false, "Current API is None");
             break;
 
         case RenderAPI::API::OpenGL:
@@ -19,7 +20,7 @@ namespace bbzl
             break;
         }
 
-        BBZL_CORE_ASSERT(false, "Unsupported renderer API");
+        ASSERT(false, "Unsupported renderer API");
         return nullptr;
     }
 

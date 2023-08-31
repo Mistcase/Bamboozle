@@ -1,5 +1,6 @@
 #include "Renderer2D.h"
 
+#include "Bamboozle/Assert.h"
 #include "Bamboozle/Application.h"
 #include "Bamboozle/bbzl.h"
 #include "Bamboozle/Hash.h"
@@ -102,7 +103,7 @@ namespace bbzl
         {
             // Configure fields
             new (SceneDataStorage) _SceneData();
-            BBZL_CORE_ASSERT(SceneData()->textureSlots.size() > 2, "Cannot render user provided textures");
+            ASSERT(SceneData()->textureSlots.size() > 2, "Cannot render user provided textures");
 
             // Temprorary object. Need it because of preprocessing and loading.
             auto res = Application::GetInstance().getResourceDirectory();
@@ -110,7 +111,7 @@ namespace bbzl
             shaders->createFromFile(res.concat("default_shader.glsl"));
 
             SceneData()->shader = shaders->extract("default_shader"_hash);
-            BBZL_CORE_ASSERT(SceneData()->shader != nullptr, "Default shader is not loaded");
+            ASSERT(SceneData()->shader != nullptr, "Default shader is not loaded");
 
             auto vertexArray = VertexArray::Create();
             auto vertexBuffer = VertexBuffer::Create(_SceneData::MaxVertexCount * VertexDesc.getStride());
@@ -167,8 +168,8 @@ namespace bbzl
             SceneData()->camera = camera;
             SceneData()->shader->bind();
 
-            const auto& viewProjection = SceneData()->camera->getViewProjection();
-            static_cast<OpenGLShader*>(SceneData()->shader.get())->setUniformMat4("u_VP", viewProjection);
+            // const auto& viewProjection = SceneData()->camera->getViewProjection();
+            // static_cast<OpenGLShader*>(SceneData()->shader.get())->setUniformMat4("u_VP", viewProjection);
         }
 
         void EndScene()
@@ -228,7 +229,7 @@ namespace bbzl
 
         void DrawQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const glm::vec4& color, const Texture2D* texture, const glm::vec4& uv)
         {
-            BBZL_CORE_ASSERT(texture != nullptr, "Texture is nullptr");
+            ASSERT(texture != nullptr, "Texture is nullptr");
 
             if (SceneData()->quadCount >= SceneData()->MaxQuadCount)
                 Flush();
