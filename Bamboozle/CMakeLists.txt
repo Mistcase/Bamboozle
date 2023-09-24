@@ -28,6 +28,9 @@ add_subdirectory(third-party/glm/)
 #include entt
 add_subdirectory(third-party/entt/)
 
+#include libpng
+add_subdirectory(third-party/libpng/)
+
 #include nlohmann_json
 set(JSON_BuildTests OFF CACHE INTERNAL "")
 add_subdirectory(third-party/nlohmann_json/)

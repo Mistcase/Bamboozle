@@ -16,3 +16,6 @@
 [submodule "Bamboozle/third-party/nlohmann_json"]
 	path = Bamboozle/third-party/nlohmann_json
 	url = https://github.com/nlohmann/json.git
+[submodule "Bamboozle/third-party/libpng"]
+	path = Bamboozle/third-party/libpng
+	url = https://github.com/glennrp/libpng.git

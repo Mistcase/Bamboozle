@@ -67,6 +67,7 @@ target_include_directories(${EXECUTABLE_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/../Bamb
     ${CMAKE_SOURCE_DIR}/../Bamboozle/third-party/glm
     ${CMAKE_SOURCE_DIR}/../Bamboozle/third-party/ImGui
     ${CMAKE_SOURCE_DIR}/../Bamboozle/third-party/entt/src
+    ${CMAKE_SOURCE_DIR}/../Bamboozle/third-party/libpng
     ${CMAKE_SOURCE_DIR}/../Bamboozle/third-party/nlohmann_json/include)
 
 add_subdirectory(../Bamboozle/ ../../Bamboozle/build/)
