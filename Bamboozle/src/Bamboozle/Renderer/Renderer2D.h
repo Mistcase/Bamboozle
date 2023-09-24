@@ -20,17 +20,17 @@ namespace bbzl
         void EndScene();
         void Flush();
 
-        void DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color);
-        void DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color);
+        void DrawQuad(glm::vec2 position, glm::vec2 size, glm::vec4 color);
+        void DrawQuad(glm::vec3 position, glm::vec2 size, glm::vec4 color);
 
-        void DrawQuad(const glm::vec2& position, const glm::vec2& size, const Texture2D* texture);
-        void DrawQuad(const glm::vec3& position, const glm::vec2& size, const Texture2D* texture);
+        void DrawQuad(glm::vec2 position, glm::vec2 size, Texture2D* texture);
+        void DrawQuad(glm::vec3 position, glm::vec2 size, Texture2D* texture);
 
-        void DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color, const Texture2D* texture);
-        void DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, const Texture2D* texture);
+        void DrawQuad(glm::vec2 position, glm::vec2 size, glm::vec4 color, const Texture2D* texture);
+        void DrawQuad(glm::vec3 position, glm::vec2 size, glm::vec4 color, const Texture2D* texture);
 
-        void DrawQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const glm::vec4& color, const Texture2D* texture);
-        void DrawQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const glm::vec4& color, const Texture2D* texture, const glm::vec4& uv);
+		void DrawQuad(glm::vec2 position, glm::vec2 size, float rotation, glm::vec4 color, const Texture2D* texture);
+        void DrawQuad(glm::vec3 position, glm::vec2 size, float rotation, glm::vec4 color, const Texture2D* texture, glm::vec4 uv);
 
         Shader* Shader();
 

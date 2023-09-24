@@ -49,7 +49,7 @@ namespace bbzl
 		if (m_texture == nullptr)
 		{
 			BBZL_CORE_ERROR("Atlas {} not loaded", path);
-            ASSERT(!"Loading failed");
+            ASSERT_FAIL("Loading failed");
 			return;
 		}
 
