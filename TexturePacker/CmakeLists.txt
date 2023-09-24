@@ -1,0 +1,28 @@
+cmake_minimum_required(VERSION 3.20.3 FATAL_ERROR)
+
+project(TexturePacker)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+set(EXECUTABLE_NAME TexturePacker)
+
+file(GLOB SRC
+ "src/*.h"
+ "src/*.cpp")
+
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+  add_definitions(-DDEBUG)
+endif ()
+
+add_subdirectory(../Bamboozle/third-party/nlohmann_json/ ./lib_json)
+add_subdirectory(../Bamboozle/third-party/libpng/ ./lib_png)
+
+add_executable(${EXECUTABLE_NAME} ${SRC})
+
+target_include_directories(${EXECUTABLE_NAME} PUBLIC
+    ${CMAKE_SOURCE_DIR}/../Bamboozle/third-party/libpng
+    ${CMAKE_SOURCE_DIR}/../Bamboozle/third-party/nlohmann_json/include)
+
+target_link_libraries(${EXECUTABLE_NAME} nlohmann_json::nlohmann_json png_static)
