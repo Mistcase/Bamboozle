@@ -4,15 +4,16 @@
 
 #include <png.h>
 #include <memory>
+#include <vector>
 
 namespace png_utils
 {
 	struct Image
 	{
         Image();
-        
+		Image(Image&& other);
+
 		Image(const Image&) = delete;
-		Image(Image&&) = delete;
 
 		Image& operator=(const Image&) = delete;
 		Image& operator=(Image&&) = delete;
@@ -35,17 +36,17 @@ namespace png_utils
 		size_t width = 0;
 		size_t height = 0;
 		size_t depth = 0; // in bits
-
 		png_bytep *rowPointers = nullptr;
+		int colorType;
 	};
 
 	using ImageHolder = std::unique_ptr<Image>;
+	using ImageSet = std::vector<ImageHolder>;
+	using Markup = std::vector<Rect>;
 
 	ImageHolder OpenFile(const char* filename);
-	bool SaveToFile(const Image& image, const char* filename);
+	bool SaveToFile(const char* filename, const Image& image);
 
-	using Markup = std::vector<Rect>;
-	using ImageSet = std::vector<ImageHolder>;
-	Image CreateImageByMarkup(size_t width, size_t height, const ImageSet& imageSet, const Markup& markup);
+	Image CreateImageByMarkup(const ImageSet& images, const Markup& markup, int outWidth, int outHeight);
 
-} // namespace Png
+} // namespace png_utils

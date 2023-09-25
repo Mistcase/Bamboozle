@@ -112,10 +112,12 @@ void Packer::generateAtlases() const
 		}
 
 		// Now really merge them some way
-		auto atlasImage = png_utils::CreateImageByMarkup(AtlasTextureWidth, AtlasTextureHeight, images, atlasMarkup.getLayout());
+        const auto atlasImage = png_utils::CreateImageByMarkup(images, atlasMarkup.getLayout(), AtlasTextureWidth, AtlasTextureHeight);
+		auto savePath = atlasFolderPath;
+		savePath += ".png";
 
-		const auto savePath = atlasFolderPath/desc.name; // TODO: Add extension?
-		const auto isSaved = png_utils::SaveToFile(atlasImage, savePath.c_str());
+		// Save to file
+		const auto isSaved = png_utils::SaveToFile(savePath.c_str(), atlasImage);
 		if (!isSaved)
 		{
 			printf("Error: failed to save atlas %s\n", savePath.c_str());
