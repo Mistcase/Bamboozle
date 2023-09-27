@@ -22,7 +22,8 @@ add_subdirectory(../Bamboozle/third-party/libpng/ ./lib_png)
 add_executable(${EXECUTABLE_NAME} ${SRC})
 
 target_include_directories(${EXECUTABLE_NAME} PUBLIC
-    ${CMAKE_SOURCE_DIR}/../Bamboozle/third-party/libpng
-    ${CMAKE_SOURCE_DIR}/../Bamboozle/third-party/nlohmann_json/include)
+  ${CMAKE_SOURCE_DIR}/../Bamboozle/third-party/nlohmann_json/include
+  ${CMAKE_SOURCE_DIR}/../Bamboozle/third-party/libpng
+  build/lib_png)
 
 target_link_libraries(${EXECUTABLE_NAME} nlohmann_json::nlohmann_json png_static)

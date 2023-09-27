@@ -113,7 +113,7 @@ void Packer::generateAtlases() const
 
 		// Now really merge them some way
         const auto atlasImage = png_utils::CreateImageByMarkup(images, atlasMarkup.getLayout(), AtlasTextureWidth, AtlasTextureHeight);
-		auto savePath = atlasFolderPath;
+		auto savePath = atlasFolderPath/desc.name;
 		savePath += ".png";
 
 		// Save to file
@@ -123,6 +123,8 @@ void Packer::generateAtlases() const
 			printf("Error: failed to save atlas %s\n", savePath.c_str());
 			continue;
 		}
+
+		// TODO: generate xml.
 
 		printf("Atlas %s created\n", desc.name.c_str());
 	}
