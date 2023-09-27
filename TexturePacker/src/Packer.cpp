@@ -3,7 +3,10 @@
 #include "PngUtils.h"
 #include "Rect.h"
 
+#include <fstream>
 #include <filesystem>
+
+#include <nlohmann/json.hpp>
 
 namespace
 {
@@ -79,7 +82,7 @@ void Packer::generateAtlases() const
 	for (const auto& desc : m_atlasDescs)
 	{
 		const auto atlasFolderPath = outputDir/desc.name;
-		std::filesystem::remove(atlasFolderPath);
+		std::filesystem::remove_all(atlasFolderPath);
 
 		const auto created = std::filesystem::create_directory(atlasFolderPath);
 		if (!created)
@@ -112,19 +115,42 @@ void Packer::generateAtlases() const
 		}
 
 		// Now really merge them some way
-        const auto atlasImage = png_utils::CreateImageByMarkup(images, atlasMarkup.getLayout(), AtlasTextureWidth, AtlasTextureHeight);
-		auto savePath = atlasFolderPath/desc.name;
-		savePath += ".png";
+		const auto& layout = atlasMarkup.getLayout();
+        const auto atlasImage = png_utils::CreateImageByMarkup(images, layout, AtlasTextureWidth, AtlasTextureHeight);
+		auto atlasSavePath = atlasFolderPath/desc.name;
+		atlasSavePath += ".png";
 
 		// Save to file
-		const auto isSaved = png_utils::SaveToFile(savePath.c_str(), atlasImage);
+		const auto isSaved = png_utils::SaveToFile(atlasSavePath.c_str(), atlasImage);
 		if (!isSaved)
 		{
-			printf("Error: failed to save atlas %s\n", savePath.c_str());
+			printf("Error: failed to save atlas %s\n", atlasSavePath.c_str());
 			continue;
 		}
 
-		// TODO: generate xml.
+		// Generate json
+		nlohmann::json json;
+		for (size_t i = 0, size = desc.imagePaths.size(); i < size; ++i)
+		{
+			const auto& path = desc.imagePaths[i];
+			const auto& rect = layout[i];
+
+			nlohmann::json jsonSprite;
+			jsonSprite["id"] = std::filesystem::path(path).filename().replace_extension();
+			jsonSprite["x"] = rect.l;
+			jsonSprite["y"] = rect.t;
+			jsonSprite["w"] = rect.getWidth();
+			jsonSprite["h"] = rect.getHeight();
+
+			json += jsonSprite;
+		}
+
+		auto markupSavePath = atlasFolderPath/desc.name;
+		markupSavePath += ".json";
+
+		std::ofstream fs(markupSavePath, std::ios::out);
+		fs << std::setw(4) << json << std::endl;
+		fs.close();
 
 		printf("Atlas %s created\n", desc.name.c_str());
 	}
