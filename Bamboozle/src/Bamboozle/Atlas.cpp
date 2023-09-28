@@ -32,19 +32,25 @@ namespace bbzl
 	Atlas::Atlas(const char* path)
 		: Resource(hash(path))
 	{
-		// Atlas file is just a json with array of sprites
-		// For now read it from drive
-	    auto data = helpers::ReadEntireFile(path);
-		if (data.empty())
-		{
-			BBZL_CORE_ERROR("Atlas {} not loaded", path);
-			return;
-		}
+		std::filesystem::path atlasDir(path);
+		const auto atlasName = atlasDir.filename(); // Filename will return name of atlas
+
+		auto pathToTexture = atlasDir / atlasName;
+		pathToTexture += ".png";
+
+		auto pathToMarkup = atlasDir / atlasName;
+		pathToMarkup += ".json";
+
+        auto data = helpers::ReadEntireFile(pathToMarkup.c_str());
+        if (data.empty())
+        {
+            ASSERT_FAIL("Atlas not found!");
+            BBZL_CORE_ERROR("Atlas {} not loaded", path);
+            return;
+        }
 
 		// Parse
         const auto root = json::parse(data);
-
-		const auto pathToTexture = root["path_to_texture"].get<std::string>();
 		m_texture = Texture2D::Create(pathToTexture, Texture2D::Format::RGBA);
 		if (m_texture == nullptr)
 		{
@@ -53,10 +59,7 @@ namespace bbzl
 			return;
 		}
 
-		const auto& jsonSprites = root["sprites"];
-		ASSERT(jsonSprites.is_array());
-
-		for (const auto& jsonSprite : jsonSprites)
+		for (const auto& jsonSprite : root)
 		{
 			m_sprites.emplace_back() = jsonSprite;
             m_sprites.back().m_texture = m_texture;

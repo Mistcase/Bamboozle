@@ -1,5 +1,5 @@
 {
 	"assets": [
-		"atlases/common/atlas.json"
+		"atlases_build/common"
 	]
 }

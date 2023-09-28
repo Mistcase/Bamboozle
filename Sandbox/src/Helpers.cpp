@@ -12,12 +12,12 @@ namespace
         static std::filesystem::path _debugPath;
         if (_debugPath.empty())
         {
-            const auto* BBZL_DEV_RES_PATH = std::getenv("BBZL_DEV_RES_PATH");
-            if (BBZL_DEV_RES_PATH != nullptr)
+            const auto* BBZL_WORKING_DIR = std::getenv("BBZL_WORKING_DIR");
+            if (BBZL_WORKING_DIR != nullptr)
             {
-                std::string str = BBZL_DEV_RES_PATH;
+                std::string str = BBZL_WORKING_DIR;
                 str.push_back(std::filesystem::path::preferred_separator);
-                
+
                 _debugPath = std::filesystem::path(str);
                 return _debugPath;
             }
