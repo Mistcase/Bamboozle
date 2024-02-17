@@ -18,9 +18,9 @@ void Sandbox2DLayer::onAttach()
     auto& window = bbzl::Application::GetInstance().getWindow();
 
     m_camera = std::make_unique<bbzl::OrthographicCamera>(window.getWidth(), window.getHeight());
-    rs.loadBundle(bbzl::Application::GetInstance().getResourceDirectory() / "common/desc.json");
+    rs.loadBundle((bbzl::Application::GetInstance().getResourceDirectory() / "common/desc.json").generic_string());
 
-	m_sprite1 = rs.getSprite("path_to_sprite_2"_hash);
+	m_sprite1 = rs.getSprite("path_to_sprite_1"_hash);
 }
 
 void Sandbox2DLayer::onDetach()

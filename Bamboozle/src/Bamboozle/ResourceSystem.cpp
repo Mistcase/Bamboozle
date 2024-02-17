@@ -134,7 +134,8 @@ namespace bbzl
 	{
 		ASSERT(GetAssetTypeFromPath(path) == AssetType::Atlas);
 
-		auto atlas = new Atlas((Application::GetInstance().getResourceDirectory() / path).c_str() );
+		const auto atlasDirFullPath = Application::GetInstance().getResourceDirectory() / path; 
+        auto* atlas = new Atlas(atlasDirFullPath.generic_string().c_str());
 
 		for (const auto& sprite : *atlas)
 		{
