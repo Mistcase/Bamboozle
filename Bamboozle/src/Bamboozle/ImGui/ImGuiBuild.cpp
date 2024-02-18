@@ -1,3 +1,4 @@
+#include "Bamboozle/bbzlpch.h"
 #include "Bamboozle/bbzl.h"
 
 #define IMGUI_IMPL_OPENGL_LOADER_GLAD

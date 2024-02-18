@@ -14,7 +14,10 @@ namespace bbzl
         enum class API
         {
             None,
-            OpenGL
+            OpenGL,
+            Vulkan,
+
+            Default = OpenGL,
         };
 
     public:
@@ -38,7 +41,7 @@ namespace bbzl
         virtual void drawIndexed(const Ref<VertexArray>& vertexArray) = 0;
         virtual void drawIndexed(const Ref<VertexArray>& vertexArray, size_t count) = 0;
 
-    private:
+    protected:
         static API m_renderAPI;
     };
 

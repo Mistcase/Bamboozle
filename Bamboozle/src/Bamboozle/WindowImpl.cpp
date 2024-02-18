@@ -3,6 +3,9 @@
 #include "Bamboozle/Assert.h"
 #include "Bamboozle/bbzl.h"
 
+#include "Platform/Vulkan/VulkanContext.h"
+#include "Platform/Vulkan/VulkanSurfaceData.h"
+
 #include "Platform/OpenGL/OpenGLContext.h"
 
 namespace
@@ -33,6 +36,25 @@ namespace bbzl
         shutdown();
     }
 
+    void WindowImpl::createSurface(void* data)
+    {
+        const auto graphicsAPI = Renderer::GetAPI();
+        if (graphicsAPI == RenderAPI::API::Vulkan)
+        {
+            auto* surfaceData = static_cast<VulkanSurfaceData*>(data);
+            const auto result = glfwCreateWindowSurface(surfaceData->instance, m_window, nullptr, surfaceData->surface);
+            if (result != VK_SUCCESS)
+            {
+                BBZL_CORE_ERROR("Cannot create window surface");
+                ASSERT_FAIL_NO_MSG();
+            }
+        }
+        else if (graphicsAPI == RenderAPI::API::OpenGL)
+        {
+            BBZL_CORE_INFO("CreateSurface with OpenGL???");
+        }
+    }
+
     void WindowImpl::init(const WindowProps& props)
     {
         m_data.title = props.title;
@@ -53,13 +75,15 @@ namespace bbzl
 
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // Enable to run opengl
+        // glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 #ifdef __APPLE__
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, 1);
 #endif
 
         m_window = glfwCreateWindow((int)props.width, (int)props.height, m_data.title.c_str(), nullptr, nullptr);
         m_context = new OpenGLContext(m_window);
+        // m_context = new VulkanContext();
         m_context->init();
 
         glfwSetWindowUserPointer(m_window, &m_data);

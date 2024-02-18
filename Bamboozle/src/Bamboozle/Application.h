@@ -8,11 +8,13 @@
 #include "LayerStack.h"
 #include "Window.h"
 
-class Window;
-class WindowCloseEvent;
+#include <filesystem>
 
 namespace bbzl
 {
+    class Window;
+    class WindowCloseEvent;
+
     class Camera;
     class IndexBuffer;
     class VertexBuffer;

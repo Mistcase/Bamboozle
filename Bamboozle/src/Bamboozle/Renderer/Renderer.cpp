@@ -1,3 +1,4 @@
+#include "Bamboozle/bbzlpch.h"
 #include "Renderer.h"
 
 #include "Bamboozle/Application.h"
@@ -11,6 +12,8 @@
 #include "Bamboozle/bbzl.h"
 
 // Temp
+#include "imgui.h"
+#include "Bamboozle/DebugPanel.h"
 #include "Bamboozle/Hash.h"
 #include "Platform/OpenGL/OpenGLShader.h"
 
@@ -30,6 +33,34 @@ namespace bbzl
         Ref<VertexArray> idleVertexArray;
         Ref<VertexBuffer> idleVertexBuffer;
 
+    } // namespace
+
+    namespace // Renderer debug draw
+    {
+        void DebugDraw_GraphicsAPISection()
+        {
+            // Order of arrays elements matters
+            static constexpr char* RenderAPINames[] = {
+                "OpenGL",
+                "Vulkan"
+            };
+            static constexpr RenderAPI::API RenderApis[] = {
+                RenderAPI::API::OpenGL,
+                RenderAPI::API::Vulkan
+            };
+
+            const auto currentRenderAPI = Renderer::GetAPIName();
+            const auto apiCount = std::size(RenderAPINames);
+
+            const auto* apiName = std::find(std::begin(RenderAPINames), std::end(RenderAPINames), currentRenderAPI);
+            int currentIndex = apiName - RenderAPINames;
+
+            const auto apiChanged = ImGui::Combo("RenderAPI", &currentIndex, RenderAPINames, apiCount);
+            if (apiChanged)
+            {
+                Renderer::SetGraphicsAPI(RenderApis[currentIndex]);
+            }
+        }
     } // namespace
 
     const PerspectiveCamera* Renderer::m_camera = nullptr;
@@ -52,11 +83,21 @@ namespace bbzl
         idleVertexBuffer->setLayout(primitiveVertexLayout);
         idleVertexArray = VertexArray::Create();
         idleVertexArray->addVertexBuffer(idleVertexBuffer);
+
+        // Toggle render api from debug menu
+        DebugPanel::Instance().registerSection("Renderer", []() {
+            DebugDraw_GraphicsAPISection();
+        });
     }
 
     void Renderer::Destroy()
     {
         Renderer2D::Destroy();
+    }
+
+    void Renderer::SetGraphicsAPI(RenderAPI::API api)
+    {
+        RenderCommand::Init(api);
     }
 
     void Renderer::OnWindowResize(uint32_t width, uint32_t height)

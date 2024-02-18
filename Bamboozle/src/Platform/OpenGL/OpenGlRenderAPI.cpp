@@ -8,6 +8,9 @@ namespace bbzl
 {
     void OpenGLRenderAPI::init()
     {
+        // Reset global state
+        m_renderAPI = RenderAPI::API::OpenGL;
+
         GL_CALL(glEnable(GL_BLEND));
         GL_CALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 

@@ -4,13 +4,11 @@
 
 namespace bbzl
 {
+    // TODO: Remove RenderCommand class
     class RenderCommand
     {
     public:
-        static inline void Init()
-        {
-            m_renderAPI->init();
-        }
+        static void Init(RenderAPI::API api = RenderAPI::API::Default);
 
         static inline void SetViewport(uint32_t width, uint32_t height)
         {
@@ -58,7 +56,7 @@ namespace bbzl
         }
 
     private:
-        static RenderAPI* m_renderAPI;
+        static std::unique_ptr<RenderAPI> m_renderAPI;
     };
 
 } // namespace bbzl

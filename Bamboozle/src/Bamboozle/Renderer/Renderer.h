@@ -1,6 +1,7 @@
 #pragma once
 
 #include "RenderCommand.h"
+#include "Bamboozle/Assert.h"
 
 namespace bbzl
 {
@@ -10,11 +11,12 @@ namespace bbzl
     class Object3D;
     class PerspectiveCamera;
 
-    enum class RendererAPI
+    /*enum class RendererAPI
     {
         None,
-        OpenGL
-    };
+        OpenGL,
+        Vulkan
+    };*/
 
     class Renderer
     {
@@ -32,8 +34,26 @@ namespace bbzl
             return RenderAPI::GetAPI();
         }
 
+        static inline const char* GetAPIName()
+        {
+            switch (RenderAPI::GetAPI())
+            {
+            case RenderAPI::API::OpenGL:
+                return "OpenGL";
+            case RenderAPI::API::Vulkan:
+                return "Vulkan";
+
+            default:
+                ASSERT(!"Unknown render api");
+            }
+
+            return "%ERROR_MSG%";
+        }
+
         static void Init();
         static void Destroy();
+
+        static void SetGraphicsAPI(RenderAPI::API api);
 
         static void OnWindowResize(uint32_t width, uint32_t height);
 

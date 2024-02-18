@@ -20,6 +20,7 @@
 	}
 
     #define ASSERT_FAIL(msg) ASSERT(false)
+    #define ASSERT_FAIL_NO_MSG() ASSERT(false)
 #else
     #define ASSERT(x, ...)
     #define ASSERT_FAIL(msg)

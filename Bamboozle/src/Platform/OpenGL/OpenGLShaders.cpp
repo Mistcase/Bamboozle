@@ -1,3 +1,4 @@
+#include "Bamboozle/bbzlpch.h"
 #include "OpenGLShaders.h"
 
 #include "Bamboozle/Hash.h"

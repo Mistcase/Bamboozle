@@ -13,6 +13,8 @@ namespace bbzl
         WindowImpl(const WindowProps& props);
         virtual ~WindowImpl();
 
+        void createSurface(void* data) override;
+
         void onUpdate() override;
 
         inline unsigned int getWidth() const override

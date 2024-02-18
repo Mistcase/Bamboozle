@@ -5,9 +5,12 @@
 #include <algorithm>
 #include <array>
 #include <cassert>
+#include <filesystem>
 #include <functional>
 #include <iostream>
 #include <memory>
+#include <numeric>
+#include <set>
 #include <sstream>
 #include <string>
 #include <unordered_map>

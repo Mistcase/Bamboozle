@@ -1,13 +1,20 @@
 #pragma once
 
-#include "Bamboozle/Core.h"
-#include <filesystem>
-#include <string>
+#include <cstdint>
 
 namespace bbzl
 {
     class Shader
     {
+    public:
+        enum Type
+        {
+            Vertex,
+            Pixel,
+
+            Count
+        };
+
     public:
         virtual ~Shader() = default;
 

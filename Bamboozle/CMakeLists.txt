@@ -6,6 +6,9 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+# include Vulkan
+find_package(Vulkan REQUIRED)
+
 # include glfw to Bamboozle
 # disable tests, examples...
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
@@ -49,6 +52,8 @@ file(GLOB SRC
  "src/Platform/*.cpp"
  "src/Platform/OpenGL/*.h"
  "src/Platform/OpenGL/*.cpp"
+ "src/Platform/Vulkan/*.h"
+ "src/Platform/Vulkan/*.cpp"
  "third-party/stb/*.h"
  "third-party/stb/*.cpp")
 
@@ -62,7 +67,7 @@ endif ()
 
 add_library(${LIB_NAME} STATIC ${SRC})
 set_target_properties(${LIB_NAME} PROPERTIES LINKER_LANGUAGE CXX)
-target_link_libraries(${LIB_NAME} glad glfw spdlog glm imgui nlohmann_json::nlohmann_json)
+target_link_libraries(${LIB_NAME} glad glfw spdlog glm imgui nlohmann_json::nlohmann_json Vulkan::Vulkan)
 target_include_directories(${LIB_NAME} PRIVATE src third-party/ImGui third-party/stb third-party/tinyobj third-party/entt/src third-party/nlohmann_json/include)
 
 target_compile_definitions(${LIB_NAME} PUBLIC "$<$<CONFIG:DEBUG>:DEBUG>")

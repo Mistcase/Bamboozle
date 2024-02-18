@@ -3,6 +3,8 @@
 #include "Bamboozle/Renderer/Shader.h"
 #include <glm/glm.hpp>
 
+#include <string>
+
 namespace bbzl
 {
     class OpenGLShader : public Shader

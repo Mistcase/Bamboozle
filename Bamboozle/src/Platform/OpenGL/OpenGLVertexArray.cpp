@@ -42,6 +42,7 @@ namespace bbzl
 
     OpenGLVertexArray::~OpenGLVertexArray()
     {
+        // TODO: Why is this trigger GL_ERROR?
         GL_CALL(glDeleteVertexArrays(1, &m_rendererId));
     }
 

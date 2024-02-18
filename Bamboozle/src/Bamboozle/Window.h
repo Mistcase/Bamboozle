@@ -1,8 +1,6 @@
 #pragma once
 
-#include "Bamboozle/Core.h"
 #include "Bamboozle/Events/Event.h"
-#include "Bamboozle/bbzl.h"
 
 namespace bbzl
 {
@@ -29,9 +27,13 @@ namespace bbzl
     public:
         using FnEventCallback = std::function<void(Event&)>;
 
-        virtual ~Window()
-        {
-        }
+    public:
+        static Window* Create(const WindowProps& props = WindowProps());
+
+    public:
+        virtual ~Window() = default;
+
+        virtual void createSurface(void* data) = 0;
 
         virtual void onUpdate() = 0;
 
@@ -46,8 +48,6 @@ namespace bbzl
         virtual bool isVSync() const = 0;
 		virtual bool isCursorVisible() const = 0;
         virtual void* getNativeWindow() const = 0;
-
-        static Window* Create(const WindowProps& props = WindowProps());
     };
 
 } // namespace bbzl
