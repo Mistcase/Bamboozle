@@ -64,10 +64,10 @@ namespace bbzl
         , m_directionalLightsBuffer(UniformBuffer::Create(sizeof(DirectionalLightsBuffer)))
     {
         // TODO: do smth with such numeric literals
-        Renderer::Shader()->bindUniformBlock("PointLights", 2);
+        // Renderer::Shader()->bindUniformBlock("PointLights", 2);
         m_pointLightsBuffer->bind(2);
 
-        Renderer::Shader()->bindUniformBlock("DirectionalLights", 3);
+        // Renderer::Shader()->bindUniformBlock("DirectionalLights", 3);
         m_directionalLightsBuffer->bind();
 
         createSkybox();
@@ -103,7 +103,10 @@ namespace bbzl
 
     void Scene::render() const
     {
-		bbzl::RenderCommand::Clear();
+        // TODO: Move FrameBegin and FrameEnd from scene as there are multiple scenes can be rendered at one frame
+        Renderer::FrameBegin();
+
+		//RenderCommand::Clear();
         Renderer::BeginScene(&m_cameraController);
 
         drawSkybox();
@@ -114,6 +117,7 @@ namespace bbzl
         submitMeshes();
 
         Renderer::EndScene();
+        Renderer::FrameEnd();
     }
 
     void Scene::onEvent(Event& event)
@@ -143,7 +147,7 @@ namespace bbzl
     {
         const glm::vec3 origin{ 0.0f, 0.0f, 0.0f };
 
-        RenderCommand::SetLineWidth(5);
+        //RenderCommand::SetLineWidth(5);
 
         Renderer::DrawLine({ origin, { 10.0f, 0.0f, 0.0f }, { 1.0f, 0.0f, 0.0f, 1.0f } });
         Renderer::DrawLine({ origin, { 0.0f, 10.0f, 0.0f }, { 0.0f, 1.0f, 0.0f, 1.0f } });
@@ -165,14 +169,14 @@ namespace bbzl
         auto mesh = m_skybox.getComponent<MeshComponent>();
         mesh.draw();
 
-        Renderer::Shader()->bind();
+        // Renderer::Shader()->bind();
     }
 
     void Scene::submitMeshes() const
     {
         for (auto &&[entity, mesh, material, transform] : m_registry.group<MeshComponent>(entt::get<MaterialComponent, TransformComponent>).each())
         {
-            static_cast<OpenGLShader*>(Renderer::Shader())->setUniformMat4("u_Transform", transform.getWorldTransform());
+            // static_cast<OpenGLShader*>(Renderer::Shader())->setUniformMat4("u_Transform", transform.getWorldTransform());
 
             material.apply();
             mesh.draw();

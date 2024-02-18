@@ -5,17 +5,22 @@
 #include "Bamboozle/Renderer/PerspectiveCamera.h"
 #include "Bamboozle/Renderer/Renderer2D.h"
 #include "Bamboozle/Renderer/Shader.h"
-#include "Bamboozle/Renderer/Shaders.h"
-#include "Bamboozle/Renderer/Texture.h"
+#include "Shader.h"
 #include "Bamboozle/Renderer/VertexArray.h"
 #include "Bamboozle/Transformable.h"
 #include "Bamboozle/bbzl.h"
 
 // Temp
+#include "Device.h"
 #include "imgui.h"
+#include "PipelineState.h"
+#include "RenderAPI.h"
 #include "Bamboozle/DebugPanel.h"
 #include "Bamboozle/Hash.h"
+#include "Platform/OpenGL/OpenGLDevice.h"
 #include "Platform/OpenGL/OpenGLShader.h"
+#include "Platform/Vulkan/VulkanDevice.h"
+#include "Platform/Vulkan/VulkanDeviceExecutionContext.h"
 
 namespace bbzl
 {
@@ -44,9 +49,9 @@ namespace bbzl
                 "OpenGL",
                 "Vulkan"
             };
-            static constexpr RenderAPI::API RenderApis[] = {
-                RenderAPI::API::OpenGL,
-                RenderAPI::API::Vulkan
+            static constexpr RenderAPI::API_TYPE RenderApis[] = {
+                RenderAPI::API_TYPE::OpenGL,
+                RenderAPI::API_TYPE::Vulkan
             };
 
             const auto currentRenderAPI = Renderer::GetAPIName();
@@ -58,31 +63,50 @@ namespace bbzl
             const auto apiChanged = ImGui::Combo("RenderAPI", &currentIndex, RenderAPINames, apiCount);
             if (apiChanged)
             {
-                Renderer::SetGraphicsAPI(RenderApis[currentIndex]);
+                Renderer::OnAPIChanged(RenderApis[currentIndex]);
             }
         }
     } // namespace
 
+    namespace
+    {
+        using ShaderData = std::vector<std::byte>;
+        ShaderData LoadEntireFile(const std::filesystem::path& path)
+        {
+            std::ifstream ifs(path, std::ios::ate | std::ios::binary);
+            ASSERT(ifs.is_open());
+
+            ShaderData buffer(ifs.tellg());
+
+            ifs.seekg(0);
+            ifs.read((char*)buffer.data(), buffer.size());
+            ifs.close();
+
+            return buffer;
+        }
+    }
+
+    std::unique_ptr<VidDeviceInterface> Renderer::m_device;
+    std::unique_ptr<DeviceExecutionContextInterface> Renderer::m_deviceContext;
+
+    Shader* Renderer::m_defaultVertexShader;
+    Shader* Renderer::m_defaultFragmentShader;
+
+    PipelineState* Renderer::m_pso = nullptr;
     const PerspectiveCamera* Renderer::m_camera = nullptr;
 
     void Renderer::Init()
     {
-        RenderCommand::Init();
+        OnAPIChanged(RenderAPI::API_TYPE::Default);
+
+        // TODO: Resource system (Load file)?
+        m_defaultVertexShader = m_device->createShader(Shader::Type::Vertex, LoadEntireFile(Application::GetInstance().getResourceDirectory() / "shaders\\shader.vert.spv"));
+        m_defaultFragmentShader = m_device->createShader(Shader::Type::Pixel, LoadEntireFile(Application::GetInstance().getResourceDirectory() / "shaders\\shader.frag.spv"));
+
+        // TODO: Is it correct to init pso once here?
+        m_pso = m_device->createPipelineStateObject();
+
         Renderer2D::Init();
-
-        auto shaders = Shaders::Create();
-        shaders->createFromFile(Application::GetInstance().getResourceDirectory().string() + "skybox_shader.glsl");
-        shaders->createFromFile(Application::GetInstance().getResourceDirectory().string() + "lines_shader.glsl");
-        skyboxShader = shaders->extract("skybox_shader"_hash);
-
-        BufferLayout primitiveVertexLayout{ { ShaderDataType::Float4, "a_Position" },
-                                            { ShaderDataType::Float4, "a_Color" } };
-
-        idleShader = shaders->extract("lines_shader"_hash);
-        idleVertexBuffer = VertexBuffer::Create(2 * sizeof(PrimitiveVertex), nullptr);
-        idleVertexBuffer->setLayout(primitiveVertexLayout);
-        idleVertexArray = VertexArray::Create();
-        idleVertexArray->addVertexBuffer(idleVertexBuffer);
 
         // Toggle render api from debug menu
         DebugPanel::Instance().registerSection("Renderer", []() {
@@ -92,32 +116,85 @@ namespace bbzl
 
     void Renderer::Destroy()
     {
+        m_device->destroyShader(m_defaultVertexShader);
+        m_device->destroyShader(m_defaultFragmentShader);
+
         Renderer2D::Destroy();
     }
 
-    void Renderer::SetGraphicsAPI(RenderAPI::API api)
+    void Renderer::OnAPIChanged(RenderAPI::API_TYPE api)
     {
-        RenderCommand::Init(api);
+        RenderAPI::m_renderAPIType = api; // TODO: REMOVE
+
+        if (api == RenderAPI::API_TYPE::OpenGL)
+        {
+            m_device = std::make_unique<OpenGLDevice>();
+            m_deviceContext = std::make_unique<DeviceExecutionContextInterface>();
+        }
+        else if (api == RenderAPI::API_TYPE::Vulkan)
+        {
+            m_device = std::make_unique<VulkanDevice>(Application::GetInstance().getWindow());
+            m_deviceContext = std::make_unique<VulkanDeviceExecutionContext>(*(VulkanDevice*)m_device.get());
+        }
+
+        ASSERT(m_device != nullptr);
     }
 
     void Renderer::OnWindowResize(uint32_t width, uint32_t height)
     {
-        RenderCommand::SetViewport(width, height);
+        //RenderCommand::SetViewport(width, height);
+    }
+
+    void Renderer::SwapBuffers()
+    {
+        m_device->swapBuffers();
+    }
+
+    void Renderer::FrameBegin()
+    {
+        m_device->beginFrame();
+
+        // TODO: add opegl context
+        if (m_deviceContext)
+        {
+            m_deviceContext->beginFrame();
+            m_deviceContext->beginRenderPass();
+        }
+
+        // TODO: Fix shaders
+        m_pso->primTopologyType = PipelineState::PrimitiveTopologyType::Triangles;
+        m_pso->shaderBundle[Shader::Type::Vertex] = m_defaultVertexShader;
+        m_pso->shaderBundle[Shader::Type::Pixel] = m_defaultFragmentShader;
+        m_pso->validate();
+    }
+
+    void Renderer::FrameEnd()
+    {
+        // TODO: add opegl context
+        if (m_deviceContext)
+        {
+            m_deviceContext->endRenderPass();
+            m_deviceContext->endFrame();
+        }
+
+        m_device->endFrame();
     }
 
     void Renderer::BeginScene(const PerspectiveCamera* camera)
     {
+        m_pso->bind();
+
         m_camera = camera;
         const auto& viewProjection = m_camera->getViewProjection();
 
-        static_cast<OpenGLShader*>(Renderer2D::Shader())->bind();
+        /*static_cast<OpenGLShader*>(Renderer2D::Shader())->bind();
 		auto cameraPawn = m_camera->getPawn();
 		const auto& transform = cameraPawn.getComponent<TransformComponent>();
-        static_cast<bbzl::OpenGLShader*>(bbzl::Renderer::Shader())->setUniform3f("u_CameraPosition", transform.getPosition());
-        static_cast<OpenGLShader*>(Renderer2D::Shader())->setUniformMat4("u_VP", viewProjection);
+        static_cast<OpenGLShader*>(bbzl::Renderer::Shader())->setUniform3f("u_CameraPosition", transform.getPosition());
+        static_cast<OpenGLShader*>(Renderer2D::Shader())->setUniformMat4("u_VP", viewProjection);*/
 
-        RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 0.1f });
-        RenderCommand::Clear();
+        //RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 0.1f });
+        //RenderCommand::Clear();
     }
 
     void Renderer::EndScene()
@@ -138,9 +215,9 @@ namespace bbzl
         idleVertexBuffer->setData(&vertex, sizeof(vertex));
 
         idleVertexArray->bind();
-        RenderCommand::DrawPoints(idleVertexArray, 1);
+        //RenderCommand::DrawPoints(idleVertexArray, 1);
 
-        Shader()->bind();
+        // Shader()->bind();
     }
 
     void Renderer::DrawLine(const Line& line)
@@ -159,15 +236,15 @@ namespace bbzl
         idleVertexBuffer->setData(vertices, 2 * sizeof(PrimitiveVertex));
 
         idleVertexArray->bind();
-        RenderCommand::DrawLines(idleVertexArray, 2);
+        //RenderCommand::DrawLines(idleVertexArray, 2);
 
-        Shader()->bind();
+        // Shader()->bind();
     }
 
-    class Shader* Renderer::Shader()
-    {
-        return Renderer2D::Shader(); // TODO: Give 3D renderer its own shader
-    }
+    //class Shader* Renderer::Shader()
+    //{
+    //    return Renderer2D::Shader(); // TODO: Give 3D renderer its own shader
+    //}
 
     class Shader* Renderer::SkyboxShader()
     {

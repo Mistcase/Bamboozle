@@ -4,7 +4,7 @@
 
 namespace bbzl
 {
-    VulkanShader::VulkanShader(const std::string& name, const std::string& srcVertex, const std::string& srcFragment)
+    VulkanShader::VulkanShader(const std::string& name)
         : m_name(name)
     {
         

@@ -11,13 +11,14 @@
         #define DEBUG_BREAK std::abort();
     #endif
 
-    #define ASSERT(x, ...)								        \
-	{															\
-		 if (!(x))												\
-		 {									                    \
-			 DEBUG_BREAK();										\
-		 }														\
-	}
+    #define ASSERT(x, ...)								    \
+	 do 												    \
+	 {                                                      \
+         if (!(x))                                          \
+         {                                                  \
+             DEBUG_BREAK();                                 \
+         }									                \
+	 }	while (false)										
 
     #define ASSERT_FAIL(msg) ASSERT(false)
     #define ASSERT_FAIL_NO_MSG() ASSERT(false)

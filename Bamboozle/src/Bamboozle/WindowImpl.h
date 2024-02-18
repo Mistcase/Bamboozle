@@ -45,7 +45,7 @@ namespace bbzl
 
     private:
         GLFWwindow* m_window;
-        GraphicsContext* m_context;
+        // GraphicsContext* m_context;
 
         struct WindowData
         {

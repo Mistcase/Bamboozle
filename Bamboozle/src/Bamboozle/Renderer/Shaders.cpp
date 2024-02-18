@@ -5,18 +5,24 @@
 #include "Bamboozle/Renderer/Renderer.h"
 
 #include "Platform/OpenGL/OpenGLShaders.h"
+#include "Platform/Vulkan/VulkanDevice.h"
+#include "Platform/Vulkan/VulkanShaders.h"
 
 namespace bbzl
 {
-    std::unique_ptr<Shaders> Shaders::Create()
+    std::unique_ptr<Shaders> Shaders::Create(VidDeviceInterface* device)
     {
-        switch (RenderAPI::GetAPI())
+        const auto api = RenderAPI::GetAPI();
+        switch (api)
         {
-        case RenderAPI::API::OpenGL:
+        case RenderAPI::API_TYPE::OpenGL:
             return std::make_unique<OpenGLShaders>();
 
+        case RenderAPI::API_TYPE::Vulkan:
+            return std::make_unique<VulkanShaders>(*(VulkanDevice*)(device));
+
         default:
-            ASSERT_FAIL("Unknown API");
+            ASSERT_FAIL("Unknown API_TYPE");
             return nullptr;
         }
     }

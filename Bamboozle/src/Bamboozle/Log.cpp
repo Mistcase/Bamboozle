@@ -1,3 +1,4 @@
+#include "Bamboozle/bbzlpch.h"
 #include "Log.h"
 
 #include "Bamboozle/bbzl.h"

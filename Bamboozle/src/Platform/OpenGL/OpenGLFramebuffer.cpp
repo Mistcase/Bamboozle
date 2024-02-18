@@ -1,3 +1,4 @@
+#include "Bamboozle/bbzlpch.h"
 #include "OpenGLFramebuffer.h"
 
 #include "Bamboozle/bbzl.h"

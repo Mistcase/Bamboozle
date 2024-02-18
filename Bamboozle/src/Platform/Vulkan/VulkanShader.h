@@ -18,19 +18,16 @@ namespace bbzl
         const char* getName() const override;
 
         VkShaderModule getNativeModule() const { return m_nativeModule; }
+        VkShaderModule* getNativeModulePtr() { return &m_nativeModule; }
 
     private:
         // Already precompileed shaders expected (SPIR-V)
-        VulkanShader(const std::string& name, const std::string& srcVertex, const std::string& srcFragment);
+        VulkanShader(const std::string& name);
         friend class VulkanShaders;
-
-    private:
-        bool m_isAssembled = false;
+        friend class VulkanDevice;
 
     private:
         const std::string m_name;
-        uint32_t m_rendererId;
-
         VkShaderModule m_nativeModule;
     };
 

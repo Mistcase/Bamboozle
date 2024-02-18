@@ -1,6 +1,5 @@
 #include "Mesh.h"
 
-#include "Bamboozle/Renderer/RenderCommand.h"
 #include "Bamboozle/Renderer/VertexArray.h"
 #include "Bamboozle/bbzl.h"
 #include <fstream>
@@ -115,7 +114,7 @@ namespace bbzl
     void MeshComponent::draw() const
     {
         m_vertexArray->bind();
-        RenderCommand::DrawIndexed(m_vertexArray);
+        //RenderCommand::DrawIndexed(m_vertexArray);
     }
 
 } // namespace bbzl

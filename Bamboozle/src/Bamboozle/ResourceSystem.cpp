@@ -52,7 +52,7 @@ namespace bbzl
 	    auto data = helpers::ReadEntireFile(path.c_str());
 		if (data.empty())
 		{
-            ASSERT(!"Fail to load bundle");
+            ASSERT_FAIL("Fail to load bundle");
 			return 0;
 		}
 
@@ -76,7 +76,7 @@ namespace bbzl
 				break;
 
 			default:
-                ASSERT(!"Unknown type");
+                ASSERT_FAIL("Unknown type");
 				break;
 			}
 		}

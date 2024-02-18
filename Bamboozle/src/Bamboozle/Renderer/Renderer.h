@@ -1,22 +1,20 @@
 #pragma once
 
-#include "RenderCommand.h"
+#include "RenderAPI.h"
 #include "Bamboozle/Assert.h"
 
 namespace bbzl
 {
+    class VidDeviceInterface;
+    class DeviceExecutionContextInterface;
+
     class Camera;
     class Shader;
     class VertexArray;
     class Object3D;
     class PerspectiveCamera;
 
-    /*enum class RendererAPI
-    {
-        None,
-        OpenGL,
-        Vulkan
-    };*/
+    struct PipelineState;
 
     class Renderer
     {
@@ -29,7 +27,7 @@ namespace bbzl
         };
 
     public:
-        static inline RenderAPI::API GetAPI()
+        static inline RenderAPI::API_TYPE GetAPI()
         {
             return RenderAPI::GetAPI();
         }
@@ -38,13 +36,13 @@ namespace bbzl
         {
             switch (RenderAPI::GetAPI())
             {
-            case RenderAPI::API::OpenGL:
+            case RenderAPI::API_TYPE::OpenGL:
                 return "OpenGL";
-            case RenderAPI::API::Vulkan:
+            case RenderAPI::API_TYPE::Vulkan:
                 return "Vulkan";
 
             default:
-                ASSERT(!"Unknown render api");
+                ASSERT_FAIL("Unknown render api");
             }
 
             return "%ERROR_MSG%";
@@ -53,9 +51,14 @@ namespace bbzl
         static void Init();
         static void Destroy();
 
-        static void SetGraphicsAPI(RenderAPI::API api);
+        static void OnAPIChanged(RenderAPI::API_TYPE api);
 
         static void OnWindowResize(uint32_t width, uint32_t height);
+
+        static void SwapBuffers();
+
+        static void FrameBegin();
+        static void FrameEnd();
 
         static void BeginScene(const PerspectiveCamera* camera);
         static void EndScene();
@@ -63,11 +66,19 @@ namespace bbzl
 		static void DrawPoint(const glm::vec3& position, const glm::vec4& color);
         static void DrawLine(const Line& line);
 
-        static class Shader* Shader();
+        // static class Shader* Shader();
         static class Shader* SkyboxShader();
 
     private:
+        static std::unique_ptr<VidDeviceInterface> m_device;
+        static std::unique_ptr<DeviceExecutionContextInterface> m_deviceContext;
+
+        // static std::unique_ptr<RenderAPI> m_renderAPI;
         static const PerspectiveCamera* m_camera;
+        static PipelineState* m_pso;
+
+        static Shader* m_defaultVertexShader;
+        static Shader* m_defaultFragmentShader;
     };
 
 } // namespace bbzl

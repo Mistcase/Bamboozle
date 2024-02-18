@@ -6,7 +6,18 @@
 #include "VulkanShader.h"
 #include "Bamboozle/Log.h"
 
-#include <glm/vec3.hpp>
+#include <glm/glm.hpp>
+
+// TODO: Remove from here
+namespace
+{
+    struct SimplePushConstantData
+    {
+        glm::mat2 transform{ 1.0f };
+        glm::vec2 offset;
+        alignas(16) glm::vec3 color;
+    };
+}
 
 namespace
 {
@@ -58,6 +69,23 @@ namespace bbzl
     VulkanPipelineState::~VulkanPipelineState()
     {
         term();
+    }
+
+    void VulkanPipelineState::validate()
+    {
+        if (m_isValid)
+        {
+            return;
+        }
+
+        createGraphicsPipeline();
+        m_isValid = true;
+    }
+
+    void VulkanPipelineState::bind()
+    {
+        // auto commandBuffer = m_device.getCurrentCommandBuffer();
+        // vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipeline);
     }
 
     void VulkanPipelineState::term()
@@ -146,17 +174,17 @@ namespace bbzl
         viewportInfo.scissorCount = 1;
         viewportInfo.pScissors = nullptr;
 
-
-
-        // Shaders
-        if (!shaderBundle[Shader::Type::Vertex] || !shaderBundle[Shader::Type::Pixel])
+        // If the pipeline requires pre-rasterization shader state or fragment shader state, stageCount must be greater than 0
+        // (https://vulkan.lunarg.com/doc/view/1.3.275.0/windows/1.3-extensions/vkspec.html#VUID-VkGraphicsPipelineCreateInfo-stageCount-06604)
+        if (!shaderBundle[Shader::Type::Vertex])
         {
+            ASSERT_FAIL_NO_MSG();
             return false;
         }
 
         uint32_t shaderStagesCount = 0;
         VkPipelineShaderStageCreateInfo shaderStages[Shader::Type::Count];
-        for (size_t type = Shader::Type::Count; type < Shader::Type::Count; type++)
+        for (size_t type = 0; type < Shader::Type::Count; type++)
         {
             if (!shaderBundle[type])
             {
@@ -170,7 +198,7 @@ namespace bbzl
 
             VulkanShader* shader = static_cast<VulkanShader*>(shaderBundle[type]);
             shaderStage.module = shader->getNativeModule();
-            shaderStage.pName = "main";  // Entry point
+            shaderStage.pName = "main"; // Entry point
             shaderStagesCount++;
         }
 
@@ -184,7 +212,21 @@ namespace bbzl
         vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
         vertexInputInfo.pVertexBindingDescriptions = bindingDescriptions.data();
 
-        VkGraphicsPipelineCreateInfo pipelineInfo;
+        VkPushConstantRange pushContantRange{};
+        pushContantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
+        pushContantRange.offset = 0;
+        pushContantRange.size = sizeof(SimplePushConstantData);
+
+        VkPipelineLayoutCreateInfo createInfo{};
+        createInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+        createInfo.setLayoutCount = 0;
+        createInfo.pSetLayouts = nullptr;
+        createInfo.pushConstantRangeCount = 1;
+        createInfo.pPushConstantRanges = &pushContantRange;
+        const auto isLayoutCreated = vkCreatePipelineLayout(m_device.getNativeDevice(), &createInfo, nullptr, &m_pipelineLayout);
+        ASSERT(isLayoutCreated == VK_SUCCESS);
+
+        VkGraphicsPipelineCreateInfo pipelineInfo{};
         pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
         pipelineInfo.stageCount = shaderStagesCount;
         pipelineInfo.pStages = shaderStages;
@@ -196,11 +238,9 @@ namespace bbzl
         pipelineInfo.pColorBlendState = &colorBlendInfo;
         pipelineInfo.pDepthStencilState = &depthStencilInfo;
         pipelineInfo.pDynamicState = &dynamicStateInfo;
-
         pipelineInfo.layout = m_pipelineLayout;
         pipelineInfo.renderPass = m_device.getSwapChain().getRenderPass();
-        pipelineInfo.subpass = 0; // TODO: Fix it!
-
+        pipelineInfo.subpass = 0;
         pipelineInfo.basePipelineIndex = -1;
         pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
 
@@ -209,6 +249,9 @@ namespace bbzl
         {
             BBZL_CORE_ERROR("Vulkan: cannot create graphics pipeline");
             ASSERT_FAIL_NO_MSG();
+            return false;
         }
+
+        return true;
     }
 } // namespace bbzl

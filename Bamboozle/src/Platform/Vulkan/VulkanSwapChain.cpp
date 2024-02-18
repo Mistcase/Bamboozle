@@ -23,19 +23,9 @@ namespace bbzl
         oldSwapChain = nullptr;
     }
 
-    void VulkanSwapChain::init()
-    {
-        createSwapChain();
-        createImageViews();
-        createRenderPass();
-        createDepthResources();
-        createFramebuffers();
-        createSyncObjects();
-    }
-
     VulkanSwapChain::~VulkanSwapChain()
     {
-        for (auto imageView : swapChainImageViews)
+        for (const auto imageView : swapChainImageViews)
         {
             vkDestroyImageView(m_device.getNativeDevice(), imageView, nullptr);
         }
@@ -70,6 +60,22 @@ namespace bbzl
         }
     }
 
+    void VulkanSwapChain::init()
+    {
+        createSwapChain();
+        createImageViews();
+        createRenderPass();
+        createDepthResources();
+        createFramebuffers();
+        createSyncObjects();
+    }
+
+    void VulkanSwapChain::swapBuffers()
+    {
+        [[maybe_unused]] const auto result = acquireNextImage(&m_currentImageIndex);
+        ASSERT(result == VK_SUCCESS);
+    }
+
     VkResult VulkanSwapChain::acquireNextImage(uint32_t* imageIndex)
     {
         vkWaitForFences(
@@ -91,13 +97,13 @@ namespace bbzl
     }
 
     VkResult VulkanSwapChain::submitCommandBuffers(
-        const VkCommandBuffer* buffers, const uint32_t* imageIndex)
+        const VkCommandBuffer* buffer)
     {
-        if (imagesInFlight[*imageIndex] != VK_NULL_HANDLE)
+        if (imagesInFlight[m_currentImageIndex] != VK_NULL_HANDLE)
         {
-            vkWaitForFences(m_device.getNativeDevice(), 1, &imagesInFlight[*imageIndex], VK_TRUE, UINT64_MAX);
+            vkWaitForFences(m_device.getNativeDevice(), 1, &imagesInFlight[m_currentImageIndex], VK_TRUE, UINT64_MAX);
         }
-        imagesInFlight[*imageIndex] = inFlightFences[currentFrame];
+        imagesInFlight[m_currentImageIndex] = inFlightFences[currentFrame];
 
         VkSubmitInfo submitInfo = {};
         submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -109,7 +115,7 @@ namespace bbzl
         submitInfo.pWaitDstStageMask = waitStages;
 
         submitInfo.commandBufferCount = 1;
-        submitInfo.pCommandBuffers = buffers;
+        submitInfo.pCommandBuffers = buffer;
 
         VkSemaphore signalSemaphores[] = { renderFinishedSemaphores[currentFrame] };
         submitInfo.signalSemaphoreCount = 1;
@@ -131,7 +137,7 @@ namespace bbzl
         presentInfo.swapchainCount = 1;
         presentInfo.pSwapchains = swapChains;
 
-        presentInfo.pImageIndices = imageIndex;
+        presentInfo.pImageIndices = &m_currentImageIndex;
 
         auto result = vkQueuePresentKHR(m_device.getNativePresentQueue(), &presentInfo);
 

@@ -1,3 +1,4 @@
+#include "Bamboozle/bbzlpch.h"
 #include "UniformBuffer.h"
 
 #include "Bamboozle/Renderer/Renderer.h"
@@ -10,16 +11,16 @@ namespace bbzl
     {
         switch (Renderer::GetAPI())
         {
-        case RenderAPI::API::None:
-            assert(!"API is None");
+        case RenderAPI::API_TYPE::None:
+            ASSERT_FAIL("API_TYPE is None");
             break;
 
-        case RenderAPI::API::OpenGL:
+        case RenderAPI::API_TYPE::OpenGL:
             return std::make_shared<OpenGLUniformBuffer>(size);
             break;
         }
 
-        assert(!"Unsupported renderer API");
+        ASSERT_FAIL("Unsupported renderer API_TYPE");
         return nullptr;
     }
 

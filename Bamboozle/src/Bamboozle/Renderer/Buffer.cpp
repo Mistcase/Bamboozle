@@ -111,16 +111,16 @@ namespace bbzl
     {
         switch (Renderer::GetAPI())
         {
-        case RenderAPI::API::None:
-            ASSERT(false, "Current API is None");
+        case RenderAPI::API_TYPE::None:
+            ASSERT(false, "Current API_TYPE is None");
             break;
 
-        case RenderAPI::API::OpenGL:
+        case RenderAPI::API_TYPE::OpenGL:
             return std::make_shared<OpenGLVertexBuffer>(size, data);
             break;
         }
 
-        ASSERT(false, "Unsupported renderer API");
+        ASSERT(false, "Unsupported renderer API_TYPE");
         return nullptr;
     }
 
@@ -128,16 +128,16 @@ namespace bbzl
     {
         switch (Renderer::GetAPI())
         {
-        case RenderAPI::API::None:
-            ASSERT(false, "Current API is None");
+        case RenderAPI::API_TYPE::None:
+            ASSERT(false, "Current API_TYPE is None");
             break;
 
-        case RenderAPI::API::OpenGL:
+        case RenderAPI::API_TYPE::OpenGL:
             return std::make_shared<OpenGLIndexBuffer>(count, indices);
             break;
         }
 
-        ASSERT(false, "Unsupported renderer API");
+        ASSERT(false, "Unsupported renderer API_TYPE");
         return nullptr;
     }
 

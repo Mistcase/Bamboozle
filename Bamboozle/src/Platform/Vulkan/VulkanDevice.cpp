@@ -1,6 +1,9 @@
 #include "Bamboozle/bbzlpch.h"
 #include "VulkanDevice.h"
 
+#include "Bamboozle/Renderer/PipelineState.h"
+#include "VulkanPipelineState.h"
+#include "VulkanShader.h"
 #include "VulkanSurfaceData.h"
 #include "Bamboozle/Log.h"
 
@@ -9,13 +12,15 @@
 
 namespace bbzl
 {
+    class VulkanShader;
+
     static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
         VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
         VkDebugUtilsMessageTypeFlagsEXT messageType,
         const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
         void* pUserData)
     {
-        BBZL_CORE_WARN("Validation layer: %s", pCallbackData->pMessage);
+        BBZL_CORE_WARN("Validation layer: {}", pCallbackData->pMessage);
         return VK_FALSE;
     }
 
@@ -65,6 +70,9 @@ namespace bbzl
 
     VulkanDevice::~VulkanDevice()
     {
+        // HACK to prevent exception on swapchain destructor
+        m_swapChain.reset();
+
         vkDestroyCommandPool(device, commandPool, nullptr);
         vkDestroyDevice(device, nullptr);
 
@@ -75,6 +83,21 @@ namespace bbzl
 
         vkDestroySurfaceKHR(instance, surface, nullptr);
         vkDestroyInstance(instance, nullptr);
+    }
+
+    void VulkanDevice::swapBuffers()
+    {
+        // m_swapChain->swapBuffers();
+    }
+
+    void VulkanDevice::beginFrame()
+    {
+        // m_commandPool.beginFrame();
+    }
+
+    void VulkanDevice::endFrame()
+    {
+        // m_commandPool.endFrame();
     }
 
     void VulkanDevice::createInstance()
@@ -137,7 +160,7 @@ namespace bbzl
             ASSERT_FAIL_NO_MSG();
         }
 
-        BBZL_CORE_INFO("Device count: %u", deviceCount);
+        BBZL_CORE_INFO("Device count: {0}", deviceCount);
 
         std::vector<VkPhysicalDevice> devices(deviceCount);
         vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
@@ -158,7 +181,7 @@ namespace bbzl
         }
 
         vkGetPhysicalDeviceProperties(physicalDevice, &properties);
-        BBZL_CORE_INFO("Physical device: %s", properties.deviceName);
+        BBZL_CORE_INFO("Physical device: {0}", properties.deviceName);
     }
 
     void VulkanDevice::createLogicalDevice()
@@ -341,7 +364,7 @@ namespace bbzl
         std::unordered_set<std::string> available;
         for (const auto& extension : extensions)
         {
-            BBZL_CORE_INFO("%s", extension.extensionName);
+            BBZL_CORE_INFO("{0}", extension.extensionName);
             available.insert(extension.extensionName);
         }
 
@@ -349,7 +372,7 @@ namespace bbzl
         const auto requiredExtensions = getRequiredExtensions();
         for (const auto& required : requiredExtensions)
         {
-            BBZL_CORE_INFO("%s", required);
+            BBZL_CORE_INFO("{0}", required);
             if (available.find(required) == available.end())
             {
                 BBZL_CORE_ERROR("Missing required glfw extension");
@@ -467,6 +490,48 @@ namespace bbzl
         ASSERT_FAIL_NO_MSG();
     }
 
+    PipelineState* VulkanDevice::createPipelineStateObject()
+    {
+        // TODO: store pso pool in device class.
+        // Just allocate new Vulkan pso for now
+
+        return new VulkanPipelineState(*this);
+    }
+
+    Shader* VulkanDevice::createShader(Shader::Type type, const ShaderData& data)
+    {
+        static size_t counter = 1;
+        const auto shaderDebugName = "vulkan_shader_" + std::to_string(counter);
+
+        VulkanShader* shader = new VulkanShader(shaderDebugName);
+
+        VkShaderModuleCreateInfo createInfo{};
+        createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+        createInfo.codeSize = data.size();
+        createInfo.pCode = (const uint32_t*)data.data();
+
+        const auto result = vkCreateShaderModule(device, &createInfo, nullptr, shader->getNativeModulePtr());
+        if (result != VK_SUCCESS)
+        {
+            BBZL_CORE_ERROR("Cannot create shader");
+
+            delete shader;
+            return nullptr;
+        }
+
+        return shader;
+    }
+
+    void VulkanDevice::destroyShader(Shader* shader)
+    {
+        delete shader;
+    }
+
+    void VulkanDevice::destroyPipelineStateObject(PipelineState* pso)
+    {
+        delete pso;
+    }
+
     uint32_t VulkanDevice::findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties) const
     {
         VkPhysicalDeviceMemoryProperties memProperties;
@@ -519,7 +584,7 @@ namespace bbzl
         vkBindBufferMemory(device, buffer, bufferMemory, 0);
     }
 
-    VkCommandBuffer VulkanDevice::beginSingleTimeCommands()
+    void VulkanDevice::beginSingleTimeCommands()
     {
         VkCommandBufferAllocateInfo allocInfo{};
         allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
@@ -527,35 +592,35 @@ namespace bbzl
         allocInfo.commandPool = commandPool;
         allocInfo.commandBufferCount = 1;
 
-        VkCommandBuffer commandBuffer;
-        vkAllocateCommandBuffers(device, &allocInfo, &commandBuffer);
+        vkAllocateCommandBuffers(device, &allocInfo, &m_commandBuffer);
 
         VkCommandBufferBeginInfo beginInfo{};
-        beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO; // TODO: what is that?
+        beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
         beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT; // TODO: what is that?
 
-        vkBeginCommandBuffer(commandBuffer, &beginInfo);
-        return commandBuffer;
+        vkBeginCommandBuffer(m_commandBuffer, &beginInfo);
     }
 
-    void VulkanDevice::endSingleTimeCommands(VkCommandBuffer commandBuffer)
+    void VulkanDevice::endSingleTimeCommands()
     {
-        vkEndCommandBuffer(commandBuffer);
+        vkEndCommandBuffer(m_commandBuffer);
 
         VkSubmitInfo submitInfo{};
         submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
         submitInfo.commandBufferCount = 1;
-        submitInfo.pCommandBuffers = &commandBuffer;
+        submitInfo.pCommandBuffers = &m_commandBuffer;
 
         vkQueueSubmit(graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
         vkQueueWaitIdle(graphicsQueue);
 
-        vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
+        vkFreeCommandBuffers(device, commandPool, 1, &m_commandBuffer);
+        m_commandBuffer = VK_NULL_HANDLE;
     }
 
     void VulkanDevice::copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size)
     {
-        VkCommandBuffer commandBuffer = beginSingleTimeCommands();
+        beginSingleTimeCommands();
+        VkCommandBuffer commandBuffer = m_commandBuffer;
 
         VkBufferCopy copyRegion{};
         copyRegion.srcOffset = 0; // Optional
@@ -563,13 +628,14 @@ namespace bbzl
         copyRegion.size = size;
         vkCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, 1, &copyRegion);
 
-        endSingleTimeCommands(commandBuffer);
+        endSingleTimeCommands();
     }
 
     void VulkanDevice::copyBufferToImage(
         VkBuffer buffer, VkImage image, uint32_t width, uint32_t height, uint32_t layerCount)
     {
-        VkCommandBuffer commandBuffer = beginSingleTimeCommands();
+        beginSingleTimeCommands();
+        VkCommandBuffer commandBuffer = m_commandBuffer;
 
         VkBufferImageCopy region{};
         region.bufferOffset = 0;
@@ -591,7 +657,7 @@ namespace bbzl
             VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
             1,
             &region);
-        endSingleTimeCommands(commandBuffer);
+        endSingleTimeCommands();
     }
 
     void VulkanDevice::createImageWithInfo(

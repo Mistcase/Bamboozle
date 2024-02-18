@@ -18,9 +18,11 @@ namespace bbzl
         VulkanSwapChain(VulkanSwapChain&&) = default;
         // VulkanSwapChain& operator=(VulkanSwapChain&&) = default;
 
-        VkFramebuffer getFrameBuffer(int index)
+        void swapBuffers();
+
+        VkFramebuffer getCurrentFrameBuffer()
         {
-            return swapChainFramebuffers[index];
+            return swapChainFramebuffers[m_currentImageIndex];
         }
         VkRenderPass getRenderPass()
         {
@@ -57,8 +59,8 @@ namespace bbzl
         }
         VkFormat findDepthFormat();
 
-        VkResult acquireNextImage(uint32_t* imageIndex);
-        VkResult submitCommandBuffers(const VkCommandBuffer* buffers, const uint32_t* imageIndex);
+
+        VkResult submitCommandBuffers(const VkCommandBuffer* buffer);
 
         bool compareSwapFormats(const VulkanSwapChain& swapChain) const
         {
@@ -73,6 +75,8 @@ namespace bbzl
         void createRenderPass();
         void createFramebuffers();
         void createSyncObjects();
+
+        VkResult acquireNextImage(uint32_t* imageIndex);
 
         // Helper functions
         VkSurfaceFormatKHR chooseSwapSurfaceFormat(
@@ -105,5 +109,7 @@ namespace bbzl
         std::vector<VkFence> inFlightFences;
         std::vector<VkFence> imagesInFlight;
         size_t currentFrame = 0;
+
+        uint32_t m_currentImageIndex;
     };
 }

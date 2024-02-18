@@ -4,6 +4,8 @@
 
 namespace bbzl
 {
+    using ShaderData = std::vector<std::byte>;
+
     class Shader
     {
     public:

@@ -51,7 +51,7 @@ namespace bbzl
 		if (m_texture == nullptr)
 		{
             BBZL_CORE_ERROR("Atlas {} not loaded", atlasDescPath);
-            ASSERT(!"Loading failed");
+            ASSERT_FAIL("Loading failed");
 			return;
 		}
 

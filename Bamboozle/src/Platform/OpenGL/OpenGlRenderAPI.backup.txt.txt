@@ -1,15 +1,9 @@
-#include "OpenGLRenderAPI.h"
-
-#include "Bamboozle/Renderer/VertexArray.h"
-#include "Bamboozle/bbzl.h"
-#include "GlCall.h"
-
-namespace bbzl
-{
     void OpenGLRenderAPI::init()
     {
         // Reset global state
-        m_renderAPI = RenderAPI::API::OpenGL;
+        // TODO: FIXME PLEASE
+        m_renderAPIType = RenderAPI::API::OpenGL;
+        m_device = std::make_unique<OpenGLDevice>();
 
         GL_CALL(glEnable(GL_BLEND));
         GL_CALL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
@@ -17,6 +11,7 @@ namespace bbzl
         GL_CALL(glEnable(GL_DEPTH_TEST));
         // GL_CALL(glDisable(GL_CULL_FACE));
     }
+
     void OpenGLRenderAPI::setPointSize(float size)
     {
         GL_CALL(glPointSize(size));
@@ -61,5 +56,3 @@ namespace bbzl
     {
         GL_CALL(glDrawElements(GL_TRIANGLES, (GLuint)count, GL_UNSIGNED_INT, nullptr));
     }
-
-} // namespace bbzl

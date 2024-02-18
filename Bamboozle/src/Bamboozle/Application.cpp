@@ -56,7 +56,7 @@ namespace bbzl
 				layer->onRender();
 			}
 
-            m_imGuiLayer->begin();
+            /*m_imGuiLayer->begin();
 
 			DebugPanel::Instance().render();
             for (auto layer : m_layerStack)
@@ -64,7 +64,7 @@ namespace bbzl
 				layer->onImGuiRender();
 			}
 
-            m_imGuiLayer->end();
+            m_imGuiLayer->end();*/
 
             m_window->onUpdate();
         }

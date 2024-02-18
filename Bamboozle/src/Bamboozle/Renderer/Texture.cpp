@@ -14,7 +14,7 @@ namespace bbzl
 
         switch (Renderer::GetAPI())
         {
-        case RenderAPI::API::OpenGL:
+        case RenderAPI::API_TYPE::OpenGL:
             return new OpenGLTexture2D(path, format);
 
         default:
@@ -27,7 +27,7 @@ namespace bbzl
     {
         switch (Renderer::GetAPI())
         {
-        case RenderAPI::API::OpenGL:
+        case RenderAPI::API_TYPE::OpenGL:
             return new OpenGLTexture2D(width, height);
 
         default:

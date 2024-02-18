@@ -1,5 +1,6 @@
 #pragma once
 
+// #include "VulkanCommandBufferPool.h"
 #include "Bamboozle/Renderer/Device.h"
 #include "Bamboozle/Window.h"
 
@@ -29,12 +30,17 @@ namespace bbzl
 
     public:
         VulkanDevice(Window& window);
-        ~VulkanDevice();
+        ~VulkanDevice() override;
 
         VulkanDevice(const VulkanDevice&) = delete;
         VulkanDevice(VulkanDevice&&) = delete;
         VulkanDevice& operator=(const VulkanDevice&) = delete;
         VulkanDevice& operator=(VulkanDevice&&) = delete;
+
+        void swapBuffers() override;
+
+        void beginFrame() override;
+        void endFrame() override;
 
         VulkanSwapChain& getSwapChain() const { ASSERT(m_swapChain, "Swap chain is null!"); return *m_swapChain; }
         VkCommandPool getCommandPool() const { return commandPool; }
@@ -49,10 +55,18 @@ namespace bbzl
         uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties) const;
         VkFormat findSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features) const;
 
+        // Resources
+        PipelineState* createPipelineStateObject() override;
+        void destroyPipelineStateObject(PipelineState* pso) override;
+
+        Shader* createShader(Shader::Type type, const ShaderData& data) override;
+        void destroyShader(Shader* shader) override;
+
         // Buffer Helper Functions
+        void beginSingleTimeCommands() override;
+        void endSingleTimeCommands() override;
+
         void createBuffer( VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
-        VkCommandBuffer beginSingleTimeCommands();
-        void endSingleTimeCommands(VkCommandBuffer commandBuffer);
         void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
         void copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height, uint32_t layerCount);
 
@@ -84,6 +98,7 @@ namespace bbzl
         VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
         Window& m_window;
         VkCommandPool commandPool;
+        VkCommandBuffer m_commandBuffer;
 
         VkDevice device;
         VkSurfaceKHR surface;
@@ -91,6 +106,7 @@ namespace bbzl
         VkQueue presentQueue;
 
         std::unique_ptr<VulkanSwapChain> m_swapChain;
+        // VulkanCommandBufferPool m_commandPool;
 
         const std::vector<const char*> validationLayers = { "VK_LAYER_KHRONOS_validation" };
         const std::vector<const char*> deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
@@ -99,7 +115,7 @@ namespace bbzl
 #ifdef NDEBUG
         const bool enableValidationLayers = false;
 #else
-        const bool enableValidationLayers = false;
+        const bool enableValidationLayers = true;
 #endif
     };
 

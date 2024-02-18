@@ -1,9 +1,8 @@
+#include "Bamboozle/bbzlpch.h"
 #include "RenderAPI.h"
-
-#include "Bamboozle/bbzl.h"
 
 namespace bbzl
 {
-    RenderAPI::API RenderAPI::m_renderAPI = RenderAPI::API::OpenGL;
+    RenderAPI::API_TYPE RenderAPI::m_renderAPIType;
 
 } // namespace bbzl

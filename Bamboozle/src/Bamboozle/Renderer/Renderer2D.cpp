@@ -1,3 +1,4 @@
+#include "Bamboozle/bbzlpch.h"
 #include "Renderer2D.h"
 
 #include "Bamboozle/Assert.h"
@@ -5,7 +6,6 @@
 #include "Bamboozle/bbzl.h"
 #include "Bamboozle/Hash.h"
 #include "Bamboozle/Renderer/OrthographicCamera.h"
-#include "Bamboozle/Renderer/RenderCommand.h"
 #include "Bamboozle/Renderer/Shader.h"
 #include "Bamboozle/Renderer/Shaders.h"
 #include "Bamboozle/Renderer/Texture.h"
@@ -101,6 +101,8 @@ namespace bbzl
     {
         void Init()
         {
+            return;
+
             // Configure fields
             new (SceneDataStorage) _SceneData();
             ASSERT(SceneData()->textureSlots.size() > 2, "Cannot render user provided textures");
@@ -194,7 +196,7 @@ namespace bbzl
             const auto dataSize = SceneData()->quadVertexBufferPtr - SceneData()->quadVertexBufferBase;
             vertexBuffer->setData(SceneData()->quadVertexBufferBase, dataSize);
 
-            RenderCommand::DrawIndexed(SceneData()->vertexArray, SceneData()->quadCount * 6);
+            //RenderCommand::DrawIndexed(SceneData()->vertexArray, SceneData()->quadCount * 6);
 
             SceneData()->quadVertexBufferPtr = SceneData()->quadVertexBufferBase;
             SceneData()->quadCount = 0;

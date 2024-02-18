@@ -1,3 +1,4 @@
+#include "Bamboozle/bbzlpch.h"
 #include "Framebuffer.h"
 
 #include "Bamboozle/Assert.h"
@@ -11,7 +12,7 @@ namespace bbzl
     {
         switch (Renderer::GetAPI())
         {
-        case RenderAPI::API::OpenGL:
+        case RenderAPI::API_TYPE::OpenGL:
             return std::make_shared<OpenGLFramebuffer>(specification);
 
         default:

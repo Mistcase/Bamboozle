@@ -4,12 +4,18 @@
 
 namespace bbzl
 {
+    class VidDeviceInterface;
+}
+
+namespace bbzl
+{
     class Shader;
 
     class Shaders
     {
     public:
-        static std::unique_ptr<Shaders> Create();
+        // TODO: Remove default value
+        static std::unique_ptr<Shaders> Create(VidDeviceInterface* device = nullptr);
 
         virtual ~Shaders() = default;
 

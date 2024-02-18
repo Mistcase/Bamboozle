@@ -1,3 +1,4 @@
+#include "Bamboozle/bbzlpch.h"
 #include "OrthographicCamera.h"
 
 #include "Bamboozle/bbzl.h"

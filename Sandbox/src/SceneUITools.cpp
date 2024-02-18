@@ -1,3 +1,4 @@
+#include "Bamboozle/bbzlpch.h"
 #include "SceneUITools.h"
 
 #include "Bamboozle/Transformable.h"

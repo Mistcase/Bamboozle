@@ -13,6 +13,7 @@ namespace
     void GLFWErrorCallback(int error, const char* desc)
     {
         BBZL_CORE_ERROR("GLFW Error ({0}): {1}", error, desc);
+        ASSERT_FAIL_NO_MSG();
     }
 
 } // namespace
@@ -39,7 +40,7 @@ namespace bbzl
     void WindowImpl::createSurface(void* data)
     {
         const auto graphicsAPI = Renderer::GetAPI();
-        if (graphicsAPI == RenderAPI::API::Vulkan)
+        if (graphicsAPI == RenderAPI::API_TYPE::Vulkan)
         {
             auto* surfaceData = static_cast<VulkanSurfaceData*>(data);
             const auto result = glfwCreateWindowSurface(surfaceData->instance, m_window, nullptr, surfaceData->surface);
@@ -49,7 +50,7 @@ namespace bbzl
                 ASSERT_FAIL_NO_MSG();
             }
         }
-        else if (graphicsAPI == RenderAPI::API::OpenGL)
+        else if (graphicsAPI == RenderAPI::API_TYPE::OpenGL)
         {
             BBZL_CORE_INFO("CreateSurface with OpenGL???");
         }
@@ -75,19 +76,18 @@ namespace bbzl
 
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // Enable to run opengl
-        // glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+        // glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); // Enable to run opengl
+        glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 #ifdef __APPLE__
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, 1);
 #endif
 
         m_window = glfwCreateWindow((int)props.width, (int)props.height, m_data.title.c_str(), nullptr, nullptr);
-        m_context = new OpenGLContext(m_window);
-        // m_context = new VulkanContext();
-        m_context->init();
 
         glfwSetWindowUserPointer(m_window, &m_data);
-        setVSync(true);
+
+        // TODO: Do smth. cannot set vsync without created context.
+        // setVSync(true);
 
         glfwSetWindowSizeCallback(m_window, [](GLFWwindow* window, int width, int height) {
             auto& data = *static_cast<WindowData*>(glfwGetWindowUserPointer(window));
@@ -177,7 +177,7 @@ namespace bbzl
     void WindowImpl::onUpdate()
     {
         glfwPollEvents();
-        m_context->swapBuffers();
+        Renderer::SwapBuffers();
     }
 
 	void WindowImpl::setCursorVisible(bool visible)
