@@ -13,6 +13,11 @@ namespace bbzl
         m_context = std::make_unique<OpenGLContext>(glfwWindow);
     }
 
+    OpenGLDevice::~OpenGLDevice()
+    {
+        
+    }
+
     void OpenGLDevice::swapBuffers()
     {
         m_context->swapBuffers();

@@ -1,7 +1,5 @@
 #pragma once
 
-#include <cstdint>
-
 namespace bbzl
 {
     using ShaderData = std::vector<std::byte>;

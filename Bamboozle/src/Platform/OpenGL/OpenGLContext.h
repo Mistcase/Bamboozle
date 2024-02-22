@@ -11,6 +11,7 @@ namespace bbzl
     {
     public:
         OpenGLContext(GLFWwindow* window);
+		~OpenGLContext();
 
         void init() override;
         void swapBuffers() override;

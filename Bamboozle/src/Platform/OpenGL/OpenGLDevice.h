@@ -11,6 +11,7 @@ namespace bbzl
     {
     public:
         OpenGLDevice();
+        ~OpenGLDevice();
 
         // Not copyable or movable
         OpenGLDevice(const OpenGLDevice&) = delete;

@@ -100,8 +100,8 @@ namespace bbzl
         OnAPIChanged(RenderAPI::API_TYPE::Default);
 
         // TODO: Resource system (Load file)?
-        m_defaultVertexShader = m_device->createShader(Shader::Type::Vertex, LoadEntireFile(Application::GetInstance().getResourceDirectory() / "shaders\\shader.vert.spv"));
-        m_defaultFragmentShader = m_device->createShader(Shader::Type::Pixel, LoadEntireFile(Application::GetInstance().getResourceDirectory() / "shaders\\shader.frag.spv"));
+        m_defaultVertexShader = m_device->createShader(Shader::Type::Vertex, LoadEntireFile(Application::GetInstance().getResourceDirectory() / "shaders/shader.vert.spv"));
+        m_defaultFragmentShader = m_device->createShader(Shader::Type::Pixel, LoadEntireFile(Application::GetInstance().getResourceDirectory() / "shaders/shader.frag.spv"));
 
         // TODO: Is it correct to init pso once here?
         m_pso = m_device->createPipelineStateObject();

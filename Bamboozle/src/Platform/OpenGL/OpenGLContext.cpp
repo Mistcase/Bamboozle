@@ -15,6 +15,10 @@ namespace bbzl
         ASSERT(window != nullptr, "Window is null");
     }
 
+	OpenGLContext::~OpenGLContext()
+	{
+	}
+
     void OpenGLContext::init()
     {
         glfwMakeContextCurrent(m_window);
