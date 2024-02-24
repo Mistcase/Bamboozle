@@ -2,9 +2,9 @@
 #include "Atlas.h"
 
 #include "Bamboozle/Log.h"
-#include "Bamboozle/Renderer/Texture.h"
 #include "Bamboozle/Hash.h"
 #include "Bamboozle/Helpers.h"
+#include "Bamboozle/Renderer/TextureManager.h" // TODO: Renderer????
 
 #include <nlohmann/json.hpp>
 
@@ -47,7 +47,7 @@ namespace bbzl
         const auto root = json::parse(data);
 
 		const std::string pathToTexture = (atlasFolderPath / "atlas.png").generic_string();
-		m_texture = Texture2D::Create(pathToTexture, Texture2D::Format::RGBA);
+		m_texture = textureManager->createTexture(pathToTexture, Texture2D::Format::R8G8B8A8);
 		if (m_texture == nullptr)
 		{
             BBZL_CORE_ERROR("Atlas {} not loaded", atlasDescPath);

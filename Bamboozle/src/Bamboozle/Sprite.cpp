@@ -1,7 +1,7 @@
 #include "bbzlpch.h"
 #include "Sprite.h"
 
-#include "Bamboozle/Renderer/Renderer2D.h"
+#include "Bamboozle/Renderer/Renderer.h"
 #include "Bamboozle/Renderer/Texture.h"
 
 namespace bbzl
@@ -19,7 +19,9 @@ namespace bbzl
 		};
 
 		const glm::vec4 white{ 1.0f, 1.0f, 1.0f, 1.0f };
-		Renderer2D::DrawQuad(glm::vec3(position, 0.0f), scale, rotation, white, m_texture, uv);
+        Renderer::DrawQuad(glm::vec3(position, 0.0f), scale, rotation, white, m_texture, uv); // ScreenSpace
+
+		// Renderer2D::DrawQuad(glm::vec3(position, 0.0f), scale, rotation, white, m_texture, uv);
 	}
 
 } // namespace bbzl

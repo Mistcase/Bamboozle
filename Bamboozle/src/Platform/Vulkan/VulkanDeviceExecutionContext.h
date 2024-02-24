@@ -4,6 +4,11 @@
 
 namespace bbzl
 {
+    struct PipelineState;
+}
+
+namespace bbzl
+{
     class VulkanDevice;
 
     class VulkanDeviceExecutionContext : public DeviceExecutionContextInterface
@@ -13,6 +18,10 @@ namespace bbzl
 
     public:
         VulkanDeviceExecutionContext(VulkanDevice& device);
+
+        void bindPipeline(const PipelineState& pipeline);
+
+        void testDraw(const PipelineState& pipeline, const Texture2D* texture) override;
 
         void beginFrame() override;
         void endFrame() override;
@@ -30,5 +39,8 @@ namespace bbzl
         std::vector<VkCommandBuffer> m_commandBuffers;
         uint32_t m_currentFrameIndex = 0;
         bool m_isInFrame = false;
+
+        VkBuffer m_testVertexBuffer;
+        VkDeviceMemory m_testBufferMemory;
     };
 }

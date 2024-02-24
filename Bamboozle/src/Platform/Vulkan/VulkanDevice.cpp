@@ -5,6 +5,7 @@
 #include "VulkanPipelineState.h"
 #include "VulkanShader.h"
 #include "VulkanSurfaceData.h"
+#include "VulkanTexture.h"
 #include "Bamboozle/Log.h"
 
 // TODO: What is VkImage
@@ -348,7 +349,7 @@ namespace bbzl
             extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
         }
 
-        extensions.push_back(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
+        // extensions.push_back(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
 
         return extensions;
     }
@@ -498,6 +499,11 @@ namespace bbzl
         return new VulkanPipelineState(*this);
     }
 
+	void VulkanDevice::destroyPipelineStateObject(PipelineState* pso)
+    {
+        delete pso;
+    }
+
     Shader* VulkanDevice::createShader(Shader::Type type, const ShaderData& data)
     {
         static size_t counter = 1;
@@ -527,10 +533,110 @@ namespace bbzl
         delete shader;
     }
 
-    void VulkanDevice::destroyPipelineStateObject(PipelineState* pso)
-    {
-        delete pso;
-    }
+	VulkanTexture2D* VulkanDevice::createTexture(size_t width, size_t height, Texture2D::Format format, void* data)
+	{
+        // Create buffer on gpu
+        VkBuffer stagingBuffer;
+        VkDeviceMemory stagingBufferMemory;
+        VkDeviceSize imageSize = width * height * 4;
+
+        createBuffer(imageSize,
+                        VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+                        VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+                        stagingBuffer,
+                        stagingBufferMemory);
+
+        void* ptr;
+        vkMapMemory(device, stagingBufferMemory, 0, imageSize, 0, &ptr);
+        memcpy(ptr, data, static_cast<size_t>(imageSize));
+        vkUnmapMemory(device, stagingBufferMemory);
+
+        // Create texture image
+        VkImage textureImage;
+        VkDeviceMemory textureImageMemory;
+
+        VkImageCreateInfo imageInfo{};
+        imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+        imageInfo.imageType = VK_IMAGE_TYPE_2D;
+        imageInfo.extent.width = static_cast<uint32_t>(width);
+        imageInfo.extent.height = static_cast<uint32_t>(height);
+        imageInfo.extent.depth = 1;
+        imageInfo.mipLevels = 1;
+        imageInfo.arrayLayers = 1;
+        imageInfo.format = VK_FORMAT_R8G8B8A8_SRGB;
+        imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
+        imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+        imageInfo.usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
+        imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+        imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
+        imageInfo.flags = 0; // Optional
+
+        createImageWithInfo(imageInfo, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, textureImage, textureImageMemory);
+
+        // Create ImageView
+        VkImageViewCreateInfo viewInfo{};
+        viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+        viewInfo.image = textureImage;
+        viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+        viewInfo.format = VK_FORMAT_R8G8B8A8_SRGB;
+        viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+        viewInfo.subresourceRange.baseMipLevel = 0;
+        viewInfo.subresourceRange.levelCount = 1;
+        viewInfo.subresourceRange.baseArrayLayer = 0;
+        viewInfo.subresourceRange.layerCount = 1;
+
+        VkImageView textureImageView;
+        VK_CALL(vkCreateImageView(device, &viewInfo, nullptr, &textureImageView));
+
+        // Create sampler
+        VkPhysicalDeviceProperties properties{};
+        vkGetPhysicalDeviceProperties(physicalDevice, &properties);
+
+        VkSamplerCreateInfo samplerInfo{};
+        samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+        samplerInfo.magFilter = VK_FILTER_LINEAR;
+        samplerInfo.minFilter = VK_FILTER_LINEAR;
+        samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+        samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+        samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+        samplerInfo.anisotropyEnable = VK_TRUE;
+        samplerInfo.maxAnisotropy = properties.limits.maxSamplerAnisotropy; // TODO: ????
+        samplerInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
+        samplerInfo.unnormalizedCoordinates = VK_FALSE;
+        samplerInfo.compareEnable = VK_FALSE;
+        samplerInfo.compareOp = VK_COMPARE_OP_ALWAYS;
+        samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+        samplerInfo.mipLodBias = 0.0f;
+        samplerInfo.minLod = 0.0f;
+        samplerInfo.maxLod = 0.0f;
+
+        VkSampler textureSampler;
+        VK_CALL(vkCreateSampler(device, &samplerInfo, nullptr, &textureSampler));
+
+        // Create engine object and fill it
+        auto* texture = new VulkanTexture2D();
+        texture->m_width = width;
+        texture->m_height = height;
+        texture->m_format = format;
+        texture->m_rendererId = -1; // TODO: Think about to remove it at all
+
+        // vk part
+        texture->m_image = textureImage;
+        texture->m_imageView = textureImageView;
+        texture->m_sampler = textureSampler;
+
+        transitionImageLayout(textureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+        copyBufferToImage(stagingBuffer, textureImage, static_cast<uint32_t>(width), static_cast<uint32_t>(height), 1);
+
+        transitionImageLayout(textureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+
+        return texture;
+	}
+
+	void VulkanDevice::destroyTexture(VulkanTexture2D* texture)
+	{
+        delete texture;
+	}
 
     uint32_t VulkanDevice::findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties) const
     {
@@ -584,43 +690,45 @@ namespace bbzl
         vkBindBufferMemory(device, buffer, bufferMemory, 0);
     }
 
-    void VulkanDevice::beginSingleTimeCommands()
+    VkCommandBuffer VulkanDevice::beginSingleTimeCommands()
     {
+        VkCommandBuffer commandBuffer;
         VkCommandBufferAllocateInfo allocInfo{};
         allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
         allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
         allocInfo.commandPool = commandPool;
         allocInfo.commandBufferCount = 1;
 
-        vkAllocateCommandBuffers(device, &allocInfo, &m_commandBuffer);
+        vkAllocateCommandBuffers(device, &allocInfo, &commandBuffer);
 
         VkCommandBufferBeginInfo beginInfo{};
         beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
         beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT; // TODO: what is that?
 
-        vkBeginCommandBuffer(m_commandBuffer, &beginInfo);
+        vkBeginCommandBuffer(commandBuffer, &beginInfo);
+
+        return commandBuffer;
     }
 
-    void VulkanDevice::endSingleTimeCommands()
+    void VulkanDevice::endSingleTimeCommands(VkCommandBuffer comandBuffer)
     {
-        vkEndCommandBuffer(m_commandBuffer);
+        vkEndCommandBuffer(comandBuffer);
 
         VkSubmitInfo submitInfo{};
         submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
         submitInfo.commandBufferCount = 1;
-        submitInfo.pCommandBuffers = &m_commandBuffer;
+        submitInfo.pCommandBuffers = &comandBuffer;
 
         vkQueueSubmit(graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
         vkQueueWaitIdle(graphicsQueue);
 
-        vkFreeCommandBuffers(device, commandPool, 1, &m_commandBuffer);
-        m_commandBuffer = VK_NULL_HANDLE;
+        vkFreeCommandBuffers(device, commandPool, 1, &comandBuffer);
+        comandBuffer = VK_NULL_HANDLE;
     }
 
     void VulkanDevice::copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size)
     {
-        beginSingleTimeCommands();
-        VkCommandBuffer commandBuffer = m_commandBuffer;
+        VkCommandBuffer commandBuffer = beginSingleTimeCommands();
 
         VkBufferCopy copyRegion{};
         copyRegion.srcOffset = 0; // Optional
@@ -628,14 +736,13 @@ namespace bbzl
         copyRegion.size = size;
         vkCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, 1, &copyRegion);
 
-        endSingleTimeCommands();
+        endSingleTimeCommands(commandBuffer);
     }
 
     void VulkanDevice::copyBufferToImage(
         VkBuffer buffer, VkImage image, uint32_t width, uint32_t height, uint32_t layerCount)
     {
-        beginSingleTimeCommands();
-        VkCommandBuffer commandBuffer = m_commandBuffer;
+        VkCommandBuffer commandBuffer = beginSingleTimeCommands();
 
         VkBufferImageCopy region{};
         region.bufferOffset = 0;
@@ -657,7 +764,7 @@ namespace bbzl
             VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
             1,
             &region);
-        endSingleTimeCommands();
+        endSingleTimeCommands(commandBuffer);
     }
 
     void VulkanDevice::createImageWithInfo(
@@ -666,11 +773,7 @@ namespace bbzl
         VkImage& image,
         VkDeviceMemory& imageMemory)
     {
-        if (vkCreateImage(device, &imageInfo, nullptr, &image) != VK_SUCCESS)
-        {
-            BBZL_CORE_ERROR("Failed to create image!");
-            ASSERT_FAIL_NO_MSG();
-        }
+        VK_CALL(vkCreateImage(device, &imageInfo, nullptr, &image));
 
         VkMemoryRequirements memRequirements;
         vkGetImageMemoryRequirements(device, image, &memRequirements);
@@ -680,17 +783,37 @@ namespace bbzl
         allocInfo.allocationSize = memRequirements.size;
         allocInfo.memoryTypeIndex = findMemoryType(memRequirements.memoryTypeBits, properties);
 
-        if (vkAllocateMemory(device, &allocInfo, nullptr, &imageMemory) != VK_SUCCESS)
-        {
-            BBZL_CORE_ERROR("Failed to allocate image memory!");
-            ASSERT_FAIL_NO_MSG();
-        }
+        VK_CALL(vkAllocateMemory(device, &allocInfo, nullptr, &imageMemory));
+        VK_CALL(vkBindImageMemory(device, image, imageMemory, 0));
+    }
 
-        if (vkBindImageMemory(device, image, imageMemory, 0) != VK_SUCCESS)
-        {
-            BBZL_CORE_ERROR("Failed to bind image memory!");
-            ASSERT_FAIL_NO_MSG();
-        }
+    void VulkanDevice::transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout)
+    {
+        VkCommandBuffer commandBuffer = beginSingleTimeCommands();
+
+        VkImageMemoryBarrier barrier{};
+        barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+        barrier.oldLayout = oldLayout;
+        barrier.newLayout = newLayout;
+        barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+        barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+        barrier.image = image;
+        barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+        barrier.subresourceRange.baseMipLevel = 0;
+        barrier.subresourceRange.levelCount = 1;
+        barrier.subresourceRange.baseArrayLayer = 0;
+        barrier.subresourceRange.layerCount = 1;
+        barrier.srcAccessMask = 0; // TODO
+        barrier.dstAccessMask = 0; // TODO
+        vkCmdPipelineBarrier(
+            commandBuffer,
+            0 /* TODO */, 0 /* TODO */,
+            0,
+            0, nullptr,
+            0, nullptr,
+            1, &barrier);
+
+        endSingleTimeCommands(commandBuffer);
     }
 
 } // namespace bbzl

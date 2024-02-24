@@ -6,56 +6,15 @@
 #include "VulkanShader.h"
 #include "Bamboozle/Log.h"
 
-#include <glm/glm.hpp>
+#include "TestVertex.h"
 
-// TODO: Remove from here
-namespace
-{
-    struct SimplePushConstantData
-    {
-        glm::mat2 transform{ 1.0f };
-        glm::vec2 offset;
-        alignas(16) glm::vec3 color;
-    };
-}
+#include <glm/glm.hpp>
 
 namespace
 {
     const VkShaderStageFlagBits BbzlToVkShaderStage[] = {
         VK_SHADER_STAGE_VERTEX_BIT,
         VK_SHADER_STAGE_FRAGMENT_BIT,
-    };
-
-    struct Vertex
-    {
-        glm::vec3 position;
-        glm::vec3 color;
-
-        static std::vector<VkVertexInputBindingDescription> GetBindingDescriptions()
-        {
-            std::vector<VkVertexInputBindingDescription> bindingDescriptions(1);
-            bindingDescriptions[0].binding = 0;
-            bindingDescriptions[0].stride = sizeof(Vertex);
-            bindingDescriptions[0].inputRate = VK_VERTEX_INPUT_RATE_VERTEX; // Or instance
-
-            return bindingDescriptions;
-        }
-
-        static std::vector<VkVertexInputAttributeDescription> GetAttributeDescriptions()
-        {
-            std::vector<VkVertexInputAttributeDescription> attributeDescriptions(2);
-            attributeDescriptions[0].binding = 0;
-            attributeDescriptions[0].location = 0;
-            attributeDescriptions[0].format = VK_FORMAT_R32G32B32_SFLOAT;
-            attributeDescriptions[0].offset = 0;
-
-            attributeDescriptions[1].binding = 0;
-            attributeDescriptions[1].location = 1;
-            attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
-            attributeDescriptions[1].offset = offsetof(Vertex, color);
-
-            return attributeDescriptions;
-        }
     };
 }
 
@@ -64,6 +23,7 @@ namespace bbzl
     VulkanPipelineState::VulkanPipelineState(VulkanDevice& device)
         : m_device(device)
     {
+        createRenderPassLayout();
     }
 
     VulkanPipelineState::~VulkanPipelineState()
@@ -79,13 +39,14 @@ namespace bbzl
         }
 
         createGraphicsPipeline();
+
         m_isValid = true;
     }
 
     void VulkanPipelineState::bind()
     {
-        // auto commandBuffer = m_device.getCurrentCommandBuffer();
-        // vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipeline);
+        // TODO: remove
+        ASSERT_FAIL("Not implemented");
     }
 
     void VulkanPipelineState::term()
@@ -219,10 +180,12 @@ namespace bbzl
 
         VkPipelineLayoutCreateInfo createInfo{};
         createInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-        createInfo.setLayoutCount = 0;
-        createInfo.pSetLayouts = nullptr;
-        createInfo.pushConstantRangeCount = 1;
-        createInfo.pPushConstantRanges = &pushContantRange;
+        createInfo.setLayoutCount = 1;
+        createInfo.pSetLayouts = &m_renderPassLayout[0].m_layout;
+        createInfo.pushConstantRangeCount = 0;
+        createInfo.pPushConstantRanges = nullptr;
+ /*       createInfo.pushConstantRangeCount = 1;
+        createInfo.pPushConstantRanges = &pushContantRange;*/
         const auto isLayoutCreated = vkCreatePipelineLayout(m_device.getNativeDevice(), &createInfo, nullptr, &m_pipelineLayout);
         ASSERT(isLayoutCreated == VK_SUCCESS);
 
@@ -254,4 +217,10 @@ namespace bbzl
 
         return true;
     }
+
+    void VulkanPipelineState::createRenderPassLayout()
+    {
+        m_renderPassLayout.emplace_back(m_device);
+    }
+
 } // namespace bbzl

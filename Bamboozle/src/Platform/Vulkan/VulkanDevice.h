@@ -6,9 +6,12 @@
 
 #include "Platform/Vulkan/VulkanContext.h"
 #include "VulkanSwapChain.h"
+#include "Bamboozle/Renderer/Texture.h"
 
 namespace bbzl
 {
+	class VulkanTexture2D;
+
     class VulkanDevice : public VidDeviceInterface
     {
     public:
@@ -62,15 +65,21 @@ namespace bbzl
         Shader* createShader(Shader::Type type, const ShaderData& data) override;
         void destroyShader(Shader* shader) override;
 
+		// TODO: think about it, does we really need to use overwritten methods?
+		VulkanTexture2D* createTexture(size_t width, size_t height, Texture2D::Format format, void* data = nullptr);
+		void destroyTexture(VulkanTexture2D* texture);
+
         // Buffer Helper Functions
-        void beginSingleTimeCommands() override;
-        void endSingleTimeCommands() override;
+        VkCommandBuffer beginSingleTimeCommands();
+        void endSingleTimeCommands(VkCommandBuffer comandBuffer);
 
         void createBuffer( VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
         void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
         void copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height, uint32_t layerCount);
 
-        void createImageWithInfo( const VkImageCreateInfo& imageInfo, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);
+        void createImageWithInfo(const VkImageCreateInfo& imageInfo, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);
+
+        void transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
 
         VkPhysicalDeviceProperties properties;
 
@@ -111,7 +120,7 @@ namespace bbzl
         const std::vector<const char*> validationLayers = { "VK_LAYER_KHRONOS_validation" };
         const std::vector<const char*> deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 
-        
+
 #ifdef NDEBUG
         const bool enableValidationLayers = false;
 #else

@@ -4,6 +4,7 @@
 #include <GLFW/glfw3.h>
 
 #include "Bamboozle/Renderer/GraphicsContext.h"
+#include "Platform/Vulkan/VKCall.h"
 
 namespace bbzl
 {

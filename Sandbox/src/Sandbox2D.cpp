@@ -16,12 +16,12 @@ Sandbox2DLayer::Sandbox2DLayer()
 
 void Sandbox2DLayer::onAttach()
 {
-    /*auto& window = bbzl::Application::GetInstance().getWindow();
+    auto& window = bbzl::Application::GetInstance().getWindow();
 
-    m_camera = std::make_unique<bbzl::OrthographicCamera>(window.getWidth(), window.getHeight());
+    // m_camera = std::make_unique<bbzl::OrthographicCamera>(window.getWidth(), window.getHeight());
     rs.loadBundle((bbzl::Application::GetInstance().getResourceDirectory() / "common/desc.json").generic_string());
 
-	m_sprite1 = rs.getSprite("path_to_sprite_1"_hash);*/
+	m_sprite1 = rs.getSprite("path_to_sprite_1"_hash);
 }
 
 void Sandbox2DLayer::onDetach()
@@ -37,13 +37,12 @@ void Sandbox2DLayer::onRender()
 	// bbzl::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
     // bbzl::RenderCommand::Clear();
 
-    /*bbzl::Renderer2D::BeginScene(m_camera.get());
-
-	m_sprite1->draw({0, 0}, { 1.0f, 1.0f }, 0.0f);
-
-    bbzl::Renderer2D::EndScene();*/
-
     bbzl::Renderer::FrameBegin();
+
+    bbzl::Renderer::BeginScene(nullptr);
+	m_sprite1->draw({0, 0}, { 1.0f, 1.0f }, 0.0f);
+    bbzl::Renderer::EndScene();
+
     bbzl::Renderer::FrameEnd();
 }
 

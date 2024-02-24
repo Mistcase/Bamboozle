@@ -1,14 +1,19 @@
 #version 450
 
-layout (location = 0) out vec4 color;
+layout (location = 0) in vec3 color;
+layout(location = 1) in vec2 fragTexCoord;
 
-layout(push_constant) uniform Push {
-	mat2 transform;
-	vec2 offset;
-	vec3 color;
-} push;
+layout(set = 0, binding = 0) uniform UniformBufferObject { 
+	mat4 model;
+	mat4 view;
+	mat4 proj;
+} ubo;
+
+layout(set = 0, binding = 1) uniform sampler2D texSampler;
+
+layout(location = 0) out vec4 outColor;
 
 void main()
 {
-    color = vec4(push.color, 1.0f);
+	outColor = texture(texSampler, fragTexCoord);
 }

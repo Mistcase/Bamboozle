@@ -1,5 +1,7 @@
+#include "Bamboozle/bbzlpch.h"
 #include "Texture.h"
 
+#include "Bamboozle/Application.h"
 #include "Bamboozle/Assert.h"
 #include "Bamboozle/Log.h"
 #include "Bamboozle/Renderer/Renderer.h"
@@ -10,13 +12,13 @@ namespace bbzl
 {
     Texture2D* Texture2D::Create(const std::string& path, Format format)
     {
-        assert(format != Format::Count);
+        ASSERT(format != Format::Count);
 
         switch (Renderer::GetAPI())
         {
         case RenderAPI::API_TYPE::OpenGL:
             return new OpenGLTexture2D(path, format);
-
+            
         default:
             ASSERT_FAIL("Unknown RednerAPI provided");
             return nullptr;

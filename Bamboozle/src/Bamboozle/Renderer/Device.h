@@ -35,9 +35,6 @@ namespace bbzl
         virtual void destroyShaderCompiler(ShaderCompiler) = 0;*/
 
     private:
-        // TODO: Remove it
-        virtual void beginSingleTimeCommands() = 0;
-        virtual void endSingleTimeCommands() = 0;
     };
 
 } // namespace bbzl

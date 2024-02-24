@@ -2,15 +2,90 @@
 #include "VulkanContext.h"
 #include "VulkanDeviceExecutionContext.h"
 
+#include "VulkanUniformBuffer.h"
+
+#include "TestVertex.h"
+
 #include "VulkanDevice.h"
+#include "VulkanPipelineState.h"
 #include "Bamboozle/Log.h"
 
 namespace bbzl
 {
+    std::vector<Vertex> quads = {
+        { { -0.5f, -0.5f, 0.0f }, { 0.0f, 1.0f, 0.0f }, { 0, 0 } },
+        { { 0.5f, -0.5f, 0.0f }, { 0.0f, 1.0f, 0.0f }, { 1, 0 } },
+        { { -0.5f, 0.5f, 0.0f }, { 0.0f, 1.0f, 0.0f }, { 0, 1 } },
+
+        { { 0.5f, -0.5f, 0.0f }, { 0.0f, 1.0f, 0.0f }, { 1, 0 } },
+        { { 0.5f, 0.5f, 0.0f }, { 0.0f, 1.0f, 0.0f }, { 1, 1 } },
+        { { -0.5f, 0.5f, 0.0f }, { 0.0f, 1.0f, 0.0f }, { 0, 1 } },
+    };
+
+    VulkanUniformBufferObject uniformBuffer;
+
     VulkanDeviceExecutionContext::VulkanDeviceExecutionContext(VulkanDevice& device)
         : m_device(device)
     {
         createCommandBuffers();
+
+        // Test vertex buffer
+        auto vertexCount = (uint32_t)quads.size();
+        VkDeviceSize bufferSize = sizeof(quads[0]) * vertexCount;
+        device.createBuffer(bufferSize,
+                            VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+                            VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, // Host - CPU, Device - GPU, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT - Access from cpu side, VK_MEMORY_PROPERTY_HOST_COHERENT_BIT - Mapping CPU mem <-> GPU mem
+                            m_testVertexBuffer,
+                            m_testBufferMemory);
+
+        void* data;
+        vkMapMemory(device.getNativeDevice(), m_testBufferMemory, 0, bufferSize, 0, &data);
+        memcpy(data, quads.data(), (size_t)bufferSize);
+        vkUnmapMemory(device.getNativeDevice(), m_testBufferMemory);
+
+        // Create ubo
+        unsigned char zerodata[sizeof(VulkanUniformBufferObject::Data)]{};
+        device.createBuffer(sizeof(VulkanUniformBufferObject::Data),
+                            VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+                            VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, // Host - CPU, Device - GPU, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT - Access from cpu side, VK_MEMORY_PROPERTY_HOST_COHERENT_BIT - Mapping CPU mem <-> GPU mem
+                            uniformBuffer.m_buffer,
+                            uniformBuffer.m_bufferMem);
+
+        {
+            void* data;
+            vkMapMemory(device.getNativeDevice(), uniformBuffer.m_bufferMem, 0, sizeof(VulkanUniformBufferObject::Data), 0, &data);
+            memcpy(data, zerodata, (size_t)sizeof(VulkanUniformBufferObject::Data));
+            vkUnmapMemory(device.getNativeDevice(), uniformBuffer.m_bufferMem);
+        }
+    }
+
+    void VulkanDeviceExecutionContext::bindPipeline(const PipelineState& pipeline)
+    {
+        const auto currentCommandBuffer = getCurrentCommandBuffer();
+        const auto& vkPipeline = static_cast<const VulkanPipelineState&>(pipeline);
+
+        vkCmdBindPipeline(currentCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, vkPipeline.getNativePipeline());
+    }
+
+    void VulkanDeviceExecutionContext::testDraw(const PipelineState& pipeline, const Texture2D* _texture)
+    {
+        VulkanTexture2D* texture = (VulkanTexture2D*)_texture;
+
+        VulkanPipelineState& vkPipeline = const_cast<VulkanPipelineState&>((const VulkanPipelineState&)(pipeline));
+        auto currentCB = getCurrentCommandBuffer();
+
+        auto& renderPassLayout = const_cast<VulkanPipelineState&>(vkPipeline).getRenderPassLayout();
+        renderPassLayout[0].setTexture(texture);
+        renderPassLayout[0].setUBO(&uniformBuffer);
+        renderPassLayout[0].newFrame(); // Update descriptor set
+
+        vkCmdBindDescriptorSets(currentCB, VK_PIPELINE_BIND_POINT_GRAPHICS, vkPipeline.getPipelineLayout(), 0, 1, &renderPassLayout[0].m_set, 0, nullptr);
+
+        VkBuffer buffers[] = { m_testVertexBuffer };
+        VkDeviceSize offsets[] = { 0, offsetof(Vertex, color), offsetof(Vertex, texCoords) }; // Offsets in vertex, bind layout
+
+        vkCmdBindVertexBuffers(currentCB, 0, 1, buffers, offsets);
+        vkCmdDraw(currentCB, 6, 1, 0, 0);
     }
 
     void VulkanDeviceExecutionContext::beginFrame()

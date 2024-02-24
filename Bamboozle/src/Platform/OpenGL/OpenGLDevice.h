@@ -24,9 +24,6 @@ namespace bbzl
         void beginFrame() override {}
         void endFrame() override {}
 
-        void beginSingleTimeCommands() override {}
-        void endSingleTimeCommands() override {}
-
         PipelineState* createPipelineStateObject() override;
         void destroyPipelineStateObject(PipelineState* pso) override;
 

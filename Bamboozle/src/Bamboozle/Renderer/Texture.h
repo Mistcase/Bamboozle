@@ -5,6 +5,11 @@
 
 namespace bbzl
 {
+    class TextureManager;
+}
+
+namespace bbzl
+{
     class Texture
     {
     public:
@@ -19,17 +24,23 @@ namespace bbzl
     class Texture2D : public Texture
     {
 	public:
-		enum class Format
+		enum Format
 		{
-			RED,
-			RGB,
-			RGBA,
+			R8,
+			R8G8B8,
+			R8G8B8A8,
 
 			Count
 		};
 
+		static constexpr char* const FormatNames[] = {
+			"R8",
+			"R8G8B8",
+			"R8G8B8A8",
+		};
+
     public:
-        static Texture2D* Create(const std::string& path, Format format = Format::RGB);
+        static Texture2D* Create(const std::string& path, Format format = Format::R8G8B8);
         static Texture2D* Create(uint32_t width, uint32_t height);
 
         virtual void setData(const void* data, size_t size) = 0;
@@ -38,5 +49,9 @@ namespace bbzl
 		virtual int getWidth() const = 0;
 		virtual int getHeight() const = 0;
     };
+
+	static_assert(Texture2D::Format::Count == std::size(Texture2D::FormatNames));
+
+    extern TextureManager* textureManager;
 
 } // namespace bbzl

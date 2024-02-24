@@ -15,6 +15,7 @@
 #include "imgui.h"
 #include "PipelineState.h"
 #include "RenderAPI.h"
+#include "TextureManager.h"
 #include "Bamboozle/DebugPanel.h"
 #include "Bamboozle/Hash.h"
 #include "Platform/OpenGL/OpenGLDevice.h"
@@ -106,6 +107,7 @@ namespace bbzl
         // TODO: Is it correct to init pso once here?
         m_pso = m_device->createPipelineStateObject();
 
+        TextureManager::Init(*m_device);
         Renderer2D::Init();
 
         // Toggle render api from debug menu
@@ -182,23 +184,17 @@ namespace bbzl
 
     void Renderer::BeginScene(const PerspectiveCamera* camera)
     {
-        m_pso->bind();
-
+        m_deviceContext->bindPipeline(*m_pso);
         m_camera = camera;
-        const auto& viewProjection = m_camera->getViewProjection();
-
-        /*static_cast<OpenGLShader*>(Renderer2D::Shader())->bind();
-		auto cameraPawn = m_camera->getPawn();
-		const auto& transform = cameraPawn.getComponent<TransformComponent>();
-        static_cast<OpenGLShader*>(bbzl::Renderer::Shader())->setUniform3f("u_CameraPosition", transform.getPosition());
-        static_cast<OpenGLShader*>(Renderer2D::Shader())->setUniformMat4("u_VP", viewProjection);*/
-
-        //RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 0.1f });
-        //RenderCommand::Clear();
     }
 
     void Renderer::EndScene()
     {
+    }
+
+    void Renderer::DrawQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const glm::vec4& color, const Texture2D* texture, const glm::vec4& uv)
+    {
+        m_deviceContext->testDraw(*m_pso, texture);
     }
 
     void Renderer::DrawPoint(const glm::vec3& position, const glm::vec4& color)

@@ -38,9 +38,9 @@ namespace bbzl
         int width, height, channels;
         auto data = stbi_load(path.c_str(), &width, &height, &channels, 0);
         assert(data != nullptr);
-        assert((channels == 3 && format == Format::RGB) ||
-               (channels == 4 && format == Format::RGBA) ||
-               (channels == 1 && format == Format::RED));
+        assert((channels == 3 && format == Format::R8G8B8) ||
+               (channels == 4 && format == Format::R8G8B8A8) ||
+               (channels == 1 && format == Format::R8));
 
         m_width = static_cast<uint32_t>(width);
         m_height = static_cast<uint32_t>(height);
