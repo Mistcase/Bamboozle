@@ -2,7 +2,7 @@
 #include "VulkanContext.h"
 #include "VulkanShaders.h"
 
-#include "VulkanDevice.h"
+#include "vkDevice.h"
 #include "VulkanShader.h"
 
 #include "Bamboozle/Hash.h"
@@ -32,7 +32,7 @@ namespace
 
 namespace bbzl
 {
-    VulkanShaders::VulkanShaders(VulkanDevice& device)
+    VulkanShaders::VulkanShaders(vkDevice& device)
         : m_device(device)
     {
     }

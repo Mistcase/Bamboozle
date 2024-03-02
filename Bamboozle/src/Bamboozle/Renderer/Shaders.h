@@ -4,7 +4,7 @@
 
 namespace bbzl
 {
-    class VidDeviceInterface;
+    class RenderDevice;
 }
 
 namespace bbzl
@@ -15,7 +15,7 @@ namespace bbzl
     {
     public:
         // TODO: Remove default value
-        static std::unique_ptr<Shaders> Create(VidDeviceInterface* device = nullptr);
+        static std::unique_ptr<Shaders> Create(RenderDevice* device = nullptr);
 
         virtual ~Shaders() = default;
 

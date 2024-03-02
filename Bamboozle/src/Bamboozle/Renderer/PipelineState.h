@@ -1,11 +1,8 @@
 #pragma once
 
 #include "Shader.h"
-
-namespace bbzl
-{
-    class DeviceExecutionContextInterface;
-}
+#include "VertexLayout.h"
+#include "Bamboozle/ShaderPassTypes.h"
 
 namespace bbzl
 {
@@ -31,16 +28,12 @@ namespace bbzl
 
         // Data
         ShaderBundle shaderBundle{};
-        // RenderState renderState;
-        // RenderPassId passId;
         PrimitiveTopologyType primTopologyType = PrimitiveTopologyType::Triangles;
-        int renderPassIdx;
+        VertexLayout vertexLayout;
+        ShaderPassType passId = ShaderPassType::COUNT;
 
-        // Functionality
-
-        /*Deleting a pointer to a derived type through the base pointer is technically UB(undefined behavior)
-        when the destructor of the base class is not virtual.
-        Quoting from the C++ standard 5.3.5 / 3:*/
+        /*Deleting a pointer to a derived type through the base pointer is technically UB when the destructor of the base class is not virtual.
+        Quoting from the C++ standard 5.3.5/3 */
         virtual ~PipelineState() = default;
         virtual void validate() = 0;
 

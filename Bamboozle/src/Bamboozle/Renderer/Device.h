@@ -7,17 +7,17 @@ namespace bbzl
     struct PipelineState;
     // class ShaderCompiler;
 
-    class VidDeviceInterface
+    class RenderDevice
     {
     public:
-        VidDeviceInterface() = default;
-        virtual ~VidDeviceInterface() = default;
+        RenderDevice() = default;
+        virtual ~RenderDevice() = default;
 
         // Not copyable or movable
-        VidDeviceInterface(const VidDeviceInterface&) = delete;
-        void operator=(const VidDeviceInterface&) = delete;
-        VidDeviceInterface(VidDeviceInterface&&) = delete;
-        VidDeviceInterface& operator=(VidDeviceInterface&&) = delete;
+        RenderDevice(const RenderDevice&) = delete;
+        void operator=(const RenderDevice&) = delete;
+        RenderDevice(RenderDevice&&) = delete;
+        RenderDevice& operator=(RenderDevice&&) = delete;
 
         virtual void swapBuffers() = 0;
 
@@ -33,8 +33,6 @@ namespace bbzl
 
         /*virtual ShaderCompiler* createShaderCompiler() = 0;
         virtual void destroyShaderCompiler(ShaderCompiler) = 0;*/
-
-    private:
     };
 
 } // namespace bbzl

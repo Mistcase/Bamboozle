@@ -6,7 +6,7 @@
 
 namespace bbzl
 {
-    class VidDeviceInterface;
+    class RenderDevice;
     class VertexArray;
 
     class RenderAPI

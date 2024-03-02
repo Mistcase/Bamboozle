@@ -4,22 +4,22 @@
 
 namespace bbzl
 {
-	class VidDeviceInterface;
+	class RenderDevice;
 	class VulkanTexture2D;
 
 	class TextureManager
 	{
 	public:
-        static void Init(VidDeviceInterface& device);
+        static void Init(RenderDevice& device);
 
 		Texture2D* createTexture(const std::filesystem::path& path, Texture2D::Format format);
 		void destroyTexture(Texture2D* texture);
 
 	private:
-        TextureManager(VidDeviceInterface& device);
+        TextureManager(RenderDevice& device);
 
 	private:
-		VidDeviceInterface& m_device;
+		RenderDevice& m_device;
 	};
 
     extern TextureManager* textureManager;

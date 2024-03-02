@@ -1,6 +1,7 @@
 #pragma once
 
 // #include "VulkanCommandBufferPool.h"
+#include "vkDescriptorSets.h"
 #include "Bamboozle/Renderer/Device.h"
 #include "Bamboozle/Window.h"
 
@@ -12,7 +13,7 @@ namespace bbzl
 {
 	class VulkanTexture2D;
 
-    class VulkanDevice : public VidDeviceInterface
+    class vkDevice : public RenderDevice
     {
     public:
         struct SwapChainSupportDetails
@@ -32,13 +33,13 @@ namespace bbzl
         };
 
     public:
-        VulkanDevice(Window& window);
-        ~VulkanDevice() override;
+        vkDevice(Window& window);
+        ~vkDevice() override;
 
-        VulkanDevice(const VulkanDevice&) = delete;
-        VulkanDevice(VulkanDevice&&) = delete;
-        VulkanDevice& operator=(const VulkanDevice&) = delete;
-        VulkanDevice& operator=(VulkanDevice&&) = delete;
+        vkDevice(const vkDevice&) = delete;
+        vkDevice(vkDevice&&) = delete;
+        vkDevice& operator=(const vkDevice&) = delete;
+        vkDevice& operator=(vkDevice&&) = delete;
 
         void swapBuffers() override;
 
@@ -78,8 +79,9 @@ namespace bbzl
         void copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height, uint32_t layerCount);
 
         void createImageWithInfo(const VkImageCreateInfo& imageInfo, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);
-
         void transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
+
+        const vkDescriptorSetsManager& getDescriptorSets();
 
         VkPhysicalDeviceProperties properties;
 
@@ -91,17 +93,19 @@ namespace bbzl
         void createLogicalDevice();
         void createCommandPool();
         void createSwapChain();
+        void createDSManager();
 
         // helper functions
-        bool isDeviceSuitable(VkPhysicalDevice VulkanDevice);
+        bool isDeviceSuitable(VkPhysicalDevice vkDevice);
         std::vector<const char*> getRequiredExtensions() const;
         bool checkValidationLayerSupport();
-        QueueFamilyIndices findQueueFamilies(VkPhysicalDevice VulkanDevice);
+        QueueFamilyIndices findQueueFamilies(VkPhysicalDevice vkDevice);
         void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
         void checkGflwRequiredInstanceExtensions();
-        bool checkDeviceExtensionSupport(VkPhysicalDevice VulkanDevice);
-        SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice VulkanDevice);
+        bool checkDeviceExtensionSupport(VkPhysicalDevice vkDevice);
+        SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice vkDevice);
 
+    private:
         VkInstance instance;
         VkDebugUtilsMessengerEXT debugMessenger;
         VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
@@ -115,7 +119,8 @@ namespace bbzl
         VkQueue presentQueue;
 
         std::unique_ptr<VulkanSwapChain> m_swapChain;
-        // VulkanCommandBufferPool m_commandPool;
+
+        std::unique_ptr<vkDescriptorSetsManager> m_descriptorSets;
 
         const std::vector<const char*> validationLayers = { "VK_LAYER_KHRONOS_validation" };
         const std::vector<const char*> deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
@@ -127,5 +132,8 @@ namespace bbzl
         const bool enableValidationLayers = true;
 #endif
     };
+
+    vkDevice* getVkDevice();
+    VkDevice getVkDeviceNative();
 
 } // namespace bbzl

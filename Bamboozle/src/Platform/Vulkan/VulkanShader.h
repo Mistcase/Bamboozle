@@ -24,7 +24,7 @@ namespace bbzl
         // Already precompileed shaders expected (SPIR-V)
         VulkanShader(const std::string& name);
         friend class VulkanShaders;
-        friend class VulkanDevice;
+        friend class vkDevice;
 
     private:
         const std::string m_name;

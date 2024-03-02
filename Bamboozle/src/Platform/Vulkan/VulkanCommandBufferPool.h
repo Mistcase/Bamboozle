@@ -13,7 +13,7 @@ namespace bbzl
         void beginFrame();
         void endFrame();
 
-        VulkanCommandBuffer getCurrentCommandBuffer();
+        VulkanCommandBuffer getCmdBuffer();
 
     private:
         std::array<VkCommandPool, PoolSize> m_commandPools;

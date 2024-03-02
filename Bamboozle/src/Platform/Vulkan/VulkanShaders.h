@@ -4,13 +4,13 @@
 
 namespace bbzl
 {
-    class VulkanDevice;
+    class vkDevice;
     class VulkanShader;
 
     class VulkanShaders : public Shaders
     {
     public:
-        VulkanShaders(VulkanDevice& device);
+        VulkanShaders(vkDevice& device);
         ~VulkanShaders() override;
 
         // This implementation only load precompiled SPIR-V file. Call it for every single shader (vertex, fragment)
@@ -23,7 +23,7 @@ namespace bbzl
         using Container = std::unordered_map<uint32_t, std::unique_ptr<VulkanShader>>;
         Container m_shaders;
 
-        VulkanDevice& m_device;
+        vkDevice& m_device;
     };
 
 } // namespace bbzl

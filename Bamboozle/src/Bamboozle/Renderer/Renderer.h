@@ -2,11 +2,22 @@
 
 #include "RenderAPI.h"
 #include "Bamboozle/Assert.h"
+#include "Bamboozle/ShaderPassTypes.h"
 
 namespace bbzl
 {
-    class VidDeviceInterface;
-    class DeviceExecutionContextInterface;
+    class ShaderPass;
+}
+
+namespace bbzl
+{
+    class Scene;
+}
+
+namespace bbzl
+{
+    class RenderDevice;
+    class DeviceExecutionContext;
 
     class Camera;
     class Shader;
@@ -17,6 +28,7 @@ namespace bbzl
 
     struct PipelineState;
 
+    // TODO: Rename as RenderSystem
     class Renderer
     {
     public:
@@ -68,19 +80,13 @@ namespace bbzl
 		static void DrawPoint(const glm::vec3& position, const glm::vec4& color);
         static void DrawLine(const Line& line);
 
-        // static class Shader* Shader();
-        static class Shader* SkyboxShader();
+    private:
+        static void InitShaderPasses();
+        static void PreparePass(ShaderPassType pass);
 
     private:
-        static std::unique_ptr<VidDeviceInterface> m_device;
-        static std::unique_ptr<DeviceExecutionContextInterface> m_deviceContext;
-
-        // static std::unique_ptr<RenderAPI> m_renderAPI;
         static const PerspectiveCamera* m_camera;
-        static PipelineState* m_pso;
-
-        static Shader* m_defaultVertexShader;
-        static Shader* m_defaultFragmentShader;
+        static std::vector<std::unique_ptr<ShaderPass>> m_shaderPasses;
     };
 
 } // namespace bbzl

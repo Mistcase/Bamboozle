@@ -46,6 +46,8 @@ file(GLOB SRC
  "src/Bamboozle/ImGui/*.cpp"
  "src/Bamboozle/Renderer/*.h"
  "src/Bamboozle/Renderer/*.cpp"
+ "src/Bamboozle/Renderer/Passes/*.h"
+ "src/Bamboozle/Renderer/Passes/*.cpp"
  "src/Bamboozle/Scene/*.h"
  "src/Bamboozle/Scene/*.cpp"
  "src/Platform/*.h"

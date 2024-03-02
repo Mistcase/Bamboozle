@@ -156,7 +156,7 @@ namespace bbzl
 
     void Scene::drawSkybox() const
     {
-        Renderer::SkyboxShader()->bind();
+        /*Renderer::SkyboxShader()->bind();
 
         const auto& transform = m_skybox.getComponent<TransformComponent>();
         static_cast<OpenGLShader*>(Renderer::SkyboxShader())->setUniformMat4("u_Transform", transform.getWorldTransform());
@@ -167,7 +167,7 @@ namespace bbzl
         texture.texture->bind(0);
 
         auto mesh = m_skybox.getComponent<MeshComponent>();
-        mesh.draw();
+        mesh.draw();*/
 
         // Renderer::Shader()->bind();
     }

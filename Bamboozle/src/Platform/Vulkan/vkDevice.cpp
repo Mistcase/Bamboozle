@@ -1,12 +1,14 @@
 #include "Bamboozle/bbzlpch.h"
-#include "VulkanDevice.h"
+#include "VulkanContext.h"
+#include "vkDevice.h"
 
 #include "Bamboozle/Renderer/PipelineState.h"
-#include "VulkanPipelineState.h"
+#include "vkPipelineState.h"
 #include "VulkanShader.h"
 #include "VulkanSurfaceData.h"
 #include "VulkanTexture.h"
 #include "Bamboozle/Log.h"
+#include "Bamboozle/Renderer/DeviceFwd.h"
 
 // TODO: What is VkImage
 // TODO: What is vkCmdCopyBufferToImage
@@ -57,9 +59,11 @@ namespace bbzl
     }
 
 
-    VulkanDevice::VulkanDevice(Window& window)
+    vkDevice::vkDevice(Window& window)
         : m_window(window)
     {
+        g_RenderDevice = this;
+
         createInstance();
         setupDebugMessenger();
         createSurface();
@@ -67,9 +71,10 @@ namespace bbzl
         createLogicalDevice();
         createCommandPool();
         createSwapChain();
+        createDSManager();
     }
 
-    VulkanDevice::~VulkanDevice()
+    vkDevice::~vkDevice()
     {
         // HACK to prevent exception on swapchain destructor
         m_swapChain.reset();
@@ -86,22 +91,22 @@ namespace bbzl
         vkDestroyInstance(instance, nullptr);
     }
 
-    void VulkanDevice::swapBuffers()
+    void vkDevice::swapBuffers()
     {
         // m_swapChain->swapBuffers();
     }
 
-    void VulkanDevice::beginFrame()
+    void vkDevice::beginFrame()
     {
         // m_commandPool.beginFrame();
     }
 
-    void VulkanDevice::endFrame()
+    void vkDevice::endFrame()
     {
         // m_commandPool.endFrame();
     }
 
-    void VulkanDevice::createInstance()
+    void vkDevice::createInstance()
     {
         if (enableValidationLayers && !checkValidationLayerSupport())
         {
@@ -151,7 +156,7 @@ namespace bbzl
         checkGflwRequiredInstanceExtensions();
     }
 
-    void VulkanDevice::pickPhysicalDevice()
+    void vkDevice::pickPhysicalDevice()
     {
         uint32_t deviceCount = 0;
         vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
@@ -185,7 +190,7 @@ namespace bbzl
         BBZL_CORE_INFO("Physical device: {0}", properties.deviceName);
     }
 
-    void VulkanDevice::createLogicalDevice()
+    void vkDevice::createLogicalDevice()
     {
         QueueFamilyIndices indices = findQueueFamilies(physicalDevice);
 
@@ -238,7 +243,7 @@ namespace bbzl
         vkGetDeviceQueue(device, indices.presentFamily, 0, &presentQueue);
     }
 
-    void VulkanDevice::createCommandPool()
+    void vkDevice::createCommandPool()
     {
         QueueFamilyIndices queueFamilyIndices = findPhysicalQueueFamilies();
 
@@ -254,18 +259,23 @@ namespace bbzl
         }
     }
 
-    void VulkanDevice::createSurface()
+    void vkDevice::createSurface()
     {
         VulkanSurfaceData surfaceCreationData{ instance, &surface };
         m_window.createSurface(&surfaceCreationData);
     }
 
-    void VulkanDevice::createSwapChain()
+    void vkDevice::createSwapChain()
     {
         m_swapChain = std::make_unique<VulkanSwapChain>(*this, VkExtent2D{ m_window.getWidth(), m_window.getHeight() });
     }
 
-    bool VulkanDevice::isDeviceSuitable(VkPhysicalDevice device)
+    void vkDevice::createDSManager()
+    {
+        m_descriptorSets = std::make_unique<vkDescriptorSetsManager>();
+    }
+
+    bool vkDevice::isDeviceSuitable(VkPhysicalDevice device)
     {
         QueueFamilyIndices indices = findQueueFamilies(device);
 
@@ -284,7 +294,7 @@ namespace bbzl
         return indices.isComplete() && extensionsSupported && swapChainAdequate && supportedFeatures.samplerAnisotropy;
     }
 
-    void VulkanDevice::populateDebugMessengerCreateInfo(
+    void vkDevice::populateDebugMessengerCreateInfo(
         VkDebugUtilsMessengerCreateInfoEXT& createInfo)
     {
         createInfo = {};
@@ -295,7 +305,7 @@ namespace bbzl
         createInfo.pUserData = nullptr; // Optional
     }
 
-    void VulkanDevice::setupDebugMessenger()
+    void vkDevice::setupDebugMessenger()
     {
         if (!enableValidationLayers)
             return;
@@ -308,7 +318,7 @@ namespace bbzl
         }
     }
 
-    bool VulkanDevice::checkValidationLayerSupport()
+    bool vkDevice::checkValidationLayerSupport()
     {
         uint32_t layerCount;
         vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
@@ -338,7 +348,7 @@ namespace bbzl
         return true;
     }
 
-    std::vector<const char*> VulkanDevice::getRequiredExtensions() const
+    std::vector<const char*> vkDevice::getRequiredExtensions() const
     {
         uint32_t glfwExtensionCount = 0;
         const char** glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
@@ -356,7 +366,7 @@ namespace bbzl
         return extensions;
     }
 
-    void VulkanDevice::checkGflwRequiredInstanceExtensions()
+    void vkDevice::checkGflwRequiredInstanceExtensions()
     {
         uint32_t extensionCount = 0;
         vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
@@ -384,7 +394,7 @@ namespace bbzl
         }
     }
 
-    bool VulkanDevice::checkDeviceExtensionSupport(VkPhysicalDevice device)
+    bool vkDevice::checkDeviceExtensionSupport(VkPhysicalDevice device)
     {
         uint32_t extensionCount;
         vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr);
@@ -405,7 +415,7 @@ namespace bbzl
         return requiredExtensions.empty();
     }
 
-    VulkanDevice::QueueFamilyIndices VulkanDevice::findQueueFamilies(VkPhysicalDevice device)
+    vkDevice::QueueFamilyIndices vkDevice::findQueueFamilies(VkPhysicalDevice device)
     {
         QueueFamilyIndices indices;
 
@@ -441,7 +451,7 @@ namespace bbzl
         return indices;
     }
 
-    VulkanDevice::SwapChainSupportDetails VulkanDevice::querySwapChainSupport(VkPhysicalDevice device)
+    vkDevice::SwapChainSupportDetails vkDevice::querySwapChainSupport(VkPhysicalDevice device)
     {
         SwapChainSupportDetails details;
         vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, surface, &details.capabilities);
@@ -470,7 +480,7 @@ namespace bbzl
         return details;
     }
 
-    VkFormat VulkanDevice::findSupportedFormat(
+    VkFormat vkDevice::findSupportedFormat(
         const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features) const
     {
         for (VkFormat format : candidates)
@@ -493,20 +503,20 @@ namespace bbzl
         ASSERT_FAIL_NO_MSG();
     }
 
-    PipelineState* VulkanDevice::createPipelineStateObject()
+    PipelineState* vkDevice::createPipelineStateObject()
     {
         // TODO: store pso pool in device class.
         // Just allocate new Vulkan pso for now
 
-        return new VulkanPipelineState(*this);
+        return new vkPipelineState(*this);
     }
 
-	void VulkanDevice::destroyPipelineStateObject(PipelineState* pso)
+	void vkDevice::destroyPipelineStateObject(PipelineState* pso)
     {
         delete pso;
     }
 
-    Shader* VulkanDevice::createShader(Shader::Type type, const ShaderData& data)
+    Shader* vkDevice::createShader(Shader::Type type, const ShaderData& data)
     {
         static size_t counter = 1;
         const auto shaderDebugName = "vulkan_shader_" + std::to_string(counter);
@@ -530,12 +540,12 @@ namespace bbzl
         return shader;
     }
 
-    void VulkanDevice::destroyShader(Shader* shader)
+    void vkDevice::destroyShader(Shader* shader)
     {
         delete shader;
     }
 
-	VulkanTexture2D* VulkanDevice::createTexture(size_t width, size_t height, Texture2D::Format format, void* data)
+	VulkanTexture2D* vkDevice::createTexture(size_t width, size_t height, Texture2D::Format format, void* data)
 	{
         // Create buffer on gpu
         VkBuffer stagingBuffer;
@@ -635,12 +645,12 @@ namespace bbzl
         return texture;
 	}
 
-	void VulkanDevice::destroyTexture(VulkanTexture2D* texture)
+	void vkDevice::destroyTexture(VulkanTexture2D* texture)
 	{
         delete texture;
 	}
 
-    uint32_t VulkanDevice::findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties) const
+    uint32_t vkDevice::findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties) const
     {
         VkPhysicalDeviceMemoryProperties memProperties;
         vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memProperties);
@@ -656,7 +666,7 @@ namespace bbzl
         return -1;
     }
 
-    void VulkanDevice::createBuffer(
+    void vkDevice::createBuffer(
         VkDeviceSize size,
         VkBufferUsageFlags usage,
         VkMemoryPropertyFlags properties,
@@ -692,7 +702,7 @@ namespace bbzl
         vkBindBufferMemory(device, buffer, bufferMemory, 0);
     }
 
-    VkCommandBuffer VulkanDevice::beginSingleTimeCommands()
+    VkCommandBuffer vkDevice::beginSingleTimeCommands()
     {
         VkCommandBuffer commandBuffer;
         VkCommandBufferAllocateInfo allocInfo{};
@@ -712,7 +722,7 @@ namespace bbzl
         return commandBuffer;
     }
 
-    void VulkanDevice::endSingleTimeCommands(VkCommandBuffer comandBuffer)
+    void vkDevice::endSingleTimeCommands(VkCommandBuffer comandBuffer)
     {
         vkEndCommandBuffer(comandBuffer);
 
@@ -728,7 +738,7 @@ namespace bbzl
         comandBuffer = VK_NULL_HANDLE;
     }
 
-    void VulkanDevice::copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size)
+    void vkDevice::copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size)
     {
         VkCommandBuffer commandBuffer = beginSingleTimeCommands();
 
@@ -741,7 +751,7 @@ namespace bbzl
         endSingleTimeCommands(commandBuffer);
     }
 
-    void VulkanDevice::copyBufferToImage(
+    void vkDevice::copyBufferToImage(
         VkBuffer buffer, VkImage image, uint32_t width, uint32_t height, uint32_t layerCount)
     {
         VkCommandBuffer commandBuffer = beginSingleTimeCommands();
@@ -769,7 +779,7 @@ namespace bbzl
         endSingleTimeCommands(commandBuffer);
     }
 
-    void VulkanDevice::createImageWithInfo(
+    void vkDevice::createImageWithInfo(
         const VkImageCreateInfo& imageInfo,
         VkMemoryPropertyFlags properties,
         VkImage& image,
@@ -789,7 +799,7 @@ namespace bbzl
         VK_CALL(vkBindImageMemory(device, image, imageMemory, 0));
     }
 
-    void VulkanDevice::transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout)
+    void vkDevice::transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout)
     {
         VkCommandBuffer commandBuffer = beginSingleTimeCommands();
 
@@ -816,6 +826,21 @@ namespace bbzl
             1, &barrier);
 
         endSingleTimeCommands(commandBuffer);
+    }
+
+    const vkDescriptorSetsManager& vkDevice::getDescriptorSets()
+    {
+        return *m_descriptorSets.get();
+    }
+
+    vkDevice* getVkDevice()
+    {
+        return static_cast<vkDevice*>(g_RenderDevice);
+    }
+
+    VkDevice getVkDeviceNative()
+    {
+        return getVkDevice()->getNativeDevice();
     }
 
 } // namespace bbzl

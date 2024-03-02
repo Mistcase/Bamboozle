@@ -12,7 +12,7 @@ namespace bbzl
     {
     }
 
-    VulkanCommandBuffer VulkanCommandBufferPool::getCurrentCommandBuffer()
+    VulkanCommandBuffer VulkanCommandBufferPool::getCmdBuffer()
     {
         ASSERT_FAIL("Not implemented");
         return {};

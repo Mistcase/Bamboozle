@@ -1,37 +1,56 @@
 #include "Bamboozle/bbzlpch.h"
 #include "VulkanContext.h"
-#include "VulkanPipelineState.h"
+#include "vkPipelineState.h"
 
-#include "VulkanDevice.h"
+#include "vkDevice.h"
 #include "VulkanShader.h"
 #include "Bamboozle/Log.h"
-
-#include "TestVertex.h"
 
 #include <glm/glm.hpp>
 
 namespace
 {
-    const VkShaderStageFlagBits BbzlToVkShaderStage[] = {
+    const VkShaderStageFlagBits BBZL_TO_VK_SHADER_STAGE[] = {
         VK_SHADER_STAGE_VERTEX_BIT,
         VK_SHADER_STAGE_FRAGMENT_BIT,
+    };
+
+    const VkFormat BBZL_TO_VK_VFV[] = {
+        VK_FORMAT_UNDEFINED,
+        VK_FORMAT_R32_SFLOAT,
+        VK_FORMAT_R32G32_SFLOAT,
+        VK_FORMAT_R32G32B32_SFLOAT,
+        VK_FORMAT_R32G32B32A32_SFLOAT,
+        VK_FORMAT_UNDEFINED,
+        VK_FORMAT_UNDEFINED,
+        VK_FORMAT_R32_SINT,
+        VK_FORMAT_R32G32_SINT,
+        VK_FORMAT_R32G32B32_SINT,
+        VK_FORMAT_R32G32B32A32_SINT,
+        VK_FORMAT_R8_UINT, // bool
+    };
+
+    struct SimplePushConstantData
+    {
+        glm::mat2 transform{ 1.0f };
+        glm::vec2 offset;
+        alignas(16) glm::vec3 color;
     };
 }
 
 namespace bbzl
 {
-    VulkanPipelineState::VulkanPipelineState(VulkanDevice& device)
+    vkPipelineState::vkPipelineState(vkDevice& device)
         : m_device(device)
     {
-        createRenderPassLayout();
     }
 
-    VulkanPipelineState::~VulkanPipelineState()
+    vkPipelineState::~vkPipelineState()
     {
         term();
     }
 
-    void VulkanPipelineState::validate()
+    void vkPipelineState::validate()
     {
         if (m_isValid)
         {
@@ -43,13 +62,13 @@ namespace bbzl
         m_isValid = true;
     }
 
-    void VulkanPipelineState::bind()
+    void vkPipelineState::bind()
     {
         // TODO: remove
         ASSERT_FAIL("Not implemented");
     }
 
-    void VulkanPipelineState::term()
+    void vkPipelineState::term()
     {
         if (m_pipeline != VK_NULL_HANDLE)
         {
@@ -58,7 +77,7 @@ namespace bbzl
         }
     }
 
-    bool VulkanPipelineState::createGraphicsPipeline()
+    bool vkPipelineState::createGraphicsPipeline()
     {
         VkPipelineInputAssemblyStateCreateInfo inputAssemblyInfo{};
         inputAssemblyInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
@@ -155,7 +174,7 @@ namespace bbzl
             VkPipelineShaderStageCreateInfo& shaderStage = shaderStages[shaderStagesCount];
             memset(&shaderStage, 0, sizeof(shaderStage));
             shaderStage.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-            shaderStage.stage = BbzlToVkShaderStage[type];
+            shaderStage.stage = BBZL_TO_VK_SHADER_STAGE[type];
 
             VulkanShader* shader = static_cast<VulkanShader*>(shaderBundle[type]);
             shaderStage.module = shader->getNativeModule();
@@ -163,25 +182,44 @@ namespace bbzl
             shaderStagesCount++;
         }
 
-        auto bindingDescriptions = Vertex::GetBindingDescriptions();
-        auto attributeDescriptions = Vertex::GetAttributeDescriptions();
+        // Only one buffer binding for now
+        VkVertexInputBindingDescription bindingDescription;
+        bindingDescription.binding = 0;
+        bindingDescription.stride = vertexLayout.getStride();
+        bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+
+        const auto& vfvElements = vertexLayout.getElements();
+        const auto vfvElementsCount = vfvElements.size();
+        std::vector<VkVertexInputAttributeDescription> attributeDescriptions(vfvElementsCount);
+        for (size_t i = 0; i < vfvElementsCount; ++i)
+        {
+            const auto& bbzlDesc = vfvElements[i];
+            auto& vkDesc = attributeDescriptions[i];
+
+            vkDesc.binding = 0;
+            vkDesc.location = static_cast<uint32_t>(i);
+            vkDesc.format = BBZL_TO_VK_VFV[static_cast<size_t>(bbzlDesc.type)];
+            vkDesc.offset = bbzlDesc.offset;
+        }
 
         VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
         vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
         vertexInputInfo.vertexAttributeDescriptionCount = (uint32_t)(attributeDescriptions.size());
-        vertexInputInfo.vertexBindingDescriptionCount = (uint32_t)(bindingDescriptions.size());
+        vertexInputInfo.vertexBindingDescriptionCount = 1;
         vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
-        vertexInputInfo.pVertexBindingDescriptions = bindingDescriptions.data();
+        vertexInputInfo.pVertexBindingDescriptions = &bindingDescription;
 
         VkPushConstantRange pushContantRange{};
         pushContantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
         pushContantRange.offset = 0;
         pushContantRange.size = sizeof(SimplePushConstantData);
 
+        const auto psoLayout = getVkDevice()->getDescriptorSets().getPSOLayout(passId);
+
         VkPipelineLayoutCreateInfo createInfo{};
         createInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
         createInfo.setLayoutCount = 1;
-        createInfo.pSetLayouts = &m_renderPassLayout[0].m_layout;
+        createInfo.pSetLayouts = &psoLayout.layout;
         createInfo.pushConstantRangeCount = 0;
         createInfo.pPushConstantRanges = nullptr;
  /*       createInfo.pushConstantRangeCount = 1;
@@ -216,11 +254,6 @@ namespace bbzl
         }
 
         return true;
-    }
-
-    void VulkanPipelineState::createRenderPassLayout()
-    {
-        m_renderPassLayout.emplace_back(m_device);
     }
 
 } // namespace bbzl

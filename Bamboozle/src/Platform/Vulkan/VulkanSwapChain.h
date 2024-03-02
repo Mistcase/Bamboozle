@@ -2,15 +2,15 @@
 
 namespace bbzl
 {
-    class VulkanDevice;
+    class vkDevice;
 
     class VulkanSwapChain
     {
     public:
         static constexpr int MAX_FRAMES_IN_FLIGHT = 2;
 
-        VulkanSwapChain(VulkanDevice& deviceRef, VkExtent2D windowExtent);
-        VulkanSwapChain(VulkanDevice& deviceRef, VkExtent2D windowExtent, std::shared_ptr<VulkanSwapChain> prev);
+        VulkanSwapChain(vkDevice& deviceRef, VkExtent2D windowExtent);
+        VulkanSwapChain(vkDevice& deviceRef, VkExtent2D windowExtent, std::shared_ptr<VulkanSwapChain> prev);
         ~VulkanSwapChain();
 
         VulkanSwapChain(const VulkanSwapChain&) = delete;
@@ -98,7 +98,7 @@ namespace bbzl
         std::vector<VkImage> swapChainImages;
         std::vector<VkImageView> swapChainImageViews;
 
-        VulkanDevice& m_device;
+        vkDevice& m_device;
         VkExtent2D windowExtent;
 
         VkSwapchainKHR swapChain;

@@ -6,7 +6,7 @@ namespace bbzl
 {
     class VulkanTexture2D : public Texture2D
     {
-        friend class VulkanDevice;
+        friend class vkDevice;
 
     public:
         ~VulkanTexture2D() override;

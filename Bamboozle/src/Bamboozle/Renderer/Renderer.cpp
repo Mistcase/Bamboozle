@@ -1,4 +1,8 @@
 #include "Bamboozle/bbzlpch.h"
+
+#include "Platform/Vulkan/VulkanContext.h"
+
+// Corresponding header.h
 #include "Renderer.h"
 
 #include "Bamboozle/Application.h"
@@ -12,16 +16,23 @@
 
 // Temp
 #include "Device.h"
+#include "DeviceExecutionContextFwd.h"
+#include "DeviceFwd.h"
 #include "imgui.h"
 #include "PipelineState.h"
 #include "RenderAPI.h"
+#include "ShaderPass.h"
 #include "TextureManager.h"
 #include "Bamboozle/DebugPanel.h"
 #include "Bamboozle/Hash.h"
+#include "Passes/PassTest.h"
+
+
+#include "Platform/OpenGL/OpenGLContext.h"
 #include "Platform/OpenGL/OpenGLDevice.h"
 #include "Platform/OpenGL/OpenGLShader.h"
-#include "Platform/Vulkan/VulkanDevice.h"
-#include "Platform/Vulkan/VulkanDeviceExecutionContext.h"
+#include "Platform/Vulkan/vkDevice.h"
+#include "Platform/Vulkan/vkExecutionContext.h"
 
 namespace bbzl
 {
@@ -29,11 +40,11 @@ namespace bbzl
     {
         std::unique_ptr<Shader> skyboxShader = nullptr;
 
-        struct PrimitiveVertex
-        {
-            glm::vec4 position;
-            glm::vec4 color;
-        };
+        //struct PrimitiveVertex
+        //{
+        //    glm::vec4 position;
+        //    glm::vec4 color;
+        //};
 
         std::unique_ptr<Shader> idleShader = nullptr;
         Ref<VertexArray> idleVertexArray;
@@ -69,45 +80,15 @@ namespace bbzl
         }
     } // namespace
 
-    namespace
-    {
-        using ShaderData = std::vector<std::byte>;
-        ShaderData LoadEntireFile(const std::filesystem::path& path)
-        {
-            std::ifstream ifs(path, std::ios::ate | std::ios::binary);
-            ASSERT(ifs.is_open());
-
-            ShaderData buffer(ifs.tellg());
-
-            ifs.seekg(0);
-            ifs.read((char*)buffer.data(), buffer.size());
-            ifs.close();
-
-            return buffer;
-        }
-    }
-
-    std::unique_ptr<VidDeviceInterface> Renderer::m_device;
-    std::unique_ptr<DeviceExecutionContextInterface> Renderer::m_deviceContext;
-
-    Shader* Renderer::m_defaultVertexShader;
-    Shader* Renderer::m_defaultFragmentShader;
-
-    PipelineState* Renderer::m_pso = nullptr;
+    std::vector<std::unique_ptr<ShaderPass>> Renderer::m_shaderPasses{};
     const PerspectiveCamera* Renderer::m_camera = nullptr;
 
     void Renderer::Init()
     {
         OnAPIChanged(RenderAPI::API_TYPE::Default);
+        InitShaderPasses();
 
-        // TODO: Resource system (Load file)?
-        m_defaultVertexShader = m_device->createShader(Shader::Type::Vertex, LoadEntireFile(Application::GetInstance().getResourceDirectory() / "shaders/shader.vert.spv"));
-        m_defaultFragmentShader = m_device->createShader(Shader::Type::Pixel, LoadEntireFile(Application::GetInstance().getResourceDirectory() / "shaders/shader.frag.spv"));
-
-        // TODO: Is it correct to init pso once here?
-        m_pso = m_device->createPipelineStateObject();
-
-        TextureManager::Init(*m_device);
+        TextureManager::Init(*g_RenderDevice);
         Renderer2D::Init();
 
         // Toggle render api from debug menu
@@ -118,8 +99,8 @@ namespace bbzl
 
     void Renderer::Destroy()
     {
-        m_device->destroyShader(m_defaultVertexShader);
-        m_device->destroyShader(m_defaultFragmentShader);
+        delete g_RenderDevice;
+        delete g_RenderContext;
 
         Renderer2D::Destroy();
     }
@@ -130,16 +111,15 @@ namespace bbzl
 
         if (api == RenderAPI::API_TYPE::OpenGL)
         {
-            m_device = std::make_unique<OpenGLDevice>();
-            m_deviceContext = std::make_unique<DeviceExecutionContextInterface>();
+            ASSERT_FAIL("Implement OpenGlRenderContext");
         }
         else if (api == RenderAPI::API_TYPE::Vulkan)
         {
-            m_device = std::make_unique<VulkanDevice>(Application::GetInstance().getWindow());
-            m_deviceContext = std::make_unique<VulkanDeviceExecutionContext>(*(VulkanDevice*)m_device.get());
+            auto* vk_device = new vkDevice(Application::GetInstance().getWindow());
+            g_RenderContext = new vkDeviceExecutionContext(*vk_device);
         }
 
-        ASSERT(m_device != nullptr);
+        ASSERT(g_RenderDevice != nullptr);
     }
 
     void Renderer::OnWindowResize(uint32_t width, uint32_t height)
@@ -149,42 +129,38 @@ namespace bbzl
 
     void Renderer::SwapBuffers()
     {
-        m_device->swapBuffers();
+        g_RenderDevice->swapBuffers();
     }
 
     void Renderer::FrameBegin()
     {
-        m_device->beginFrame();
+        g_RenderContext->beginFrame();
+        // g_RenderDevice->beginFrame();
 
         // TODO: add opegl context
-        if (m_deviceContext)
+        if (g_RenderContext)
         {
-            m_deviceContext->beginFrame();
-            m_deviceContext->beginRenderPass();
+            // g_RenderContext->beginFrame();
+            g_RenderContext->beginRenderPass();
         }
-
-        // TODO: Fix shaders
-        m_pso->primTopologyType = PipelineState::PrimitiveTopologyType::Triangles;
-        m_pso->shaderBundle[Shader::Type::Vertex] = m_defaultVertexShader;
-        m_pso->shaderBundle[Shader::Type::Pixel] = m_defaultFragmentShader;
-        m_pso->validate();
     }
 
     void Renderer::FrameEnd()
     {
         // TODO: add opegl context
-        if (m_deviceContext)
+        if (g_RenderContext)
         {
-            m_deviceContext->endRenderPass();
-            m_deviceContext->endFrame();
+            // g_RenderContext->endRenderPass();
+            g_RenderContext->endFrame();
         }
 
-        m_device->endFrame();
+        // g_RenderDevice->endFrame();
+        g_RenderContext->endFrame();
     }
 
     void Renderer::BeginScene(const PerspectiveCamera* camera)
     {
-        m_deviceContext->bindPipeline(*m_pso);
+        // g_RenderContext->bindPipeline(*m_pso);
         m_camera = camera;
     }
 
@@ -194,13 +170,17 @@ namespace bbzl
 
     void Renderer::DrawQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const glm::vec4& color, const Texture2D* texture, const glm::vec4& uv)
     {
-        m_deviceContext->testDraw(*m_pso, texture);
+        // Setup VF, pipeline, render pass, ...
+        PreparePass(ShaderPassType::PASS_COMMON);
+
+        // Draw call
+        g_RenderContext->draw(6, 1);
     }
 
     void Renderer::DrawPoint(const glm::vec3& position, const glm::vec4& color)
     {
         // Temporary use idleShader
-        assert(m_camera != nullptr);
+      /*  assert(m_camera != nullptr);
         assert(idleShader != nullptr);
 
         idleShader->bind();
@@ -210,7 +190,7 @@ namespace bbzl
         PrimitiveVertex vertex{ glm::vec4(position, 1.0f), color };
         idleVertexBuffer->setData(&vertex, sizeof(vertex));
 
-        idleVertexArray->bind();
+        idleVertexArray->bind();*/
         //RenderCommand::DrawPoints(idleVertexArray, 1);
 
         // Shader()->bind();
@@ -218,7 +198,7 @@ namespace bbzl
 
     void Renderer::DrawLine(const Line& line)
     {
-        assert(m_camera != nullptr);
+       /* assert(m_camera != nullptr);
         assert(idleShader != nullptr);
 
         idleShader->bind();
@@ -231,20 +211,22 @@ namespace bbzl
         };
         idleVertexBuffer->setData(vertices, 2 * sizeof(PrimitiveVertex));
 
-        idleVertexArray->bind();
+        idleVertexArray->bind();*/
         //RenderCommand::DrawLines(idleVertexArray, 2);
 
         // Shader()->bind();
     }
 
-    //class Shader* Renderer::Shader()
-    //{
-    //    return Renderer2D::Shader(); // TODO: Give 3D renderer its own shader
-    //}
-
-    class Shader* Renderer::SkyboxShader()
+    void Renderer::InitShaderPasses()
     {
-        return skyboxShader.get();
+        m_shaderPasses.resize(size_t(ShaderPassType::COUNT));
+        m_shaderPasses[size_t(ShaderPassType::PASS_COMMON)] = std::make_unique<ShaderPassCommon>();
+    }
+
+    void Renderer::PreparePass(ShaderPassType pass)
+    {
+        const auto idx = static_cast<size_t>(pass);
+        m_shaderPasses[idx]->prepare(); 
     }
 
 } // namespace bbzl

@@ -7,7 +7,7 @@ namespace bbzl
     class OpenGLContext;
     struct PipelineState;
 
-    class OpenGLDevice : public VidDeviceInterface
+    class OpenGLDevice : public RenderDevice
     {
     public:
         OpenGLDevice();

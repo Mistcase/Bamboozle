@@ -2,19 +2,19 @@
 #include "VulkanContext.h"
 #include "VulkanSwapChain.h"
 
-#include "VulkanDevice.h"
+#include "vkDevice.h"
 #include "Bamboozle/Log.h"
 
 namespace bbzl
 {
-    VulkanSwapChain::VulkanSwapChain(VulkanDevice& deviceRef, VkExtent2D extent)
+    VulkanSwapChain::VulkanSwapChain(vkDevice& deviceRef, VkExtent2D extent)
         : m_device{ deviceRef }
         , windowExtent{ extent }
     {
         init();
     }
 
-    VulkanSwapChain::VulkanSwapChain(VulkanDevice& deviceRef, VkExtent2D extent, std::shared_ptr<VulkanSwapChain> prev)
+    VulkanSwapChain::VulkanSwapChain(vkDevice& deviceRef, VkExtent2D extent, std::shared_ptr<VulkanSwapChain> prev)
         : m_device(deviceRef)
         , windowExtent(extent)
         , oldSwapChain(prev)
@@ -72,8 +72,7 @@ namespace bbzl
 
     void VulkanSwapChain::swapBuffers()
     {
-        [[maybe_unused]] const auto result = acquireNextImage(&m_currentImageIndex);
-        ASSERT(result == VK_SUCCESS);
+        VK_CALL(acquireNextImage(&m_currentImageIndex));
     }
 
     VkResult VulkanSwapChain::acquireNextImage(uint32_t* imageIndex)

@@ -5,12 +5,12 @@ namespace bbzl
     class Texture2D;
     struct PipelineState;
 
-    class DeviceExecutionContextInterface
+    class DeviceExecutionContext
     {
     public:
-        virtual ~DeviceExecutionContextInterface() = default;
+        virtual ~DeviceExecutionContext() = default;
 
-        virtual void bindPipeline(const PipelineState& pipeline) {}
+        virtual void setPSO(const PipelineState& pipeline) {}
 
         virtual void beginFrame() {}
         virtual void endFrame() {}
@@ -18,10 +18,9 @@ namespace bbzl
         virtual void beginRenderPass() {}
         virtual void endRenderPass() {}
 
-        virtual void getBackbuffer() {}
-
-        virtual void testDraw(const PipelineState& pipeline, const Texture2D* texture)
+        virtual void draw(size_t vertexCount, size_t instanceCount)
         {
+            ASSERT_FAIL_NO_MSG();
         }
     };
 }

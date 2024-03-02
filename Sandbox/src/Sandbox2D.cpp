@@ -34,15 +34,12 @@ void Sandbox2DLayer::onUpdate(float dt)
 
 void Sandbox2DLayer::onRender()
 {
-	// bbzl::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
-    // bbzl::RenderCommand::Clear();
-
     bbzl::Renderer::FrameBegin();
-
     bbzl::Renderer::BeginScene(nullptr);
-	m_sprite1->draw({0, 0}, { 1.0f, 1.0f }, 0.0f);
-    bbzl::Renderer::EndScene();
 
+    m_sprite1->draw({0, 0}, { 1.0f, 1.0f }, 0.0f);
+
+    bbzl::Renderer::EndScene();
     bbzl::Renderer::FrameEnd();
 }
 

@@ -2,14 +2,14 @@
 
 namespace bbzl
 {
-    class VulkanDevice;
+    class vkDevice;
     class VulkanTexture2D;
     struct VulkanUniformBufferObject;
 
     class VulkanDescriptorSet
     {
     public:
-        VulkanDescriptorSet(VulkanDevice& device);
+        VulkanDescriptorSet(vkDevice& device);
 
         void newFrame();
 
@@ -26,7 +26,7 @@ namespace bbzl
         VkDescriptorPool m_pool; // TODO: Remove from here
         VkDescriptorSet m_set = VK_NULL_HANDLE;
 
-        VulkanDevice& m_device;
+        vkDevice& m_device;
     };
 
 } 

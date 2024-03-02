@@ -2,13 +2,13 @@
 #include "VulkanContext.h"
 #include "VulkanDescriptorSet.h"
 
-#include "VulkanDevice.h"
+#include "vkDevice.h"
 #include "VulkanTexture.h"
 #include "VulkanUniformBuffer.h"
 
 namespace bbzl
 {
-    VulkanDescriptorSet::VulkanDescriptorSet(VulkanDevice& device)
+    VulkanDescriptorSet::VulkanDescriptorSet(vkDevice& device)
         : m_device(device)
     {
         // TODO: think about configuration of descriptor sets

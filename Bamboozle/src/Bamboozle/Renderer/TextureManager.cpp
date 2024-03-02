@@ -3,7 +3,7 @@
 
 #include "Bamboozle/Log.h"
 #include "Bamboozle/Renderer/Renderer.h"
-#include "Platform/Vulkan/VulkanDevice.h"
+#include "Platform/Vulkan/vkDevice.h"
 #include "Platform/Vulkan/VulkanTexture.h"
 #include "Platform/Vulkan/VulkanContext.h"
 
@@ -13,12 +13,12 @@ namespace bbzl
 {
     TextureManager* textureManager = nullptr;
 
-	TextureManager::TextureManager(VidDeviceInterface& device)
+	TextureManager::TextureManager(RenderDevice& device)
 		: m_device(device)
 	{
 	}
 
-    void TextureManager::Init(VidDeviceInterface& device)
+    void TextureManager::Init(RenderDevice& device)
     {
 		// TODO: deallocate it
         textureManager = new TextureManager(device);
@@ -39,7 +39,7 @@ namespace bbzl
 		const auto apiType = Renderer::GetAPI();
 		if (apiType == RenderAPI::API_TYPE::Vulkan)
 		{
-			texture = static_cast<VulkanDevice&>(m_device).createTexture(width, height, format, data);
+			texture = static_cast<vkDevice&>(m_device).createTexture(width, height, format, data);
 		}
 		else
 		{
